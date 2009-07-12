@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<jnlp spec="1.0+" codebase="http://mdb/" href="$outputFile">
+  <information>
+    <title>Music Database</title>
+    <vendor>Simon</vendor>
+    <shortcut online="false">
+      <menu />
+      <desktop submenu="/Internet"/>
+    </shortcut>
+    <description>The Music Database</description>
+    <offline-allowed />
+  </information>
+
+  <security>
+    <all-permissions />
+  </security>
+
+  <resources>
+    <j2se version="1.6+" initial-heap-size="32m" max-heap-size="128m" />
+    <property name="jnlp.versionEnabled" value="true"/>
+    $dependencies
+  </resources>
+   
+  <application-desc main-class="$mainClass" />
+    
+</jnlp>

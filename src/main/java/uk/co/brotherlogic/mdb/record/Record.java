@@ -1,0 +1,571 @@
+package uk.co.brotherlogic.mdb.record;
+
+/**
+ * Class to represent a record
+ * @author Simon Tucker
+ */
+
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+
+import uk.co.brotherlogic.mdb.Artist;
+import uk.co.brotherlogic.mdb.Category;
+import uk.co.brotherlogic.mdb.Format;
+import uk.co.brotherlogic.mdb.FullGroop;
+import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.Track;
+
+public class Record implements Comparable<Record>
+{
+
+	private static final double GROOP_RATIO = 0.8;
+
+	String author;
+
+	Calendar boughtDate;
+
+	Category category;
+
+	Collection catnos;
+
+	DateFormat df;
+
+	Format format;
+
+	Collection labels;
+
+	String notes;
+
+	int number;
+
+	int owner;
+
+	String title;
+
+	Collection tracks;
+
+	int year;
+
+	int releaseMonth;
+
+	int releaseType;
+
+	double price;
+
+	Collection<Artist> compilers;
+
+	public Record()
+	{
+		title = "";
+		notes = " ";
+		year = -1;
+		boughtDate = Calendar.getInstance();
+		catnos = new LinkedList();
+		labels = new LinkedList();
+		tracks = new LinkedList();
+
+		price = 0.0;
+
+		// Assuming no date alteration is required here
+		df = new SimpleDateFormat();
+	}
+
+	public Record(String title, Format format, Calendar boughtDate,
+			Collection catnos, Collection labels, Collection tracks)
+	{
+		this();
+		this.title = title;
+		this.format = format;
+		this.boughtDate = boughtDate;
+		this.catnos = catnos;
+		this.labels = labels;
+		this.tracks = tracks;
+	}
+
+	public void addPersonnel(int trackNumber, Collection pers)
+	{
+		Track intTrack = getTrack(trackNumber);
+		intTrack.addPersonnel(pers);
+	}
+
+	public void addTracks(int addPoint, int noToAdd)
+	{
+		// Work through the tracks
+		Iterator tIt = tracks.iterator();
+		Collection groops = new Vector();
+		Collection pers = new Vector();
+
+		while (tIt.hasNext())
+		{
+			// Get the current track
+			Track currTrack = (Track) tIt.next();
+
+			// If the track is beyond the addition point - move it along
+			if (currTrack.getTrackNumber() > addPoint)
+				// Update the trackNumber
+				currTrack.setTrackNumber(currTrack.getTrackNumber() + noToAdd);
+			else if (currTrack.getTrackNumber() == addPoint)
+			{
+				// Collect the information from the previous track
+				groops = currTrack.getGroops();
+				pers = currTrack.getPersonnel();
+				// currTrack.setTrackNumber(currTrack.getTrackNumber() +
+				// noToAdd);
+			}
+		}
+
+		// Now add the new tracks using the new information collected above
+		for (int i = addPoint + 1; i < addPoint + noToAdd + 1; i++)
+			tracks.add(new Track("", 0, groops, pers, i));
+	}
+
+	public int compareTo(Record o)
+	{
+		return (title.toLowerCase() + number).compareTo(o.getTitle()
+				.toLowerCase()
+				+ (o.getNumber()));
+	}
+
+	public void createTracks(int noTracks)
+	{
+		for (int i = 0; i < noTracks; i++)
+			tracks.add(new Track("", 0, new Vector(), new Vector(), i + 1));
+	}
+
+	public Collection getAllGroops()
+	{
+		Collection allGroops = new Vector();
+
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext())
+			allGroops.addAll(((Track) tIt.next()).getGroops());
+
+		return allGroops;
+	}
+
+	public String getAuthor()
+	{
+		return author;
+	}
+
+	public Category getCategory()
+	{
+		return category;
+	}
+
+	public Collection getCatNos()
+	{
+		return catnos;
+	}
+
+	public String getCatNoString()
+	{
+		String ret = "";
+		Iterator cIt = catnos.iterator();
+		while (cIt.hasNext())
+			ret += cIt.next();
+
+		return ret;
+	}
+
+	public Collection<Artist> getCompilers() throws SQLException
+	{
+		if (compilers == null)
+			compilers = new LinkedList<Artist>(GetRecords.create()
+					.getCompilers(this));
+
+		return compilers;
+	}
+
+	public Calendar getDate()
+	{
+		return boughtDate;
+	}
+
+	public Format getFormat()
+	{
+		return format;
+	}
+
+	public int getGenre()
+	{
+		return category.getMP3Number();
+	}
+
+	public String getGroopString()
+	{
+		// Construct the groop string
+		Collection main = getMainGroops();
+		Iterator gIt = main.iterator();
+		String groop = "";
+		while (gIt.hasNext())
+			groop += gIt.next() + " & ";
+
+		// Remove the trailing & or replace with various
+		if (groop.length() > 0)
+			groop = groop.substring(0, groop.length() - 3);
+		else
+			groop = "Various";
+
+		return groop;
+
+	}
+
+	public Collection getLabels()
+	{
+		return labels;
+	}
+
+	public Collection getMainGroops()
+	{
+		// A Map of groopName --> Count
+		Map mainGroopMap = new TreeMap();
+		Collection mainGroops = new Vector();
+
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext())
+		{
+			// Increment the count for each groop
+			Collection groops = ((Track) tIt.next()).getGroops();
+			Iterator gIt = groops.iterator();
+			while (gIt.hasNext())
+			{
+				String groopName = ((FullGroop) gIt.next()).getName();
+
+				Integer intVal;
+				if (mainGroopMap.containsKey(groopName))
+				{
+					intVal = (Integer) mainGroopMap.get(groopName);
+					intVal = new Integer(intVal.intValue() + 1);
+				}
+				else
+					intVal = new Integer(1);
+
+				mainGroopMap.put(groopName, intVal);
+			}
+		}
+
+		// Select only groops who appear on the right number of tracks
+		Iterator mIt = mainGroopMap.keySet().iterator();
+		while (mIt.hasNext())
+		{
+			String keyGroop = (String) mIt.next();
+
+			if ((((Integer) mainGroopMap.get(keyGroop)).doubleValue() / tracks
+					.size()) > GROOP_RATIO)
+				mainGroops.add(keyGroop);
+		}
+
+		return mainGroops;
+
+	}
+
+	public String getNotes()
+	{
+		return notes;
+	}
+
+	public int getNoTracks()
+	{
+		return tracks.size();
+	}
+
+	public int getNumber()
+	{
+		return number;
+	}
+
+	public int getOwner()
+	{
+		return owner;
+	}
+
+	public double getPrice()
+	{
+		return price;
+	}
+
+	/**
+	 * @return Returns the releaseMonth.
+	 */
+	public int getReleaseMonth()
+	{
+		return releaseMonth;
+	}
+
+	/**
+	 * @return Returns the releaseType.
+	 */
+	public int getReleaseType()
+	{
+		return releaseType;
+	}
+
+	public int getReleaseYear()
+	{
+		return year;
+	}
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public String getTitleWithCat()
+	{
+		return getTitle() + getCatNoString();
+	}
+
+	public Track getTrack(int trackNumber)
+	{
+		Track ret = new Track();
+
+		// Search all the tracks
+		boolean found = false;
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext() && !found)
+		{
+			Track currTrack = (Track) tIt.next();
+			if (currTrack.getTrackNumber() == trackNumber)
+			{
+				ret = currTrack;
+				found = true;
+			}
+		}
+		return ret;
+	}
+
+	public Collection getTracks()
+	{
+		return tracks;
+	}
+
+	public Collection getTrackTitles()
+	{
+		Collection retSet = new Vector();
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext())
+			retSet.add(((Track) tIt.next()).getTitle());
+
+		return retSet;
+	}
+
+	public int getYear()
+	{
+		return year;
+	}
+
+	public String printRecord()
+	{
+		String ret = "";
+
+		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
+
+		String tempNotes = notes;
+		if (tempNotes.length() < 1)
+			tempNotes = " ";
+
+		// Do the static record stuff
+		ret += "#R#~" + title + "~" + myForm.format(boughtDate.getTime()) + "~"
+				+ format.getName() + "~" + tempNotes + "~" + year + "~"
+				+ category.getName() + "~" + category.getMP3Number();
+
+		// Now add the labels to this
+		Iterator lIt = labels.iterator();
+		while (lIt.hasNext())
+			ret += "~" + ((Label) lIt.next()).getName();
+		ret += "\n";
+
+		// Now print the cat nos
+		Iterator cIt = catnos.iterator();
+		while (cIt.hasNext())
+			ret += cIt.next() + "~";
+		ret += "\n";
+		// Now print the tracks
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext())
+			ret += tIt.next();
+		return ret;
+	}
+
+	public void save() throws SQLException
+	{
+		GetRecords.create().saveCompilers(this);
+	}
+
+	public void setAuthor(String in)
+	{
+		author = in;
+	}
+
+	public void setCategory(Category cat)
+	{
+		category = cat;
+	}
+
+	public void setCatNos(Collection cats)
+	{
+		// Remove and add
+		catnos.clear();
+		catnos.addAll(cats);
+	}
+
+	public void setCompilers(Collection<Artist> compilers)
+	{
+		this.compilers = new LinkedList<Artist>(compilers);
+	}
+
+	public void setDate(String dat) throws ParseException
+	{
+		if (dat.length() > 8)
+		{
+			// dat is YYYY-MM-DD
+			boughtDate = Calendar.getInstance();
+			DateFormat longForm = new SimpleDateFormat("yyyy-MM-dd");
+			boughtDate.setTime(longForm.parse(dat));
+		}
+		else if (dat.length() < 6)
+			throw new NumberFormatException("No String!");
+		else
+		{
+			// Assume date to be DD/MM/YY
+			boughtDate = Calendar.getInstance();
+			DateFormat shortForm = new SimpleDateFormat("dd/MM/yy");
+			boughtDate.setTime(shortForm.parse(dat));
+		}
+	}
+
+	public void setFormat(Format form)
+	{
+		format = form;
+	}
+
+	public void setGroops(int trackNumber, Collection grps)
+	{
+		Track intTrack = getTrack(trackNumber);
+		intTrack.setGroops(grps);
+	}
+
+	public void setLabels(Collection labs)
+	{
+		// Remove and add
+		labels.clear();
+		labels.addAll(labs);
+	}
+
+	public void setNotes(String in)
+	{
+		notes = in;
+	}
+
+	public void setNumber(int num)
+	{
+		number = num;
+	}
+
+	public void setOwner(int in)
+	{
+		owner = in;
+	}
+
+	public void setPersonnel(int trackNumber, Collection pers)
+	{
+		Track intTrack = getTrack(trackNumber);
+		intTrack.setPersonnel(pers);
+	}
+
+	public void setPrice(double price)
+	{
+		this.price = price;
+	}
+
+	/**
+	 * @param releaseMonth
+	 *            The releaseMonth to set.
+	 */
+	public void setReleaseMonth(int releaseMonth)
+	{
+		this.releaseMonth = releaseMonth;
+	}
+
+	/**
+	 * @param releaseType
+	 *            The releaseType to set.
+	 */
+	public void setReleaseType(int releaseType)
+	{
+		this.releaseType = releaseType;
+	}
+
+	public void setTitle(String tit)
+	{
+		title = tit;
+	}
+
+	public void setTracks(Collection tracksIn)
+	{
+		tracks.clear();
+		tracks.addAll(tracksIn);
+	}
+
+	public void setTracks(int maxNumber)
+	{
+		// Only include relevant tracks
+		Collection newTracks = new LinkedList();
+		Iterator trIt = tracks.iterator();
+		while (trIt.hasNext())
+		{
+			Track currTrack = (Track) trIt.next();
+			if (currTrack.getTrackNumber() <= maxNumber)
+				newTracks.add(currTrack);
+		}
+
+		// Replace the tracks
+		tracks = newTracks;
+
+	}
+
+	public void setYear(int in)
+	{
+		year = in;
+	}
+
+	public String toString()
+	{
+		Collection fullGroops = getMainGroops();
+		Iterator fIt = fullGroops.iterator();
+		String grp = "";
+		while (fIt.hasNext())
+			grp += fIt.next() + " & ";
+
+		if (grp.length() > 2)
+			grp = grp.substring(0, grp.length() - 3);
+		else
+			grp = "Various";
+
+		String ret = "";
+		ret += grp + " - " + title + "(" + format + ") " + labels + category
+				+ "\n";
+
+		Iterator tIt = tracks.iterator();
+		while (tIt.hasNext())
+		{
+			Track next = (Track) tIt.next();
+			ret += next.getTrackNumber() + ": ";
+			ret += next.getGroops() + " - ";
+			ret += next.getTitle() + "[";
+			ret += next.getPersonnel() + "]";
+			ret += " / " + next.getTrackRefNumber() + "\n";
+		}
+		return ret;
+	}
+}
