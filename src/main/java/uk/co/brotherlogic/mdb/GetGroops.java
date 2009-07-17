@@ -19,7 +19,7 @@ import java.util.Vector;
 public class GetGroops
 {
 	private static String delString = "DELETE_ME";
-	private static Map<Integer, FullGroop> groopMap = new TreeMap<Integer, FullGroop>();
+	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
 
 	static Persistent p;
 
@@ -39,16 +39,15 @@ public class GetGroops
 		groops = new TreeMap();
 	}
 
-	public void addGroop(FullGroop in) throws SQLException
+	public void addGroop(Groop in) throws SQLException
 	{
 		// Get the groop number
 		int groopNumber = in.getNumber();
 		if (groopNumber < 1 && groops.containsKey(in.getGroopName()))
-			groopNumber = ((FullGroop) groops.get(in.getGroopName()))
-					.getNumber();
+			groopNumber = ((Groop) groops.get(in.getGroopName())).getNumber();
 		if (!(groopNumber > 0))
 			if (tempStore.containsKey(in.getGroopName()))
-				groopNumber = ((FullGroop) tempStore.get(in.getGroopName()))
+				groopNumber = ((Groop) tempStore.get(in.getGroopName()))
 						.getNumber();
 			else
 			{
@@ -95,15 +94,14 @@ public class GetGroops
 		{
 			// Get the groop name
 			String groopName = (String) kIt.next();
-			FullGroop grp = (FullGroop) tempStore.get(groopName);
+			Groop grp = (Groop) tempStore.get(groopName);
 
 			// Get the full groop
 			if (!groops.keySet().contains(groopName))
 				groops.put(groopName, grp);
 			else
-				((FullGroop) groops.get(groopName))
-						.addLineUps(((FullGroop) tempStore.get(groopName))
-								.getLineUps());
+				((Groop) groops.get(groopName)).addLineUps(((Groop) tempStore
+						.get(groopName)).getLineUps());
 		}
 		tempStore.clear();
 	}
@@ -130,7 +128,7 @@ public class GetGroops
 			String groopName = rs.getString(1);
 			int groopNumber = rs.getInt(2);
 
-			FullGroop fGroop = new FullGroop(groopName, groopNumber);
+			Groop fGroop = new Groop(groopName, groopNumber);
 			groops.put(groopName, fGroop);
 		}
 	}
@@ -140,7 +138,7 @@ public class GetGroops
 		return groops.values();
 	}
 
-	public FullGroop getGroop(int num) throws SQLException
+	public Groop getGroop(int num) throws SQLException
 	{
 		// Get the groop name
 		Statement s = p.getConnection().getStatement();
@@ -148,7 +146,7 @@ public class GetGroops
 				.executeQuery("SELECT GroopName FROM Groops WHERE GroopNumber = "
 						+ num);
 
-		FullGroop ret = new FullGroop("ERROR!", 1, new TreeSet());
+		Groop ret = new Groop("ERROR!", 1, new TreeSet());
 		while (rs.next())
 			ret = getGroop(rs.getString(1));
 
@@ -160,15 +158,15 @@ public class GetGroops
 		return ret;
 	}
 
-	public FullGroop getGroop(String groopName)
+	public Groop getGroop(String groopName)
 	{
 		if (groops.containsKey(groopName))
-			return (FullGroop) groops.get(groopName);
+			return (Groop) groops.get(groopName);
 		else
 			return null;
 	}
 
-	public Map getGroopMap()
+	public Map<String, Groop> getGroopMap()
 	{
 		if (groops.size() == 0)
 			try
@@ -182,7 +180,7 @@ public class GetGroops
 		return groops;
 	}
 
-	public int getLineUpNum(FullGroop grp) throws SQLException
+	public int getLineUpNum(Groop grp) throws SQLException
 	{
 		// Initialise the return value
 		int ret = 0;
@@ -211,7 +209,7 @@ public class GetGroops
 		if (tempStore.containsKey(grp.getGroopName()) && ret < 1)
 		{
 
-			FullGroop tempGroop = (FullGroop) tempStore.get(grp.getGroopName());
+			Groop tempGroop = (Groop) tempStore.get(grp.getGroopName());
 
 			Iterator tLupIt = tempGroop.getLineUps().iterator();
 			while (tLupIt.hasNext())
@@ -262,13 +260,13 @@ public class GetGroops
 			// Construct the new full groop if required
 			if (!tempStore.containsKey(grp.getGroopName()))
 			{
-				FullGroop newGrp = new FullGroop(grp.getGroopName(), grp
-						.getNumber(), new Vector());
+				Groop newGrp = new Groop(grp.getGroopName(), grp.getNumber(),
+						new Vector());
 				tempStore.put(newGrp.getGroopName(), newGrp);
 			}
 
 			// Add the new lineup
-			FullGroop tempGrp = (FullGroop) tempStore.get(grp.getGroopName());
+			Groop tempGrp = (Groop) tempStore.get(grp.getGroopName());
 			grp.getChosenLineup().setLineUpNumber(ret);
 			tempGrp.addLineUp(new LineUp(ret, grp.getChosenLineup()
 					.getArtists()));
@@ -278,7 +276,7 @@ public class GetGroops
 
 	}
 
-	public FullGroop getSingleGroop(int num) throws SQLException
+	public Groop getSingleGroop(int num) throws SQLException
 	{
 		System.out.println("build_groop: " + num);
 
@@ -292,7 +290,7 @@ public class GetGroops
 		ps.execute();
 		ResultSet rs = ps.getResultSet();
 
-		FullGroop currGroop = null;
+		Groop currGroop = null;
 		LineUp currLineUp = null;
 		while (rs.next())
 		{
@@ -306,7 +304,7 @@ public class GetGroops
 			{
 				System.out.println("Creaing: " + groopName);
 				// Construct the current groop and line up
-				currGroop = new FullGroop(groopName, groopNumber, new TreeSet());
+				currGroop = new Groop(groopName, groopNumber, new TreeSet());
 				currLineUp = new LineUp(lineUpNumber, new TreeSet());
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
@@ -319,7 +317,7 @@ public class GetGroops
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the current groop and line up
-				currGroop = new FullGroop(groopName, groopNumber, new TreeSet());
+				currGroop = new Groop(groopName, groopNumber, new TreeSet());
 				currLineUp = new LineUp(lineUpNumber, new TreeSet());
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));

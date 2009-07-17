@@ -13,6 +13,7 @@ public class LineUp implements Comparable
 	// Lineup properties
 	int lineUpNumber;
 	Collection artists;
+	String groopName = "";
 
 	public LineUp()
 	{
@@ -43,6 +44,11 @@ public class LineUp implements Comparable
 	public Collection<Artist> getArtists()
 	{
 		return artists;
+	}
+
+	public String getGroopName()
+	{
+		return groopName;
 	}
 
 	public int getLineUpNumber()

@@ -120,7 +120,7 @@ public class Persistent
 			String val = (String) rIt.next();
 			if (val.startsWith("G"))
 			{
-				FullGroop grp = GetGroops.build().getGroop(
+				Groop grp = GetGroops.build().getGroop(
 						Integer.parseInt(val.substring(1)));
 				ret.add(grp);
 			}

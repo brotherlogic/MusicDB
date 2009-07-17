@@ -27,7 +27,7 @@ import java.util.Vector;
 
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.EntitySelector;
-import uk.co.brotherlogic.mdb.FullGroop;
+import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
 import uk.co.brotherlogic.mdb.GetFormats;
@@ -94,7 +94,7 @@ public class GetRecords
 
 	}
 
-	public void addGroop(int trackNumber, FullGroop groop) throws SQLException
+	public void addGroop(int trackNumber, Groop groop) throws SQLException
 	{
 		// First get the groop number
 		GetGroops.build().addGroop(groop);
@@ -126,7 +126,7 @@ public class GetRecords
 		// Now add the groups
 		Iterator grIt = toAdd.getGroops().iterator();
 		while (grIt.hasNext())
-			addGroop(trackNumber, (FullGroop) grIt.next());
+			addGroop(trackNumber, (Groop) grIt.next());
 	}
 
 	public void addRecord(Record in) throws SQLException, InterruptedException
@@ -435,7 +435,7 @@ public class GetRecords
 
 			System.out.println("building lineup " + lineUpNumber);
 
-			FullGroop tempGroop = GetGroops.build().getSingleGroop(groopNumber);
+			Groop tempGroop = GetGroops.build().getSingleGroop(groopNumber);
 			tempGroop.setChosenLineup(tempGroop.getLineUp(lineUpNumber));
 			retSet.add(tempGroop);
 		}

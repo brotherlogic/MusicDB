@@ -36,7 +36,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 	Object[] elems;
 	List<Artist> objs;
 	List<Artist> selectedObjs;
-	FullGroop currentGroop;
+	Groop currentGroop;
 	int lineUpNumber;
 
 	// GUI elements
@@ -53,7 +53,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 	JButton jButton1 = new JButton();
 	JButton butAll = new JButton();
 
-	public LineUpSelectorGUI(FullGroop grp, JFrame refIn)
+	public LineUpSelectorGUI(Groop grp, JFrame refIn)
 	{
 		// Set up the display and list models
 		super(refIn, grp.getGroopName(), true);
@@ -217,10 +217,10 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		return objs.get(bPoint);
 	}
 
-	public FullGroop getData()
+	public Groop getData()
 	{
 		if (selectedObjs.size() > 0)
-			return new FullGroop(currentGroop.getGroopName(), lineUpNumber,
+			return new Groop(currentGroop.getGroopName(), lineUpNumber,
 					new LinkedList(), new LineUp(lineUpNumber, selectedObjs));
 		else
 			return null;

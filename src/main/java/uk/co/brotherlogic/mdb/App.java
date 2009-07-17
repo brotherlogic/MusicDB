@@ -89,7 +89,7 @@ public class App extends JFrame
 		over = new AddRecordOverseer(this, GetArtists.create().getArtists(),
 				GetLabels.create().getLabels(), GetFormats.create()
 						.getFormats(), GetGroops.build().getGroopMap(),
-				GetFormats.create().getFormats());
+				GetCategories.build().getCategories());
 
 	}
 
@@ -213,8 +213,8 @@ public class App extends JFrame
 				over = new AddRecordOverseer(this, GetArtists.create()
 						.getArtists(), GetLabels.create().getLabels(),
 						GetFormats.create().getFormats(), GetGroops.build()
-								.getGroopMap(), GetFormats.create()
-								.getFormats(), examine);
+								.getGroopMap(), GetCategories.build()
+								.getCategories(), examine);
 			}
 		}
 		catch (Exception ex)

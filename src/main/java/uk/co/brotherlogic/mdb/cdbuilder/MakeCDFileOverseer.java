@@ -31,7 +31,7 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import uk.co.brotherlogic.mdb.EntitySelector;
-import uk.co.brotherlogic.mdb.FullGroop;
+import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.TrackChooser;
 import uk.co.brotherlogic.mdb.record.GetRecords;
@@ -306,7 +306,7 @@ public class MakeCDFileOverseer
 		for (int i = 0; i < trackData.size(); i++)
 		{
 			// Build the collection of groops and the track name
-			Collection<FullGroop> groops = new TreeSet<FullGroop>();
+			Collection<Groop> groops = new TreeSet<Groop>();
 			String trackName = "";
 			String trackNumber = "";
 
@@ -323,7 +323,7 @@ public class MakeCDFileOverseer
 				Iterator grpIt = currTrack.getGroops().iterator();
 				while (grpIt.hasNext())
 				{
-					FullGroop currGroop = (FullGroop) grpIt.next();
+					Groop currGroop = (Groop) grpIt.next();
 					if (!groops.contains(currGroop))
 						groops.add(currGroop);
 				}
@@ -342,7 +342,7 @@ public class MakeCDFileOverseer
 
 			// Construct the groop string
 			String grps = "";
-			Iterator<FullGroop> grIt = groops.iterator();
+			Iterator<Groop> grIt = groops.iterator();
 			while (grIt.hasNext())
 				grps += grIt.next().getTidyName() + " & ";
 			grps = grps.substring(0, grps.length() - 3);

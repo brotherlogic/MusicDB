@@ -30,8 +30,9 @@ import uk.co.brotherlogic.mdb.Builder;
 import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.CategoryBuilderGUI;
 import uk.co.brotherlogic.mdb.Format;
-import uk.co.brotherlogic.mdb.FullGroop;
+import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.LineUpSelectorGUI;
 import uk.co.brotherlogic.mdb.NewFormatGUI;
 import uk.co.brotherlogic.mdb.SetBuilder;
@@ -55,16 +56,17 @@ public class AddRecordOverseer implements ActionListener
 	// Flag, indicating whether we are editing or not
 	boolean editFlag;
 
-	Map groops;
+	Map<String, LineUp> groops;
 
 	// The gui to be used
 	AddRecordGUI gui;
 
 	// Collections to be used for making
-	Collection labels;
+	Collection<Label> labels;
 
-	public AddRecordOverseer(App c, Collection artists, Collection labels,
-			Collection formats, Map groops, Collection categories)
+	public AddRecordOverseer(App c, Collection<Artist> artists,
+			Collection<Label> labels, Collection<Format> formats,
+			Map<String, Groop> groops, Collection<Category> categories)
 	{
 		// Set the callback object
 		call = c;
@@ -93,8 +95,10 @@ public class AddRecordOverseer implements ActionListener
 			setForSelectedFormat();
 	}
 
-	public AddRecordOverseer(App c, Collection artists, Collection labels,
-			Collection formats, Map groops, Collection categories, Record rec)
+	public AddRecordOverseer(App c, Collection<Artist> artists,
+			Collection<Label> labels, Collection<Format> formats,
+			Map<String, Groop> groops, Collection<Category> categories,
+			Record rec)
 	{
 		call = c;
 		curr = rec;
@@ -244,25 +248,25 @@ public class AddRecordOverseer implements ActionListener
 	public void addGroop()
 	{
 		// Bring up the group selection screen
-		SetBuilder<FullGroop> grpBuild = new SetBuilder<FullGroop>(
-				"Select Groop", gui, new FullGroop());
-		grpBuild.setData(groops.values(), new Vector());
+		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groop", gui,
+				new Groop());
+		grpBuild.setData(groops.values(), new Vector<Groop>());
 		grpBuild.setVisible(true);
 
 		// Get the results
-		Collection tempGrps = grpBuild.getData();
-		Collection groupsToAdd = new Vector();
+		Collection<Groop> tempGrps = grpBuild.getData();
+		Collection<Groop> groupsToAdd = new Vector<Groop>();
 
 		// Check that some groops were selected
 		if (tempGrps != null)
 		{
 			// Work through the selected groups
-			Iterator gIt = tempGrps.iterator();
+			Iterator<Groop> gIt = tempGrps.iterator();
 			boolean cancel = false;
 			while (gIt.hasNext() && !cancel)
 			{
 				// Get the current groop
-				FullGroop currGroop = (FullGroop) gIt.next();
+				Groop currGroop = gIt.next();
 
 				// Select thr groop line ups
 				LineUpSelectorGUI lineup = new LineUpSelectorGUI(currGroop, gui);
@@ -270,7 +274,7 @@ public class AddRecordOverseer implements ActionListener
 				lineup.setVisible(true);
 
 				// Get the group and add it to the group to be added
-				FullGroop toAdd = lineup.getData();
+				Groop toAdd = lineup.getData();
 				if (toAdd != null)
 					groupsToAdd.add(toAdd);
 				else
@@ -284,7 +288,8 @@ public class AddRecordOverseer implements ActionListener
 				String tracksToAdd = JOptionPane.showInputDialog(gui,
 						"Enter Tracks", "Enter Tracks",
 						JOptionPane.QUESTION_MESSAGE);
-				Collection numbers = getRange(tracksToAdd, curr.getNoTracks());
+				Collection<Integer> numbers = getRange(tracksToAdd, curr
+						.getNoTracks());
 
 				// Iterate each number and add the group
 				Iterator nIt = numbers.iterator();
@@ -307,13 +312,13 @@ public class AddRecordOverseer implements ActionListener
 	public void addGroop(int trackNumber)
 	{
 		// Build a set of full groops
-		Collection grps = curr.getTrack(trackNumber).getGroops();
-		Collection fgrps = new Vector();
+		Collection<LineUp> grps = curr.getTrack(trackNumber).getGroops();
+		Collection<LineUp> fgrps = new Vector<LineUp>();
 
-		Iterator fIt = grps.iterator();
+		Iterator<LineUp> fIt = grps.iterator();
 		while (fIt.hasNext())
 		{
-			FullGroop temp = (FullGroop) fIt.next();
+			LineUp temp = fIt.next();
 
 			if (groops.containsKey(temp.getGroopName()))
 				fgrps.add(groops.get(temp.getGroopName()));
@@ -321,8 +326,8 @@ public class AddRecordOverseer implements ActionListener
 				fgrps.add(temp);
 		}
 
-		SetBuilder<FullGroop> grpBuild = new SetBuilder<FullGroop>(
-				"Select Groops", gui, new FullGroop());
+		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops",
+				gui, new Groop());
 		grpBuild.setData(groops.values(), fgrps, Math.max(1, trackNumber - 1),
 				curr.getNoTracks());
 		grpBuild.setVisible(true);
@@ -347,7 +352,7 @@ public class AddRecordOverseer implements ActionListener
 			while (tIt.hasNext() && !cancel)
 			{
 				// Get the current groop
-				FullGroop currGroop = (FullGroop) tIt.next();
+				Groop currGroop = (Groop) tIt.next();
 
 				// Select thr groop line ups
 				LineUpSelectorGUI lineup = new LineUpSelectorGUI(currGroop, gui);
@@ -355,7 +360,7 @@ public class AddRecordOverseer implements ActionListener
 				lineup.setVisible(true);
 
 				// Get the group and add it to the group to be added
-				FullGroop toAdd = lineup.getData();
+				Groop toAdd = lineup.getData();
 				if (toAdd != null)
 					groupsToAdd.add(toAdd);
 				else
@@ -386,7 +391,7 @@ public class AddRecordOverseer implements ActionListener
 			Iterator cIt = in.iterator();
 			while (cIt.hasNext())
 			{
-				FullGroop tempGroop = (FullGroop) cIt.next();
+				Groop tempGroop = (Groop) cIt.next();
 				rep = tempGroop.getGroopName();
 			}
 		}
@@ -708,10 +713,10 @@ public class AddRecordOverseer implements ActionListener
 		JOptionPane.showMessageDialog(gui, "ERROR: " + e.getMessage());
 	}
 
-	public Collection getRange(String ret, int max)
+	public Collection<Integer> getRange(String ret, int max)
 	{
 		// Initialise the collection
-		Vector trckList = new Vector();
+		Vector<Integer> trckList = new Vector<Integer>();
 
 		try
 		{

@@ -1,47 +1,127 @@
 package uk.co.brotherlogic.mdb;
 
 /**
- * Instantion of abstract groop to be used in the database
+ * Class to represent a full groop with all the lineups
  * @author Simon Tucker
  */
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Vector;
 
-public class Groop extends AbstractGroop
+public class Groop extends AbstractGroop implements Comparable<Groop>,
+		Builder<Groop>
 {
-	// Use a single lineup instead of a collection
-	LineUp thisLineUp;
-
-	// Boolean flag which indicates whether the group name contains a comma
-	boolean commaInGroopName;
+	LineUp chosenLineup;
 
 	public Groop()
 	{
-		groopName = "";
-		thisLineUp = new LineUp();
+
 	}
 
-	// Stub for now
-	public Groop(String name, int lineUpNumber, Collection artists)
+	public Groop(String name, int num)
 	{
-		// Set name
+		// Set the variables
 		groopName = name;
-
-		// Create and set the line up
-		thisLineUp = new LineUp(lineUpNumber, artists);
-
-		commaInGroopName = false;
+		groopNumber = num;
+		this.lineUps = null;
 	}
 
-	public void addArtist(Artist artistName)
+	public Groop(String name, int num, Collection lineUps)
 	{
-		thisLineUp.addArtist(artistName);
+		// Set the variables
+		groopName = name;
+		groopNumber = num;
+		this.lineUps = new Vector();
+		this.lineUps.addAll(lineUps);
 	}
 
-	public LineUp getLineUp()
+	public Groop(String name, int num, Collection lineUps,
+			LineUp chosenLineup)
 	{
-		return thisLineUp;
+		this(name, num, lineUps);
+		this.chosenLineup = chosenLineup;
+		lineUps.add(chosenLineup);
+	}
+
+	public void addLineUp(LineUp in)
+	{
+		lineUps.add(in);
+	}
+
+	public void addLineUps(Collection lineUpsToAdd)
+	{
+		lineUps.addAll(lineUpsToAdd);
+	}
+
+	@Override
+	public Groop build(String name)
+	{
+		return new Groop(name, -1);
+	}
+
+	@Override
+	public int compareTo(Groop o)
+	{
+		return -groopName.toLowerCase().compareTo(o.groopName.toLowerCase());
+	}
+
+	private void fillLineUp()
+	{
+		try
+		{
+			this.lineUps = GetGroops.build().getSingleGroop(this.groopNumber)
+					.getLineUps();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	public LineUp getChosenLineup()
+	{
+		if (chosenLineup == null)
+			if (lineUps.size() == 1)
+				chosenLineup = lineUps.iterator().next();
+		return chosenLineup;
+	}
+
+	public LineUp getLineUp(int in)
+	{
+		if (lineUps == null)
+			fillLineUp();
+
+		LineUp ret = null;
+		// Move and iterator to the right point
+		boolean found = false;
+		Iterator it = lineUps.iterator();
+		while (!found && it.hasNext())
+		{
+			LineUp temp = (LineUp) it.next();
+			if (temp.getLineUpNumber() == in)
+			{
+				ret = temp;
+				found = true;
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Collection getLineUps()
+	{
+		if (lineUps == null)
+			fillLineUp();
+		return super.getLineUps();
+	}
+
+	public int getNoLineUps()
+	{
+		return lineUps.size();
 	}
 
 	public String getTidyName()
@@ -62,31 +142,18 @@ public class Groop extends AbstractGroop
 
 	}
 
-	public String printGroop()
+	public void setChosenLineup(LineUp chosenLineup)
 	{
-		String ret = "#G#~" + groopName;
-
-		Iterator mIt = thisLineUp.getArtists().iterator();
-		while (mIt.hasNext())
-			ret += "~" + mIt.next();
-		ret += "\n";
-
-		return ret;
-	}
-
-	public void setCommaInGroopName(boolean comma)
-	{
-		commaInGroopName = comma;
-	}
-
-	public void setLineUpNumber(int lineUpNumber)
-	{
-		thisLineUp.setLineUpNumber(lineUpNumber);
+		this.chosenLineup = chosenLineup;
 	}
 
 	public String toString()
 	{
-		return groopName; // + " :~ " + thisLineUp;
+		// Simple for now
+		String ret = "";
+		ret += groopName;
+
+		return ret;
 	}
 
 }

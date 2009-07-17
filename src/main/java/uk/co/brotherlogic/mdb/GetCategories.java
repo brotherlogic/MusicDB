@@ -18,17 +18,15 @@ import java.util.TreeSet;
 public class GetCategories
 {
 	// Maps category number to category
-	Map categories;
+	Map<String, Category> categories;
 	Persistent p;
 
 	// Temporary store of category name -> category
-	Map tempStore;
+	Map<String, Category> tempStore;
 
 	// Stores the insert query
 	PreparedStatement insertQuery;
 	PreparedStatement collectQuery;
-
-	private static String delString = "DELETE_ME";
 
 	private static GetCategories singleton;
 
@@ -36,8 +34,8 @@ public class GetCategories
 	{
 		// Set the required parameters
 		p = Persistent.create();
-		tempStore = new TreeMap();
-		categories = new TreeMap();
+		tempStore = new TreeMap<String, Category>();
+		categories = new TreeMap<String, Category>();
 
 		insertQuery = p
 				.getConnection()
@@ -55,7 +53,7 @@ public class GetCategories
 			execute();
 
 		if (exists(in.getName()))
-			return ((Category) categories.get(in.getName())).getNumber();
+			return (categories.get(in.getName())).getNumber();
 		else if (in.getNumber() > 0)
 			return in.getNumber();
 		else
@@ -93,7 +91,7 @@ public class GetCategories
 	public void execute() throws SQLException
 	{
 		// Initialise the groop store
-		categories = new TreeMap();
+		categories = new TreeMap<String, Category>();
 
 		// Get a statement and run the query
 		Statement s = p.getConnection().getStatement();
@@ -124,9 +122,9 @@ public class GetCategories
 		return categories.keySet().contains(name);
 	}
 
-	public Collection getCategories()
+	public Collection<Category> getCategories()
 	{
-		TreeSet ret = new TreeSet();
+		TreeSet<Category> ret = new TreeSet<Category>();
 		ret.addAll(categories.values());
 		return ret;
 	}
@@ -137,7 +135,7 @@ public class GetCategories
 			execute();
 
 		if (exists(name))
-			return (Category) categories.get(name);
+			return categories.get(name);
 		else
 			return new Category(name, -1, mp3Number);
 	}

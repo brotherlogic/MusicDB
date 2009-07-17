@@ -11,8 +11,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetLabels;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
 
 public class DiscogsReaderParser extends DefaultHandler
@@ -25,7 +25,7 @@ public class DiscogsReaderParser extends DefaultHandler
 	private static final int READING_TRACK = 3;
 	private int state = NULL_STATE;
 
-	Collection<Groop> overallGroups = new LinkedList<Groop>();
+	Collection<LineUp> overallGroups = new LinkedList<LineUp>();
 
 	Track currTrack;
 
