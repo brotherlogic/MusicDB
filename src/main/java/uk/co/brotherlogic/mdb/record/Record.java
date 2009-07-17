@@ -31,17 +31,19 @@ public class Record implements Comparable<Record>
 
 	String author;
 
+	private int discogsNum = -1;
+
 	Calendar boughtDate;
 
 	Category category;
 
-	Collection catnos;
+	Collection<String> catnos = new LinkedList<String>();
 
 	DateFormat df;
 
 	Format format;
 
-	Collection labels;
+	Collection<Label> labels = new LinkedList<Label>();
 
 	String notes;
 
@@ -51,7 +53,7 @@ public class Record implements Comparable<Record>
 
 	String title;
 
-	Collection tracks;
+	Collection<Track> tracks = new LinkedList<Track>();
 
 	int year;
 
@@ -91,10 +93,25 @@ public class Record implements Comparable<Record>
 		this.tracks = tracks;
 	}
 
+	public void addCatNo(String catNo)
+	{
+		catnos.add(catNo);
+	}
+
+	public void addLabel(Label label)
+	{
+		labels.add(label);
+	}
+
 	public void addPersonnel(int trackNumber, Collection pers)
 	{
 		Track intTrack = getTrack(trackNumber);
 		intTrack.addPersonnel(pers);
+	}
+
+	public void addTrack(Track trk)
+	{
+		tracks.add(trk);
 	}
 
 	public void addTracks(int addPoint, int noToAdd)
@@ -162,7 +179,7 @@ public class Record implements Comparable<Record>
 		return category;
 	}
 
-	public Collection getCatNos()
+	public Collection<String> getCatNos()
 	{
 		return catnos;
 	}
@@ -189,6 +206,11 @@ public class Record implements Comparable<Record>
 	public Calendar getDate()
 	{
 		return boughtDate;
+	}
+
+	public int getDiscogsURI()
+	{
+		return discogsNum;
 	}
 
 	public Format getFormat()
@@ -220,7 +242,7 @@ public class Record implements Comparable<Record>
 
 	}
 
-	public Collection getLabels()
+	public Collection<Label> getLabels()
 	{
 		return labels;
 	}
@@ -412,7 +434,7 @@ public class Record implements Comparable<Record>
 		category = cat;
 	}
 
-	public void setCatNos(Collection cats)
+	public void setCatNos(Collection<String> cats)
 	{
 		// Remove and add
 		catnos.clear();
@@ -442,6 +464,11 @@ public class Record implements Comparable<Record>
 			DateFormat shortForm = new SimpleDateFormat("dd/MM/yy");
 			boughtDate.setTime(shortForm.parse(dat));
 		}
+	}
+
+	public void setDiscogsNum(int dNum)
+	{
+		discogsNum = dNum;
 	}
 
 	public void setFormat(Format form)
@@ -550,7 +577,7 @@ public class Record implements Comparable<Record>
 		if (grp.length() > 2)
 			grp = grp.substring(0, grp.length() - 3);
 		else
-			grp = "Various";
+			grp = "Various (but " + getAuthor() + ")";
 
 		String ret = "";
 		ret += grp + " - " + title + "(" + format + ") " + labels + category

@@ -25,6 +25,7 @@ public class GetArtists
 	// Prepared Statements to use
 	private final PreparedStatement insertQuery;
 	private final PreparedStatement collectQuery;
+	private final PreparedStatement collectQueryShowName;
 
 	private boolean executed = false;
 	private static GetArtists singleton;
@@ -43,6 +44,8 @@ public class GetArtists
 				"INSERT INTO Artists (sort_name, show_name) VALUES (?,?)");
 		collectQuery = p.getConnection().getPreparedStatement(
 				"SELECT artist_id,show_name FROM Artists WHERE sort_name = ?");
+		collectQueryShowName = p.getConnection().getPreparedStatement(
+				"SELECT artist_id,sort_name FROM Artists WHERE show_name = ?");
 	}
 
 	public int[] addArtists(Collection<Artist> art) throws SQLException
@@ -159,14 +162,12 @@ public class GetArtists
 
 	public Artist getArtist(String name) throws SQLException
 	{
-		System.out.println("get_artist: " + name);
 		if (exist(name))
 			return artists.get(name);
 		else if (tempStore.containsKey(name))
 			return tempStore.get(name);
 		else
 		{
-			System.out.println("Building");
 			collectQuery.setString(1, name);
 			ResultSet rs = collectQuery.executeQuery();
 
@@ -180,6 +181,38 @@ public class GetArtists
 
 				// Add this new artist
 				artists.put(name, new Artist(name, num, showName));
+
+				return artists.get(name);
+			}
+			else
+			{
+				rs.close();
+				return new Artist(name, -1);
+			}
+		}
+	}
+
+	public Artist getArtistFromShowName(String name) throws SQLException
+	{
+		if (exist(name))
+			return artists.get(name);
+		else if (tempStore.containsKey(name))
+			return tempStore.get(name);
+		else
+		{
+			collectQueryShowName.setString(1, name);
+			ResultSet rs = collectQueryShowName.executeQuery();
+
+			// Move on and return the relevant artust
+			if (rs.next())
+			{
+				int num = rs.getInt(1);
+				String sortName = rs.getString(2);
+
+				rs.close();
+
+				// Add this new artist
+				artists.put(name, new Artist(sortName, num, name));
 
 				return artists.get(name);
 			}
@@ -209,10 +242,7 @@ public class GetArtists
 	public static GetArtists create() throws SQLException
 	{
 		if (singleton == null)
-		{
-			System.out.println("BUILDING GET ARTISTS");
 			singleton = new GetArtists(Persistent.create());
-		}
 
 		return singleton;
 	}
