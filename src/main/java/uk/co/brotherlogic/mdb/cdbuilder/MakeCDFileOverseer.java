@@ -151,13 +151,10 @@ public class MakeCDFileOverseer
 		// Now choose from this
 		EntitySelector select = new EntitySelector(null);
 		select.setData(examples);
-		Object[] fname = (Object[]) select.getData();
+		String fname = select.getData();
 
 		String resultingDir = null;
-		if (fname.length > 1)
-			resultingDir = resolveMultipleDirs(fname);
-		else if (fname.length == 1)
-			resultingDir = (String) fname[0];
+		resultingDir = fname;
 
 		File ret;
 		if (resultingDir != null)

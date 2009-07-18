@@ -9,16 +9,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class Format implements Comparable
+public class Format implements Comparable<Format>
 {
 	String name;
-	TreeSet categories;
+	TreeSet<Category> categories;
 	int formatNumber;
 
 	public Format()
 	{
 		name = "";
-		categories = new TreeSet();
+		categories = new TreeSet<Category>();
 		formatNumber = 0;
 	}
 
@@ -26,14 +26,14 @@ public class Format implements Comparable
 	{
 		name = sIn;
 		formatNumber = num;
-		categories = new TreeSet();
+		categories = new TreeSet<Category>();
 	}
 
-	public Format(int num, String sIn, Collection cats)
+	public Format(int num, String sIn, Collection<Category> cats)
 	{
 		name = sIn;
 		formatNumber = num;
-		categories = new TreeSet(cats);
+		categories = new TreeSet<Category>(cats);
 	}
 
 	public void addCategory(Category cat)
@@ -41,15 +41,15 @@ public class Format implements Comparable
 		categories.add(cat);
 	}
 
-	public int compareTo(Object o)
+	public int compareTo(Format o)
 	{
-		return name.compareTo(((Format) o).getName());
+		return name.compareTo(o.getName());
 	}
 
 	public String fullString()
 	{
 		String out = formatNumber + ": " + name + "\n";
-		Iterator cIt = categories.iterator();
+		Iterator<Category> cIt = categories.iterator();
 		while (cIt.hasNext())
 			out += cIt.next() + ", ";
 
@@ -71,7 +71,7 @@ public class Format implements Comparable
 		return formatNumber;
 	}
 
-	public void setCategories(Collection vec)
+	public void setCategories(Collection<Category> vec)
 	{
 		// Clear the old categories
 		categories.clear();

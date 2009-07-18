@@ -217,11 +217,10 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		return objs.get(bPoint);
 	}
 
-	public Groop getData()
+	public LineUp getData()
 	{
 		if (selectedObjs.size() > 0)
-			return new Groop(currentGroop.getGroopName(), lineUpNumber,
-					new LinkedList(), new LineUp(lineUpNumber, selectedObjs));
+			return new LineUp(lineUpNumber, selectedObjs, currentGroop);
 		else
 			return null;
 	}

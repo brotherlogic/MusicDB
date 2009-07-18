@@ -18,16 +18,15 @@ import java.util.Vector;
 
 public class GetGroops
 {
-	private static String delString = "DELETE_ME";
 	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
 
 	static Persistent p;
 
 	// Maps groopnumber to Groop
-	Map groops;
+	Map<String, Groop> groops;
 
 	// Temporary store of groop name -> lineup
-	Map tempStore;
+	Map<String, Groop> tempStore;
 
 	private static GetGroops singleton = null;
 
@@ -35,20 +34,20 @@ public class GetGroops
 	{
 		// Set the required parameters
 		p = Persistent.create();
-		tempStore = new TreeMap();
-		groops = new TreeMap();
+		tempStore = new TreeMap<String, Groop>();
+		groops = new TreeMap<String, Groop>();
 	}
 
-	public void addGroop(Groop in) throws SQLException
+	public void addLineUp(LineUp lineup) throws SQLException
 	{
+		Groop in = lineup.getGroop();
 		// Get the groop number
 		int groopNumber = in.getNumber();
 		if (groopNumber < 1 && groops.containsKey(in.getGroopName()))
-			groopNumber = ((Groop) groops.get(in.getGroopName())).getNumber();
+			groopNumber = (groops.get(in.getGroopName())).getNumber();
 		if (!(groopNumber > 0))
 			if (tempStore.containsKey(in.getGroopName()))
-				groopNumber = ((Groop) tempStore.get(in.getGroopName()))
-						.getNumber();
+				groopNumber = (tempStore.get(in.getGroopName())).getNumber();
 			else
 			{
 				// Add the groop name and get the number
@@ -74,11 +73,11 @@ public class GetGroops
 
 		// Get the lineup number
 		int lineUpNum = -1;
-		if (in.getChosenLineup().getLineUpNumber() == -1)
-			lineUpNum = getLineUpNum(in);
+		if (lineup.getLineUpNumber() == -1)
+			lineUpNum = getLineUpNum(lineup);
 		else
-			lineUpNum = in.getChosenLineup().getLineUpNumber();
-		in.getChosenLineup().setLineUpNumber(lineUpNum);
+			lineUpNum = lineup.getLineUpNumber();
+		lineup.setLineUpNumber(lineUpNum);
 
 	}
 
@@ -89,19 +88,19 @@ public class GetGroops
 
 	public void commitGroops()
 	{
-		Iterator kIt = tempStore.keySet().iterator();
+		Iterator<String> kIt = tempStore.keySet().iterator();
 		while (kIt.hasNext())
 		{
 			// Get the groop name
-			String groopName = (String) kIt.next();
-			Groop grp = (Groop) tempStore.get(groopName);
+			String groopName = kIt.next();
+			Groop grp = tempStore.get(groopName);
 
 			// Get the full groop
 			if (!groops.keySet().contains(groopName))
 				groops.put(groopName, grp);
 			else
-				((Groop) groops.get(groopName)).addLineUps(((Groop) tempStore
-						.get(groopName)).getLineUps());
+				(groops.get(groopName)).addLineUps((tempStore.get(groopName))
+						.getLineUps());
 		}
 		tempStore.clear();
 	}
@@ -116,7 +115,7 @@ public class GetGroops
 		ss.close();
 
 		// Initialise the groop store
-		groops = new TreeMap();
+		groops = new TreeMap<String, Groop>();
 
 		// Get the bare bones of the groops
 		String sql = "SELECT GroopName, GroopNumber from Groops";
@@ -133,7 +132,7 @@ public class GetGroops
 		}
 	}
 
-	public Collection getData()
+	public Collection<Groop> getData()
 	{
 		return groops.values();
 	}
@@ -146,7 +145,7 @@ public class GetGroops
 				.executeQuery("SELECT GroopName FROM Groops WHERE GroopNumber = "
 						+ num);
 
-		Groop ret = new Groop("ERROR!", 1, new TreeSet());
+		Groop ret = new Groop("ERROR!", 1, new TreeSet<LineUp>());
 		while (rs.next())
 			ret = getGroop(rs.getString(1));
 
@@ -161,7 +160,7 @@ public class GetGroops
 	public Groop getGroop(String groopName)
 	{
 		if (groops.containsKey(groopName))
-			return (Groop) groops.get(groopName);
+			return groops.get(groopName);
 		else
 			return null;
 	}
@@ -180,28 +179,29 @@ public class GetGroops
 		return groops;
 	}
 
-	public int getLineUpNum(Groop grp) throws SQLException
+	public int getLineUpNum(LineUp lup) throws SQLException
 	{
 		// Initialise the return value
 		int ret = 0;
 
+		Groop grp = lup.getGroop();
+
 		// Get the line ups for this groop
-		Collection lineups = new Vector();
+		Collection<LineUp> lineups = new Vector<LineUp>();
 		if (GetGroops.build().getGroop(grp.getGroopName()) != null)
 			lineups = GetGroops.build().getGroop(grp.getGroopName())
 					.getLineUps();
 
 		// Work through each line up
-		Iterator lIt = lineups.iterator();
-		int maxLineUp = 0;
+		Iterator<LineUp> lIt = lineups.iterator();
 		while (lIt.hasNext())
 		{
 			// Compare the two artist sets
-			LineUp tempLineUp = (LineUp) lIt.next();
-			Collection arts = tempLineUp.getArtists();
+			LineUp tempLineUp = lIt.next();
+			Collection<Artist> arts = tempLineUp.getArtists();
 
-			if (arts.containsAll(grp.getChosenLineup().getArtists())
-					&& grp.getChosenLineup().getArtists().containsAll(arts))
+			if (arts.containsAll(lup.getArtists())
+					&& lup.getArtists().containsAll(arts))
 				ret = tempLineUp.getLineUpNumber();
 		}
 
@@ -209,17 +209,17 @@ public class GetGroops
 		if (tempStore.containsKey(grp.getGroopName()) && ret < 1)
 		{
 
-			Groop tempGroop = (Groop) tempStore.get(grp.getGroopName());
+			Groop tempGroop = tempStore.get(grp.getGroopName());
 
-			Iterator tLupIt = tempGroop.getLineUps().iterator();
+			Iterator<LineUp> tLupIt = tempGroop.getLineUps().iterator();
 			while (tLupIt.hasNext())
 			{
 				// Compare the two artist sets
-				LineUp tempLineUp = (LineUp) tLupIt.next();
-				Collection arts = tempLineUp.getArtists();
+				LineUp tempLineUp = tLupIt.next();
+				Collection<Artist> arts = tempLineUp.getArtists();
 
-				if (arts.containsAll(grp.getChosenLineup().getArtists())
-						&& grp.getChosenLineup().getArtists().containsAll(arts))
+				if (arts.containsAll(lup.getArtists())
+						&& lup.getArtists().containsAll(arts))
 					ret = tempLineUp.getLineUpNumber();
 			}
 		}
@@ -249,8 +249,7 @@ public class GetGroops
 			s.close();
 
 			// Now add the artists
-			int[] artNums = GetArtists.create().addArtists(
-					grp.getChosenLineup().getArtists());
+			int[] artNums = GetArtists.create().addArtists(lup.getArtists());
 
 			for (int artNum : artNums)
 				p.getConnection().runUpdate(
@@ -261,15 +260,14 @@ public class GetGroops
 			if (!tempStore.containsKey(grp.getGroopName()))
 			{
 				Groop newGrp = new Groop(grp.getGroopName(), grp.getNumber(),
-						new Vector());
+						new Vector<LineUp>());
 				tempStore.put(newGrp.getGroopName(), newGrp);
 			}
 
 			// Add the new lineup
-			Groop tempGrp = (Groop) tempStore.get(grp.getGroopName());
-			grp.getChosenLineup().setLineUpNumber(ret);
-			tempGrp.addLineUp(new LineUp(ret, grp.getChosenLineup()
-					.getArtists()));
+			Groop tempGrp = tempStore.get(grp.getGroopName());
+			lup.setLineUpNumber(ret);
+			tempGrp.addLineUp(new LineUp(ret, lup.getArtists(), tempGrp));
 		}
 
 		return ret;
@@ -304,8 +302,10 @@ public class GetGroops
 			{
 				System.out.println("Creaing: " + groopName);
 				// Construct the current groop and line up
-				currGroop = new Groop(groopName, groopNumber, new TreeSet());
-				currLineUp = new LineUp(lineUpNumber, new TreeSet());
+				currGroop = new Groop(groopName, groopNumber,
+						new TreeSet<LineUp>());
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
 			}
@@ -317,8 +317,10 @@ public class GetGroops
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the current groop and line up
-				currGroop = new Groop(groopName, groopNumber, new TreeSet());
-				currLineUp = new LineUp(lineUpNumber, new TreeSet());
+				currGroop = new Groop(groopName, groopNumber,
+						new TreeSet<LineUp>());
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
 
@@ -330,7 +332,8 @@ public class GetGroops
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the new line up
-				currLineUp = new LineUp(lineUpNumber, new TreeSet());
+				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
+						currGroop);
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
 			}

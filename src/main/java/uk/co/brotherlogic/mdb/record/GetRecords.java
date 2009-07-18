@@ -27,12 +27,13 @@ import java.util.Vector;
 
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.EntitySelector;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
 import uk.co.brotherlogic.mdb.GetFormats;
 import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
+import uk.co.brotherlogic.mdb.Groop;
+import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
 
@@ -52,9 +53,9 @@ public class GetRecords
 	// Flag indicating overlap of record titles
 	boolean nonOver;
 
-	Map numberToRecords;
+	Map<Integer, Record> numberToRecords;
 
-	Collection records;
+	Collection<Record> records;
 	PreparedStatement updateTrack;
 
 	PreparedStatement updateRecord;
@@ -67,8 +68,8 @@ public class GetRecords
 		p = Persistent.create();
 
 		// Create the records
-		records = new Vector();
-		numberToRecords = new TreeMap();
+		records = new Vector<Record>();
+		numberToRecords = new TreeMap<Integer, Record>();
 
 		getTracks = p
 				.getConnection()
@@ -94,22 +95,6 @@ public class GetRecords
 
 	}
 
-	public void addGroop(int trackNumber, Groop groop) throws SQLException
-	{
-		// First get the groop number
-		GetGroops.build().addGroop(groop);
-		int grpNum = groop.getNumber();
-
-		// Get the lineup number
-		int lineUpNum = groop.getChosenLineup().getLineUpNumber();
-
-		// Now add the groop into the line up set
-		p.getConnection().runUpdate(
-				"INSERT INTO LineUpSet (TrackNumber, LineUpNumber) VALUES ("
-						+ trackNumber + "," + lineUpNum + ")");
-
-	}
-
 	public void addGroopsAndPersonnel(int trackNumber, Track toAdd)
 			throws SQLException
 	{
@@ -124,9 +109,24 @@ public class GetRecords
 							+ artNum + "," + trackNumber + ")");
 
 		// Now add the groups
-		Iterator grIt = toAdd.getGroops().iterator();
+		Iterator<LineUp> grIt = toAdd.getGroops().iterator();
 		while (grIt.hasNext())
-			addGroop(trackNumber, (Groop) grIt.next());
+			addLineUp(trackNumber, grIt.next());
+	}
+
+	public void addLineUp(int trackNumber, LineUp lineup) throws SQLException
+	{
+		// First get the groop number
+		GetGroops.build().addLineUp(lineup);
+
+		// Get the lineup number
+		int lineUpNum = lineup.getLineUpNumber();
+
+		// Now add the groop into the line up set
+		p.getConnection().runUpdate(
+				"INSERT INTO LineUpSet (TrackNumber, LineUpNumber) VALUES ("
+						+ trackNumber + "," + lineUpNum + ")");
+
 	}
 
 	public void addRecord(Record in) throws SQLException, InterruptedException
@@ -495,7 +495,7 @@ public class GetRecords
 		try
 		{
 			if (numberToRecords.keySet().contains(new Integer(recNumber)))
-				rec = (Record) numberToRecords.get(new Integer(recNumber));
+				rec = numberToRecords.get(new Integer(recNumber));
 			else
 			{
 				// Get the single record
@@ -571,10 +571,10 @@ public class GetRecords
 		return records;
 	}
 
-	public Collection getRecordTitles() throws SQLException
+	public Collection<String> getRecordTitles() throws SQLException
 	{
 		// Use a tree set to keep things in order
-		Set titleSet = new TreeSet();
+		Set<String> titleSet = new TreeSet<String>();
 
 		// Collect the titles
 		Statement s = p.getConnection().getStatement();
@@ -745,14 +745,14 @@ public class GetRecords
 		// Now build a chooser to select this record
 		EntitySelector sel = new EntitySelector(owner);
 		sel.setData(titles, "Select Record");
-		Object[] wrap = (Object[]) sel.getData();
+		String wrap = sel.getData();
 
-		if (wrap == null || wrap.length == 0)
+		if (wrap == null || wrap.length() == 0)
 			ret = null;
 		else
 		{
 			// Now get the record associated with this
-			List records = getRecords((String) wrap[0]);
+			List records = getRecords(wrap);
 
 			// Check that we have one record
 			if (records.size() == 1)
@@ -773,7 +773,7 @@ public class GetRecords
 				}
 
 				sel.setData(catNos, "Select Catalogue Number");
-				int val = catNos.indexOf(((Object[]) sel.getData())[0]);
+				int val = catNos.indexOf(sel.getData());
 				ret = (Record) records.get(val);
 			}
 		}

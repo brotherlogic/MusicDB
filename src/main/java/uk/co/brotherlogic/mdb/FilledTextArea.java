@@ -8,6 +8,7 @@ package uk.co.brotherlogic.mdb;
 import java.awt.Component;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -16,21 +17,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-public class FilledTextArea extends JTextField
+public class FilledTextArea<X> extends JTextField
 {
 
 	static class UpperCaseDocument extends PlainDocument
 	{
 		String typed;
-		Collection sce;
-		FilledTextArea par;
+		Collection<String> sce;
 		String prevBest;
 		AttributeSet basicSet;
 		boolean flag = false;
 
-		public UpperCaseDocument(FilledTextArea parent)
+		public UpperCaseDocument(Collection<String> source)
 		{
-			par = parent;
+			sce = source;
 			typed = "";
 			prevBest = "";
 			// flag = true;
@@ -38,10 +38,10 @@ public class FilledTextArea extends JTextField
 
 		public String findBest(String start)
 		{
-			Iterator sIt = sce.iterator();
+			Iterator<String> sIt = sce.iterator();
 			while (sIt.hasNext())
 			{
-				String comp = sIt.next().toString();
+				String comp = sIt.next();
 				if ((comp).toLowerCase().startsWith(start.toLowerCase()))
 					return comp;
 			}
@@ -52,7 +52,6 @@ public class FilledTextArea extends JTextField
 		public void insertString(int offs, String str, AttributeSet a)
 				throws BadLocationException
 		{
-			prepareDocument();
 			basicSet = a;
 
 			typed += str;
@@ -89,11 +88,6 @@ public class FilledTextArea extends JTextField
 			}
 		}
 
-		public void prepareDocument()
-		{
-			sce = par.getSource();
-		}
-
 		public void remove(int offs, int len) throws BadLocationException
 		{
 			// If len is 1 and the previous best is not of length 1 then remove
@@ -120,7 +114,8 @@ public class FilledTextArea extends JTextField
 	}
 
 	// Array containing strings to be compared to
-	Collection sce; // Should be string....
+	Collection<X> sce; // Should be string....
+	Collection<String> source;
 	String typed;
 
 	UpperCaseDocument doc;
@@ -130,20 +125,18 @@ public class FilledTextArea extends JTextField
 		// Do nothing here???
 	}
 
-	public FilledTextArea(Collection src)
+	public FilledTextArea(Collection<X> src)
 	{
 		sce = src;
+		source = new LinkedList<String>();
+		for (X x : src)
+			source.add(x.toString());
 	}
 
 	protected Document createDefaultModel()
 	{
-		doc = new UpperCaseDocument(this);
+		doc = new UpperCaseDocument(source);
 		return doc;
-	}
-
-	public Collection getSource()
-	{
-		return sce;
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value,

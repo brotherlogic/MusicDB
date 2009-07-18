@@ -8,26 +8,28 @@ package uk.co.brotherlogic.mdb;
 import java.util.Collection;
 import java.util.Vector;
 
-public class LineUp implements Comparable
+public class LineUp implements Comparable<LineUp>
 {
 	// Lineup properties
 	int lineUpNumber;
-	Collection artists;
-	String groopName = "";
+	Collection<Artist> artists;
+	Groop grp;
 
 	public LineUp()
 	{
 		lineUpNumber = -1;
-		artists = new Vector();
+		artists = new Vector<Artist>();
 	}
 
-	public LineUp(int number, Collection arts)
+	public LineUp(int number, Collection<Artist> arts, Groop groop)
 	{
+		grp = groop;
+
 		// Set the number
 		lineUpNumber = number;
 
 		// Create the artists collection and add the arts
-		artists = new Vector();
+		artists = new Vector<Artist>();
 		artists.addAll(arts);
 	}
 
@@ -36,7 +38,7 @@ public class LineUp implements Comparable
 		artists.add(art);
 	}
 
-	public int compareTo(Object o)
+	public int compareTo(LineUp o)
 	{
 		return this.toString().compareTo(o.toString());
 	}
@@ -46,9 +48,9 @@ public class LineUp implements Comparable
 		return artists;
 	}
 
-	public String getGroopName()
+	public Groop getGroop()
 	{
-		return groopName;
+		return grp;
 	}
 
 	public int getLineUpNumber()

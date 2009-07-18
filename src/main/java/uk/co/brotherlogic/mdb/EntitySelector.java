@@ -26,17 +26,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-import uk.co.brotherlogic.mdb.record.Record;
-
 public class EntitySelector extends JDialog implements ActionListener,
 		CaretListener
 {
 	// Stuff needed for the list model
 	DefaultListModel listMod;
-	Record[] elems;
+	String[] elems;
 	Collection<String> listElements;
 	List<String> sortedObjs;
-	Object ans;
+	String ans;
 
 	// Elements of the GUI
 	JTextField textIn = new JTextField();
@@ -80,7 +78,7 @@ public class EntitySelector extends JDialog implements ActionListener,
 	{
 		if (e.getActionCommand() == "ok")
 		{
-			ans = listMain.getSelectedValues();
+			this.ans = (String) listMain.getSelectedValue();
 			this.setVisible(false);
 		}
 		else if (e.getActionCommand() == "cancel")
@@ -88,15 +86,15 @@ public class EntitySelector extends JDialog implements ActionListener,
 		else if (e.getActionCommand() == "text")
 		{
 			// same as ok
-			ans = listMain.getSelectedValues();
+			this.ans = (String) listMain.getSelectedValue();
 			this.setVisible(false);
 		}
 	}
 
-	public void addAllElements(Object[] elems)
+	public void addAllElements(String[] elems)
 	{
 		// Add the data to the listModel
-		for (Object elem : elems)
+		for (String elem : elems)
 			listMod.addElement(elem);
 	}
 
@@ -138,7 +136,7 @@ public class EntitySelector extends JDialog implements ActionListener,
 		return sortedObjs.get(bPoint);
 	}
 
-	public Object getData()
+	public String getData()
 	{
 		setVisible(true);
 		// Return the data
@@ -172,17 +170,6 @@ public class EntitySelector extends JDialog implements ActionListener,
 				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}
 
-	public void receiveData(Collection in)
-	{
-		// Don't need this method
-	}
-
-	public void setData(Collection c, String tit)
-	{
-		setData(c);
-		setTitle(tit);
-	}
-
 	public void setData(Collection<String> listElems)
 	{
 		// Clear the current lists
@@ -204,5 +191,11 @@ public class EntitySelector extends JDialog implements ActionListener,
 			// Add the data to the list
 			addAllElements(listElems.toArray(new String[0]));
 		}
+	}
+
+	public void setData(Collection<String> c, String tit)
+	{
+		setData(c);
+		setTitle(tit);
 	}
 }

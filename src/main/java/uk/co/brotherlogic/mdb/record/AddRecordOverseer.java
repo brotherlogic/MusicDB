@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -56,7 +57,7 @@ public class AddRecordOverseer implements ActionListener
 	// Flag, indicating whether we are editing or not
 	boolean editFlag;
 
-	Map<String, LineUp> groops;
+	Map<String, Groop> groops;
 
 	// The gui to be used
 	AddRecordGUI gui;
@@ -255,7 +256,7 @@ public class AddRecordOverseer implements ActionListener
 
 		// Get the results
 		Collection<Groop> tempGrps = grpBuild.getData();
-		Collection<Groop> groupsToAdd = new Vector<Groop>();
+		Collection<LineUp> groupsToAdd = new Vector<LineUp>();
 
 		// Check that some groops were selected
 		if (tempGrps != null)
@@ -274,7 +275,7 @@ public class AddRecordOverseer implements ActionListener
 				lineup.setVisible(true);
 
 				// Get the group and add it to the group to be added
-				Groop toAdd = lineup.getData();
+				LineUp toAdd = lineup.getData();
 				if (toAdd != null)
 					groupsToAdd.add(toAdd);
 				else
@@ -311,30 +312,20 @@ public class AddRecordOverseer implements ActionListener
 
 	public void addGroop(int trackNumber)
 	{
-		// Build a set of full groops
-		Collection<LineUp> grps = curr.getTrack(trackNumber).getGroops();
-		Collection<LineUp> fgrps = new Vector<LineUp>();
-
-		Iterator<LineUp> fIt = grps.iterator();
-		while (fIt.hasNext())
-		{
-			LineUp temp = fIt.next();
-
-			if (groops.containsKey(temp.getGroopName()))
-				fgrps.add(groops.get(temp.getGroopName()));
-			else
-				fgrps.add(temp);
-		}
+		Collection<Groop> chGrps = new LinkedList<Groop>();
+		for (LineUp lineup : curr.getTrack(trackNumber).getGroops())
+			if (groops.containsKey(lineup.getGroop().getGroopName()))
+				chGrps.add(groops.get(lineup.getGroop().getGroopName()));
 
 		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops",
 				gui, new Groop());
-		grpBuild.setData(groops.values(), fgrps, Math.max(1, trackNumber - 1),
+		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1),
 				curr.getNoTracks());
 		grpBuild.setVisible(true);
 
 		// Get the results
-		Collection tempGrps = grpBuild.getData();
-		Collection groupsToAdd = new Vector();
+		Collection<Groop> tempGrps = grpBuild.getData();
+		Collection<LineUp> groupsToAdd = new LinkedList<LineUp>();
 
 		if (grpBuild.getTrackNumber() > 0)
 		{
@@ -347,12 +338,12 @@ public class AddRecordOverseer implements ActionListener
 		else if (tempGrps != null)
 		{
 			// Work through the selected groups
-			Iterator tIt = tempGrps.iterator();
+			Iterator<Groop> tIt = tempGrps.iterator();
 			boolean cancel = false;
 			while (tIt.hasNext() && !cancel)
 			{
 				// Get the current groop
-				Groop currGroop = (Groop) tIt.next();
+				Groop currGroop = tIt.next();
 
 				// Select thr groop line ups
 				LineUpSelectorGUI lineup = new LineUpSelectorGUI(currGroop, gui);
@@ -360,7 +351,7 @@ public class AddRecordOverseer implements ActionListener
 				lineup.setVisible(true);
 
 				// Get the group and add it to the group to be added
-				Groop toAdd = lineup.getData();
+				LineUp toAdd = lineup.getData();
 				if (toAdd != null)
 					groupsToAdd.add(toAdd);
 				else
@@ -380,7 +371,7 @@ public class AddRecordOverseer implements ActionListener
 		grpBuild.clean();
 	}
 
-	public void addGroopsToGUI(Collection in, int trackNumber)
+	public void addGroopsToGUI(Collection<LineUp> in, int trackNumber)
 	{
 		String rep = "";
 		if (in.size() > 1)
@@ -388,11 +379,11 @@ public class AddRecordOverseer implements ActionListener
 			rep = "MULTIPLE";
 		else
 		{
-			Iterator cIt = in.iterator();
+			Iterator<LineUp> cIt = in.iterator();
 			while (cIt.hasNext())
 			{
-				Groop tempGroop = (Groop) cIt.next();
-				rep = tempGroop.getGroopName();
+				LineUp tempGroop = cIt.next();
+				rep = tempGroop.getGroop().getGroopName();
 			}
 		}
 
@@ -405,11 +396,11 @@ public class AddRecordOverseer implements ActionListener
 		// Bring up the personnel selection screen
 		SetBuilder<Artist> persBuild = new SetBuilder<Artist>(
 				"Select Personnel", gui, new Artist());
-		persBuild.setData(artists, new Vector());
+		persBuild.setData(artists, new Vector<Artist>());
 		persBuild.setVisible(true);
 
 		// Get the results
-		Collection tempPers = persBuild.getData();
+		Collection<Artist> tempPers = persBuild.getData();
 
 		// Check that something was returned - i.e. that cancel wasn't pressed
 		if (tempPers != null)
@@ -433,13 +424,14 @@ public class AddRecordOverseer implements ActionListener
 					JOptionPane.QUESTION_MESSAGE);
 
 			// Get the track numbers
-			Collection trackNumbers = getRange(tracksToAdd, curr.getNoTracks());
+			Collection<Integer> trackNumbers = getRange(tracksToAdd, curr
+					.getNoTracks());
 
-			Iterator tIt = trackNumbers.iterator();
+			Iterator<Integer> tIt = trackNumbers.iterator();
 			while (tIt.hasNext())
 			{
 				// Deal with each track number accordingly
-				int trackNumber = ((Integer) tIt.next()).intValue();
+				int trackNumber = (tIt.next()).intValue();
 				if (replace)
 					curr.setPersonnel(trackNumber, tempPers);
 				else
@@ -460,7 +452,7 @@ public class AddRecordOverseer implements ActionListener
 		persBuild.setVisible(true);
 
 		// Get the results
-		Collection tempPers = persBuild.getData();
+		Collection<Artist> tempPers = persBuild.getData();
 
 		// Add the data if cancel wasn't pressed
 		if (persBuild.getTrackNumber() > 0)
@@ -530,17 +522,17 @@ public class AddRecordOverseer implements ActionListener
 		if (curr.getLabels().size() < 2)
 		{
 			// Create a collection and add the current label to it
-			Collection tempLabs = new Vector();
+			Collection<Label> tempLabs = new Vector<Label>();
 			String currLabelName = gui.getLabel();
 
 			Label currLabel;
 
 			// Find this label in the label collection
-			Iterator lIt = labels.iterator();
+			Iterator<Label> lIt = labels.iterator();
 			boolean found = false;
 			while (lIt.hasNext() && !found)
 			{
-				currLabel = (Label) lIt.next();
+				currLabel = lIt.next();
 				if (currLabel.getName().equals(currLabelName))
 				{
 					// Add the label and set found to true
@@ -565,7 +557,7 @@ public class AddRecordOverseer implements ActionListener
 		if (curr.getCatNos().size() < 2)
 		{
 			// Create a collection and add the current label to it
-			Collection tempCats = new Vector();
+			Collection<String> tempCats = new Vector<String>();
 			tempCats.add(gui.getCatNo());
 
 			curr.setCatNos(tempCats);
@@ -662,14 +654,14 @@ public class AddRecordOverseer implements ActionListener
 						return name;
 					}
 				});
-		catBuild.setData(new Vector(), curr.getCatNos());
+		catBuild.setData(new Vector<String>(), curr.getCatNos());
 		catBuild.setAddOnly(true);
 		catBuild.setVisible(true);
 
 		// Clear the cat numbers
 		catBuild.dispose();
 
-		Collection newCats = catBuild.getData();
+		Collection<String> newCats = catBuild.getData();
 
 		// Check that some data was actually returned
 		if (newCats != null)
@@ -692,7 +684,7 @@ public class AddRecordOverseer implements ActionListener
 		// Get the data on completion and add to the record
 		// If cancel null will be returned
 		// THis is a set of both Labels and String Wrappers
-		Collection newLabels = labBuild.getData();
+		Collection<Label> newLabels = labBuild.getData();
 
 		// Clear the set builder
 		labBuild.dispose();
