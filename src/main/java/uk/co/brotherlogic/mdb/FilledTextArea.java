@@ -120,19 +120,18 @@ public class FilledTextArea<X> extends JTextField
 
 	UpperCaseDocument doc;
 
-	public FilledTextArea()
-	{
-		// Do nothing here???
-	}
-
 	public FilledTextArea(Collection<X> src)
 	{
 		sce = src;
 		source = new LinkedList<String>();
 		for (X x : src)
 			source.add(x.toString());
+
+		// Force the document model
+		setDocument(createDefaultModel());
 	}
 
+	@Override
 	protected Document createDefaultModel()
 	{
 		doc = new UpperCaseDocument(source);
