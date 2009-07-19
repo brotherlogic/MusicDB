@@ -25,7 +25,7 @@ public class DiscogsReaderParser extends DefaultHandler
 	private static final int READING_TRACK = 3;
 	private int state = NULL_STATE;
 
-	Collection<LineUp> overallGroups = new LinkedList<LineUp>();
+	Collection<LineUp> overallLineUps = new LinkedList<LineUp>();
 
 	Track currTrack;
 
@@ -114,7 +114,7 @@ public class DiscogsReaderParser extends DefaultHandler
 		{
 			currTrack = new Track();
 			if (!rec.getAuthor().equalsIgnoreCase("various"))
-				currTrack.setGroops(overallGroups);
+				currTrack.setLineUps(overallLineUps);
 			state = READING_TRACK;
 		}
 

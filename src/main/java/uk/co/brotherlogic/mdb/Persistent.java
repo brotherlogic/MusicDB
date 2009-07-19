@@ -17,8 +17,6 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import uk.co.brotherlogic.mdb.record.Record;
-
 public class Persistent
 {
 	private static Persistent singleton;
@@ -85,59 +83,9 @@ public class Persistent
 		return sb.toString();
 	}
 
-	public boolean determineOver(Record in)
+	public Collection<Integer> getAllRecordNumbers() throws SQLException
 	{
-		// Get the artist
-		String artist = in.getGroopString();
-
-		// Get the title
-		String title = in.getTitle();
-
-		// Get a count of the records with this format
-		return false;
-	}
-
-	public Collection getAliases(String in) throws SQLException
-	{
-
-		Collection reps = new TreeSet();
-		Collection ret = new TreeSet();
-
-		// Get left side of aliases stuff
-		Statement s = con.getStatement();
-		ResultSet rs = s
-				.executeQuery("SELECT RightSide FROM FullArtistLinks WHERE LeftSide = \'"
-						+ in + "\'");
-		while (rs.next())
-			reps.add(rs.getString(1));
-		rs.close();
-		s.close();
-
-		// Now convert the numbers into groups and artists
-		Iterator rIt = reps.iterator();
-		while (rIt.hasNext())
-		{
-			String val = (String) rIt.next();
-			if (val.startsWith("G"))
-			{
-				Groop grp = GetGroops.build().getGroop(
-						Integer.parseInt(val.substring(1)));
-				ret.add(grp);
-			}
-			else
-			{
-				Artist art = GetArtists.create().getArtist(
-						Integer.parseInt(val.substring(1)));
-				ret.add(art);
-			}
-		}
-
-		return ret;
-	}
-
-	public Collection getAllRecordNumbers() throws SQLException
-	{
-		Collection retSet = new TreeSet();
+		Collection<Integer> retSet = new TreeSet<Integer>();
 
 		// Get all the record numbers and get the corresponding records
 		Statement s = con.getStatement();
@@ -163,10 +111,10 @@ public class Persistent
 		return getNumbers("BestHipHop");
 	}
 
-	public SortedSet getNewNumbers(Calendar dat) throws SQLException
+	public SortedSet<Integer> getNewNumbers(Calendar dat) throws SQLException
 	{
 		// Initialise the set
-		TreeSet retSet = new TreeSet();
+		TreeSet<Integer> retSet = new TreeSet<Integer>();
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
 
 		Statement s = con.getStatement();
@@ -235,7 +183,8 @@ public class Persistent
 		return ret;
 	}
 
-	public void setAliases(String elem, Collection alias) throws SQLException
+	public void setAliases(String elem, Collection<String> alias)
+			throws SQLException
 	{
 		// First delete all relevant alias
 		String delKey = elem;
@@ -243,22 +192,23 @@ public class Persistent
 				+ "' OR RightSide = '" + delKey + "'");
 
 		// And add the new ones
-		Iterator aIt = alias.iterator();
+		Iterator<String> aIt = alias.iterator();
 		while (aIt.hasNext())
 		{
-			String tempElem = (String) aIt.next();
+			String tempElem = aIt.next();
 			con.runUpdate("INSERT INTO Aliases VALUES ('" + delKey + "','"
 					+ tempElem + "')");
 		}
 	}
 
-	public void setExceptions(Collection exceptions) throws SQLException
+	public void setExceptions(Collection<String> exceptions)
+			throws SQLException
 	{
 		// Remove the current exceptions
 		con.runDelete("DELETE FROM exceptions");
 
 		// Iterate and add through exceptions
-		Iterator exIt = exceptions.iterator();
+		Iterator<String> exIt = exceptions.iterator();
 		while (exIt.hasNext())
 			// Add the current exception
 			con.runUpdate("INSERT INTO exceptions VALUES ('" + exIt.next()

@@ -38,10 +38,10 @@ public class NewFormatGUI extends JDialog implements ActionListener
 	// Flag to indicate cancellation
 	boolean cancelled = false;
 
-	public NewFormatGUI(Collection categories, JFrame in)
+	public NewFormatGUI(Collection<Category> categories, JFrame in)
 	{
 		super(in, true);
-		Vector cats = new Vector();
+		Vector<Category> cats = new Vector<Category>();
 		cats.addAll(categories);
 
 		try
@@ -92,13 +92,14 @@ public class NewFormatGUI extends JDialog implements ActionListener
 				ret = new Format(-1, textFormat.getText(), ((Format) comboOther
 						.getSelectedItem()).getCategories());
 			else
-				ret = new Format(-1, textFormat.getText(), new TreeSet());
+				ret = new Format(-1, textFormat.getText(),
+						new TreeSet<Category>());
 
 			return ret;
 		}
 	}
 
-	private void jbInit(Vector categories) throws Exception
+	private void jbInit(Vector<Category> categories) throws Exception
 	{
 		// Construct the Categories thing accordingly
 		comboOther = new JComboBox(categories);

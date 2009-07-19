@@ -11,10 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,6 +31,7 @@ import uk.co.brotherlogic.mdb.GetFormats;
 import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
 import uk.co.brotherlogic.mdb.Groop;
+import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
@@ -109,7 +108,7 @@ public class GetRecords
 							+ artNum + "," + trackNumber + ")");
 
 		// Now add the groups
-		Iterator<LineUp> grIt = toAdd.getGroops().iterator();
+		Iterator<LineUp> grIt = toAdd.getLineUps().iterator();
 		while (grIt.hasNext())
 			addLineUp(trackNumber, grIt.next());
 	}
@@ -137,10 +136,6 @@ public class GetRecords
 
 		// Re set the format!
 		in.getFormat().setNumber(formatNumber);
-
-		// Get the date formatter - AMERICAN DATE FORMAT
-		DateFormat amForm = new SimpleDateFormat("MM/dd/yy");
-		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
 
 		// Get tbe category number
 		int catNum = GetCategories.build().addCategory(in.getCategory());
@@ -184,10 +179,10 @@ public class GetRecords
 							+ recordNumber + "," + labNum + ")");
 
 		// Add the catalogue numbers
-		Iterator cIt = in.getCatNos().iterator();
+		Iterator<String> cIt = in.getCatNos().iterator();
 		while (cIt.hasNext())
 		{
-			String catNo = (String) cIt.next();
+			String catNo = cIt.next();
 			p.getConnection().runUpdate(
 					"INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES ("
 							+ recordNumber + ",\'" + p.cleanString(catNo)
@@ -195,9 +190,9 @@ public class GetRecords
 		}
 
 		// Add the tracks
-		Iterator tIt = in.getTracks().iterator();
+		Iterator<Track> tIt = in.getTracks().iterator();
 		while (tIt.hasNext())
-			addTrack(recordNumber, (Track) tIt.next());
+			addTrack(recordNumber, tIt.next());
 
 		// save the record
 		in.save();
@@ -309,10 +304,9 @@ public class GetRecords
 		// Prepare the objects
 		boolean first = true;
 		Record currRec = new Record();
-		Collection labels = new Vector();
-		Collection catnos = new Vector();
+		Collection<Label> labels = new Vector<Label>();
+		Collection<String> catnos = new Vector<String>();
 		int currNum = -1;
-		String currLabel = "";
 
 		while (rs.next())
 		{
@@ -337,8 +331,8 @@ public class GetRecords
 
 				// Create new bits
 				currRec = new Record();
-				labels = new Vector();
-				catnos = new Vector();
+				labels = new Vector<Label>();
+				catnos = new Vector<String>();
 
 				String title = rs.getString(2);
 
@@ -360,16 +354,15 @@ public class GetRecords
 
 				String label = rs.getString(5);
 				String catno = rs.getString(6);
-				labels.add(label);
+				labels.add(GetLabels.create().getLabel(label));
 				catnos.add(catno);
-				currLabel = label;
 				currNum = recNum;
 			}
 			else
 			{
 				String catNo = rs.getString(6);
 				String lab = rs.getString(5);
-				labels.add(lab);
+				labels.add(GetLabels.create().getLabel(lab));
 				catnos.add(catNo);
 			}
 		}
@@ -388,14 +381,14 @@ public class GetRecords
 
 	}
 
-	public Set getCatNos(int recNumber) throws SQLException
+	public Set<String> getCatNos(int recNumber) throws SQLException
 	{
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
 				.executeQuery("SELECT CatNo FROM CatNoSet WHERE RecordNumber = "
 						+ recNumber);
 
-		Set retSet = new TreeSet();
+		Set<String> retSet = new TreeSet<String>();
 		while (rs.next())
 			retSet.add(rs.getString(1));
 
@@ -415,11 +408,24 @@ public class GetRecords
 		return artists;
 	}
 
-	public Set getGroops(int trackNumber) throws SQLException
+	public Set<Label> getLabels(int recNumber) throws SQLException
 	{
-		System.out.println("get_groops " + trackNumber);
+		Statement s = p.getConnection().getStatement();
+		ResultSet rs = s
+				.executeQuery("SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = "
+						+ recNumber);
+
+		Set<Label> retSet = new TreeSet<Label>();
+		while (rs.next())
+			retSet.add(GetLabels.create().getLabel(rs.getString(1)));
+
+		return retSet;
+	}
+
+	public Set<LineUp> getLineUps(int trackNumber) throws SQLException
+	{
 		// Prepare the set to be returned
-		Set retSet = new TreeSet();
+		Set<LineUp> retSet = new TreeSet<LineUp>();
 
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
@@ -436,28 +442,13 @@ public class GetRecords
 			System.out.println("building lineup " + lineUpNumber);
 
 			Groop tempGroop = GetGroops.build().getSingleGroop(groopNumber);
-			tempGroop.setChosenLineup(tempGroop.getLineUp(lineUpNumber));
-			retSet.add(tempGroop);
+			retSet.add(tempGroop.getLineUp(lineUpNumber));
 		}
 
 		return retSet;
 	}
 
-	public Set getLabels(int recNumber) throws SQLException
-	{
-		Statement s = p.getConnection().getStatement();
-		ResultSet rs = s
-				.executeQuery("SELECT LabelName FROM Labels,LabelSet WHERE Labels.LabelNumber = LabelSet.LabelNumber AND RecordNumber = "
-						+ recNumber);
-
-		Set retSet = new TreeSet();
-		while (rs.next())
-			retSet.add(GetLabels.create().getLabel(rs.getString(1)));
-
-		return retSet;
-	}
-
-	public Map getMap()
+	public Map<Integer, Record> getMap()
 	{
 		return numberToRecords;
 	}
@@ -467,10 +458,10 @@ public class GetRecords
 		return nonOver;
 	}
 
-	public Set getPersonnel(int trackNumber) throws SQLException
+	public Set<Artist> getPersonnel(int trackNumber) throws SQLException
 	{
 		System.out.println("Getting personnel for track " + trackNumber);
-		Set retSet = new TreeSet();
+		Set<Artist> retSet = new TreeSet<Artist>();
 
 		// Set the parameter
 		Statement s = p.getConnection().getStatement();
@@ -514,10 +505,10 @@ public class GetRecords
 		return rec;
 	}
 
-	public Collection getRecordNumbers() throws SQLException
+	public Collection<Integer> getRecordNumbers() throws SQLException
 	{
 		// Use a tree set to keep things in order
-		Set titleSet = new TreeSet();
+		Set<Integer> titleSet = new TreeSet<Integer>();
 
 		// Collect the titles
 		Statement s = p.getConnection().getStatement();
@@ -531,10 +522,11 @@ public class GetRecords
 		return titleSet;
 	}
 
-	public Collection getRecordNumbersWithoutAuthors() throws SQLException
+	public Collection<Integer> getRecordNumbersWithoutAuthors()
+			throws SQLException
 	{
 		// Use a tree set to keep things in order
-		Set titleSet = new TreeSet();
+		Set<Integer> titleSet = new TreeSet<Integer>();
 
 		// Collect the titles
 		Statement s = p.getConnection().getStatement();
@@ -549,10 +541,10 @@ public class GetRecords
 		return titleSet;
 	}
 
-	public List getRecords(String title) throws SQLException
+	public List<Record> getRecords(String title) throws SQLException
 	{
-		Collection numbers = new Vector();
-		List records = new Vector();
+		Collection<Integer> numbers = new Vector<Integer>();
+		List<Record> records = new Vector<Record>();
 
 		// First generate a list of all the record numbers with this title
 		Statement s = p.getConnection().getStatement();
@@ -565,9 +557,9 @@ public class GetRecords
 		s.close();
 
 		// Now get all the records for these numbers
-		Iterator lIt = numbers.iterator();
+		Iterator<Integer> lIt = numbers.iterator();
 		while (lIt.hasNext())
-			records.add(getRecord(((Integer) lIt.next()).intValue()));
+			records.add(getRecord((lIt.next()).intValue()));
 		return records;
 	}
 
@@ -645,9 +637,9 @@ public class GetRecords
 
 	}
 
-	public Set getTracks(int recNumber) throws SQLException
+	public Set<Track> getTracks(int recNumber) throws SQLException
 	{
-		Set retSet = new TreeSet();
+		Set<Track> retSet = new TreeSet<Track>();
 
 		// First Build the bare track details
 		Statement s = p.getConnection().getStatement();
@@ -675,7 +667,7 @@ public class GetRecords
 			currTrack.setTrackRefNumber(refNum);
 
 			currTrack.setPersonnel(getPersonnel(refNum));
-			currTrack.setGroops(getGroops(refNum));
+			currTrack.setLineUps(getLineUps(refNum));
 
 			retSet.add(currTrack);
 		}
@@ -685,9 +677,9 @@ public class GetRecords
 		return retSet;
 	}
 
-	public Collection getTrackTitles() throws SQLException
+	public Collection<String> getTrackTitles() throws SQLException
 	{
-		List lis = new LinkedList();
+		List<String> lis = new LinkedList<String>();
 
 		// Set the parameter
 		Statement s = p.getConnection().getStatement();
@@ -740,7 +732,7 @@ public class GetRecords
 		Record ret;
 
 		// First get a list of all the record titles
-		Collection titles = getRecordTitles();
+		Collection<String> titles = getRecordTitles();
 
 		// Now build a chooser to select this record
 		EntitySelector sel = new EntitySelector(owner);
@@ -752,29 +744,29 @@ public class GetRecords
 		else
 		{
 			// Now get the record associated with this
-			List records = getRecords(wrap);
+			List<Record> records = getRecords(wrap);
 
 			// Check that we have one record
 			if (records.size() == 1)
 			{
 				nonOver = false;
-				ret = (Record) records.get(0);
+				ret = records.get(0);
 			}
 			else
 			{
 				nonOver = true;
-				LinkedList catNos = new LinkedList();
-				Iterator rIt = records.iterator();
+				LinkedList<String> catNos = new LinkedList<String>();
+				Iterator<Record> rIt = records.iterator();
 				while (rIt.hasNext())
 				{
-					Record rec = (Record) rIt.next();
+					Record rec = rIt.next();
 					catNos.addLast(rec.getCatNoString() + " ["
 							+ rec.getNumber() + "]");
 				}
 
 				sel.setData(catNos, "Select Catalogue Number");
 				int val = catNos.indexOf(sel.getData());
-				ret = (Record) records.get(val);
+				ret = records.get(val);
 			}
 		}
 		return ret;
@@ -786,10 +778,6 @@ public class GetRecords
 		// First get the format number
 		int formatNumber = GetFormats.create().addFormat(in.getFormat(),
 				in.getCategory()).getNumber();
-
-		// Get the date formatter - AMERICAN DATE FORMAT
-		DateFormat amForm = new SimpleDateFormat("MM/dd/yy");
-		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
 
 		// Get the new category number
 		int catNum = GetCategories.build().addCategory(in.getCategory());
@@ -830,11 +818,10 @@ public class GetRecords
 				"DELETE FROM CatNoSet WHERE RecordNumber = " + recordNumber);
 
 		// Add the catalogue numbers
-		Iterator cIt = in.getCatNos().iterator();
+		Iterator<String> cIt = in.getCatNos().iterator();
 		while (cIt.hasNext())
 		{
-			Object o = cIt.next();
-			String catNo = (String) o;
+			String catNo = cIt.next();
 			p.getConnection().runUpdate(
 					"INSERT INTO CatNoSet (RecordNumber,CatNo) VALUES ("
 							+ recordNumber + ",\'" + p.cleanString(catNo)
@@ -842,15 +829,15 @@ public class GetRecords
 		}
 
 		// Get the other number of tracks
-		Collection otherTracks = getTracks(in.getNumber());
+		Collection<Track> otherTracks = getTracks(in.getNumber());
 
 		if (otherTracks.size() < in.getTracks().size())
 		{
 			// We need to add tracks here
-			Iterator tIt = in.getTracks().iterator();
+			Iterator<Track> tIt = in.getTracks().iterator();
 			while (tIt.hasNext())
 			{
-				Track toDeal = (Track) tIt.next();
+				Track toDeal = tIt.next();
 
 				if (toDeal.getTrackNumber() > otherTracks.size())
 					addTrack(in.getNumber(), toDeal);
@@ -863,27 +850,27 @@ public class GetRecords
 		{
 
 			// First delete the tracks
-			Iterator otIt = otherTracks.iterator();
+			Iterator<Track> otIt = otherTracks.iterator();
 			while (otIt.hasNext())
 			{
-				Track currTrack = (Track) otIt.next();
+				Track currTrack = otIt.next();
 				if (currTrack.getTrackNumber() > in.getTracks().size())
 					deleteTrack(in.getNumber(), currTrack.getTrackNumber(),
 							currTrack.getTrackRefNumber());
 			}
 
 			// Update the rest
-			Iterator tIt = in.getTracks().iterator();
+			Iterator<Track> tIt = in.getTracks().iterator();
 			while (tIt.hasNext())
-				updateTrack(recordNumber, (Track) tIt.next());
+				updateTrack(recordNumber, tIt.next());
 
 		}
 		else
 		{
 			// Just add the tracks
-			Iterator tIt = in.getTracks().iterator();
+			Iterator<Track> tIt = in.getTracks().iterator();
 			while (tIt.hasNext())
-				updateTrack(recordNumber, (Track) tIt.next());
+				updateTrack(recordNumber, tIt.next());
 		}
 
 		in.save();

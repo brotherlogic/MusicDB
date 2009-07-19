@@ -35,9 +35,9 @@ public class SetBuilderGUI extends JDialog implements ActionListener,
 
 	// The collection of objects
 	Object[] elems;
-	Collection listElements;
-	SortedSet objs;
-	SortedSet selectObjs;
+	Collection<String> listElements;
+	SortedSet<String> objs;
+	SortedSet<String> selectObjs;
 
 	// Current track number
 	int trackNumber;
@@ -67,8 +67,8 @@ public class SetBuilderGUI extends JDialog implements ActionListener,
 		adListMod = new DefaultListModel();
 
 		// Prepare the objects
-		objs = new TreeSet();
-		selectObjs = new TreeSet();
+		objs = new TreeSet<String>();
+		selectObjs = new TreeSet<String>();
 
 		// Set the size of the component
 		setSize(447, 307);
@@ -196,17 +196,17 @@ public class SetBuilderGUI extends JDialog implements ActionListener,
 	public String getClosest(String attempt)
 	{
 		// Retrieve the tail of the selection set
-		SortedSet temp = objs.tailSet(attempt);
+		SortedSet<String> temp = objs.tailSet(attempt);
 
 		// Return the relevant item
 		if (temp.size() > 0)
-			return (String) temp.first();
+			return temp.first();
 		else
 			return "";
 
 	}
 
-	public Collection getData()
+	public Collection<String> getData()
 	{
 		// Return the data
 		return selectObjs;
@@ -295,7 +295,7 @@ public class SetBuilderGUI extends JDialog implements ActionListener,
 			listMod.add(nearPoint, in);
 	}
 
-	public void setData(Collection listElems, Collection chosen)
+	public void setData(Collection<String> listElems, Collection<String> chosen)
 	{
 		// Clear the current lists
 		clearLists();
@@ -319,13 +319,13 @@ public class SetBuilderGUI extends JDialog implements ActionListener,
 			setListsVisible(false);
 
 		// Add any pre-chosen elements
-		Iterator it = chosen.iterator();
+		Iterator<String> it = chosen.iterator();
 		while (it.hasNext() && chosen.size() > 0)
-			addElem((String) it.next());
+			addElem(it.next());
 	}
 
-	public void setData(Collection listElems, Collection chosen, int entTrack,
-			int maxTrack)
+	public void setData(Collection<String> listElems,
+			Collection<String> chosen, int entTrack, int maxTrack)
 	{
 		// Prepare the form
 		setData(listElems, chosen);

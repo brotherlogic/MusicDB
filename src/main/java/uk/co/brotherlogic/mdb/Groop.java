@@ -28,16 +28,17 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 		this.lineUps = null;
 	}
 
-	public Groop(String name, int num, Collection lineUps)
+	public Groop(String name, int num, Collection<LineUp> lineUps)
 	{
 		// Set the variables
 		groopName = name;
 		groopNumber = num;
-		this.lineUps = new Vector();
+		this.lineUps = new Vector<LineUp>();
 		this.lineUps.addAll(lineUps);
 	}
 
-	public Groop(String name, int num, Collection lineUps, LineUp chosenLineup)
+	public Groop(String name, int num, Collection<LineUp> lineUps,
+			LineUp chosenLineup)
 	{
 		this(name, num, lineUps);
 		this.chosenLineup = chosenLineup;
@@ -49,7 +50,7 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 		lineUps.add(in);
 	}
 
-	public void addLineUps(Collection lineUpsToAdd)
+	public void addLineUps(Collection<LineUp> lineUpsToAdd)
 	{
 		lineUps.addAll(lineUpsToAdd);
 	}
@@ -88,10 +89,10 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 		LineUp ret = null;
 		// Move and iterator to the right point
 		boolean found = false;
-		Iterator it = lineUps.iterator();
+		Iterator<LineUp> it = lineUps.iterator();
 		while (!found && it.hasNext())
 		{
-			LineUp temp = (LineUp) it.next();
+			LineUp temp = it.next();
 			if (temp.getLineUpNumber() == in)
 			{
 				ret = temp;

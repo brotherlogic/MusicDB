@@ -14,7 +14,7 @@ import java.util.Vector;
 
 public class GetSimpleTracks
 {
-	List tracks;
+	List<Track> tracks;
 	Persistent p;
 
 	public GetSimpleTracks(Persistent p)
@@ -32,8 +32,8 @@ public class GetSimpleTracks
 		ResultSet rs = s.executeQuery("SELECT * FROM SimpleTrackInfo");
 
 		// Create two collections for each type of data
-		List withLength = new Vector();
-		List withoutLength = new Vector();
+		List<Track> withLength = new Vector<Track>();
+		List<Track> withoutLength = new Vector<Track>();
 
 		// To calculate the average
 		int avgVal = 0;
@@ -65,7 +65,7 @@ public class GetSimpleTracks
 
 		// Now set the withoutLengths to the average length
 		int averageLength = Math.round(avgVal / avgCount);
-		Iterator i = withoutLength.iterator();
+		Iterator<Track> i = withoutLength.iterator();
 		while (i.hasNext())
 			((SimpleTrack) i.next()).setLengthInSeconds(averageLength);
 
@@ -78,7 +78,7 @@ public class GetSimpleTracks
 		tracks = withLength;
 	}
 
-	public List getTracks()
+	public List<Track> getTracks()
 	{
 		return tracks;
 	}

@@ -96,7 +96,7 @@ public class AddRecordGUI extends JFrame
 			ActionListener list)
 	{
 		// Create the filled Text Area
-		textLabel = new FilledTextArea(labels);
+		textLabel = new FilledTextArea<Label>(labels);
 		comboFormat = new JComboBox(new Vector<Format>(formats));
 
 		Vector<String> months = new Vector<String>();

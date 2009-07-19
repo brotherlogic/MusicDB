@@ -51,14 +51,14 @@ public class Track implements Comparable<Track>
 		return trackNumber - otherNum;
 	}
 
-	public Collection<LineUp> getGroops()
-	{
-		return groops;
-	}
-
 	public int getLengthInSeconds()
 	{
 		return lengthInSeconds;
+	}
+
+	public Collection<LineUp> getLineUps()
+	{
+		return groops;
 	}
 
 	public Collection<Artist> getPersonnel()
@@ -82,15 +82,15 @@ public class Track implements Comparable<Track>
 		return refNumber;
 	}
 
-	public void setGroops(Collection<LineUp> groopsIn)
-	{
-		groops.clear();
-		groops.addAll(groopsIn);
-	}
-
 	public void setLengthInSeconds(int secondsIn)
 	{
 		lengthInSeconds = secondsIn;
+	}
+
+	public void setLineUps(Collection<LineUp> groopsIn)
+	{
+		groops.clear();
+		groops.addAll(groopsIn);
 	}
 
 	public void setPersonnel(Collection<Artist> personnelIn)

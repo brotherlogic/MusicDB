@@ -6,23 +6,14 @@ package uk.co.brotherlogic.mdb.cdbuilder;
  * @date 17/04/03
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -32,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import uk.co.brotherlogic.mdb.EntitySelector;
 import uk.co.brotherlogic.mdb.Groop;
+import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.TrackChooser;
 import uk.co.brotherlogic.mdb.record.GetRecords;
@@ -135,7 +127,7 @@ public class MakeCDFileOverseer
 		// Search the sub-directories of this
 		SortedSet<String> examples = new TreeSet<String>();
 		Map<String, String> trans = new TreeMap<String, String>();
-		File[] dirs = musicDir.listFiles();
+
 		// Construct the correct file
 		File sDir = new File(musicDir.getCanonicalPath() + File.separator
 				+ "convert");
@@ -169,95 +161,52 @@ public class MakeCDFileOverseer
 	}
 
 	/** Copys directory from to the new directory to and tidies up */
-	private void copyDir(String from, String to)
-	{
-		long start = System.currentTimeMillis();
-		File toCopyFrom = new File(outDir.getAbsolutePath() + File.separator
-				+ from);
-		File toCopyTo = new File(outDir.getAbsoluteFile() + File.separator + to);
-		if (!toCopyFrom.exists() || !toCopyTo.exists())
-		{
-			System.err.println("Cannot locate: " + toCopyFrom + " => "
-					+ toCopyFrom.exists());
-			System.err.println("Cannot locate: " + toCopyTo + " => "
-					+ toCopyFrom.exists());
-			System.exit(1);
-		}
-
-		// Get the current maximal number
-		int offset = 1;
-		for (String name : toCopyTo.list())
-			if (name.toLowerCase().endsWith("mp3")
-					|| name.toLowerCase().endsWith("wav"))
-				offset++;
-
-		// Perform the copy operation
-		List<File> lFiles = Arrays.asList(toCopyFrom.listFiles());
-		Collections.sort(lFiles);
-
-		for (File f : lFiles)
-			copyFile(f, toCopyTo, offset++);
-
-		// Delete the directory
-		toCopyFrom.delete();
-
-		System.out.println("Time taken: "
-				+ ((System.currentTimeMillis() - start) / 1000.0));
-	}
-
-	private void copyFile(File toCopy, File outputDir, int num)
-	{
-		// Sort out the track number
-		String numStr = "" + num;
-		if (num < 10)
-			numStr = "0" + numStr;
-
-		File outputFile = new File(outputDir.getAbsolutePath() + File.separator
-				+ numStr + "-Track_" + numStr
-				+ toCopy.getName().substring(toCopy.getName().length() - 4));
-
-		System.out.println(num + " Copying " + toCopy + " to " + outputFile);
-		try
-		{
-			InputStream is = new BufferedInputStream(
-					new FileInputStream(toCopy));
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(
-					outputFile));
-
-			byte[] barr = new byte[1024];
-			int read = is.read(barr);
-			while (read > 0)
-			{
-				os.write(barr, 0, read);
-				read = is.read(barr);
-			}
-			os.close();
-			is.close();
-
-			// Now delete the last file
-			toCopy.delete();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-	}
-
-	/** Function to concatenate multiple output directories */
-	private String resolveMultipleDirs(Object[] dirs)
-	{
-		OrderingUI oui = new OrderingUI(dirs);
-		oui.setVisible(true);
-
-		Object[] sortedDirs = oui.getOrdering();
-
-		for (int i = 1; i < sortedDirs.length; i++)
-			copyDir((String) sortedDirs[i], (String) sortedDirs[0]);
-
-		return (String) sortedDirs[0];
-	}
+	/*
+	 * private void copyDir(String from, String to) { long start =
+	 * System.currentTimeMillis(); File toCopyFrom = new
+	 * File(outDir.getAbsolutePath() + File.separator + from); File toCopyTo =
+	 * new File(outDir.getAbsoluteFile() + File.separator + to); if
+	 * (!toCopyFrom.exists() || !toCopyTo.exists()) {
+	 * System.err.println("Cannot locate: " + toCopyFrom + " => " +
+	 * toCopyFrom.exists()); System.err.println("Cannot locate: " + toCopyTo +
+	 * " => " + toCopyFrom.exists()); System.exit(1); }
+	 * 
+	 * // Get the current maximal number int offset = 1; for (String name :
+	 * toCopyTo.list()) if (name.toLowerCase().endsWith("mp3") ||
+	 * name.toLowerCase().endsWith("wav")) offset++;
+	 * 
+	 * // Perform the copy operation List<File> lFiles =
+	 * Arrays.asList(toCopyFrom.listFiles()); Collections.sort(lFiles);
+	 * 
+	 * for (File f : lFiles) copyFile(f, toCopyTo, offset++);
+	 * 
+	 * // Delete the directory toCopyFrom.delete();
+	 * 
+	 * System.out.println("Time taken: " + ((System.currentTimeMillis() - start)
+	 * / 1000.0)); }
+	 * 
+	 * private void copyFile(File toCopy, File outputDir, int num) { // Sort out
+	 * the track number String numStr = "" + num; if (num < 10) numStr = "0" +
+	 * numStr;
+	 * 
+	 * File outputFile = new File(outputDir.getAbsolutePath() + File.separator +
+	 * numStr + "-Track_" + numStr +
+	 * toCopy.getName().substring(toCopy.getName().length() - 4));
+	 * 
+	 * System.out.println(num + " Copying " + toCopy + " to " + outputFile); try
+	 * { InputStream is = new BufferedInputStream( new FileInputStream(toCopy));
+	 * OutputStream os = new BufferedOutputStream(new FileOutputStream(
+	 * outputFile));
+	 * 
+	 * byte[] barr = new byte[1024]; int read = is.read(barr); while (read > 0)
+	 * { os.write(barr, 0, read); read = is.read(barr); } os.close();
+	 * is.close();
+	 * 
+	 * // Now delete the last file toCopy.delete(); } catch (IOException e) {
+	 * e.printStackTrace(); System.exit(1); }
+	 * 
+	 * }
+	 */
 
 	// Function to write the info file
 	public boolean writeFile(boolean auto) throws IOException
@@ -274,7 +223,7 @@ public class MakeCDFileOverseer
 			track.doTracks();
 
 		// Get the data
-		LinkedList trackData = track.getTrackData();
+		LinkedList<LinkedList<Track>> trackData = track.getTrackData();
 
 		// Construct the writer
 		PrintWriter w = new PrintWriter(new FileWriter(outFile), true);
@@ -308,19 +257,19 @@ public class MakeCDFileOverseer
 			String trackNumber = "";
 
 			// Get the vector
-			LinkedList currVec = (LinkedList) trackData.get(i);
+			LinkedList<Track> currVec = trackData.get(i);
 
 			// Work each track number
-			Iterator vIt = currVec.iterator();
+			Iterator<Track> vIt = currVec.iterator();
 			while (vIt.hasNext())
 			{
-				Track currTrack = (Track) vIt.next();
+				Track currTrack = vIt.next();
 
 				// Add the groops if it's not already there
-				Iterator grpIt = currTrack.getGroops().iterator();
+				Iterator<LineUp> grpIt = currTrack.getLineUps().iterator();
 				while (grpIt.hasNext())
 				{
-					Groop currGroop = (Groop) grpIt.next();
+					Groop currGroop = grpIt.next().getGroop();
 					if (!groops.contains(currGroop))
 						groops.add(currGroop);
 				}
@@ -333,9 +282,6 @@ public class MakeCDFileOverseer
 			// Remove the trailing | from the title
 			trackName = trackName.substring(0, trackName.length() - 3);
 			trackNumber = trackNumber.substring(0, trackNumber.length() - 1);
-
-			// Get the track
-			Track currTrack = outRec.getTrack(i);
 
 			// Construct the groop string
 			String grps = "";

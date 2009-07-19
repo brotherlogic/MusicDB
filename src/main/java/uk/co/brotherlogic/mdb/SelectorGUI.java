@@ -31,8 +31,8 @@ public class SelectorGUI extends JDialog implements ActionListener,
 	// List model for the text list
 	DefaultListModel listMod;
 	Object[] elems;
-	Collection listElements;
-	SortedSet objs;
+	Collection<Artist> listElements;
+	SortedSet<Artist> objs;
 
 	// The resulting selected object
 	Object ans;
@@ -115,7 +115,7 @@ public class SelectorGUI extends JDialog implements ActionListener,
 
 	public Object getClosest(String attempt)
 	{
-		SortedSet temp = objs.tailSet(new Artist(attempt, -1));
+		SortedSet<Artist> temp = objs.tailSet(new Artist(attempt, -1));
 
 		if (temp.size() > 0)
 			return temp.first();
@@ -158,9 +158,9 @@ public class SelectorGUI extends JDialog implements ActionListener,
 				ListSelectionModel.SINGLE_SELECTION);
 	}
 
-	public void setData(Collection listElems)
+	public void setData(Collection<Artist> listElems)
 	{
-		objs = new TreeSet();
+		objs = new TreeSet<Artist>();
 		listMod.clear();
 
 		// If a list of elements is provided
@@ -184,7 +184,7 @@ public class SelectorGUI extends JDialog implements ActionListener,
 		}
 	}
 
-	public void setData(Collection c, String tit)
+	public void setData(Collection<Artist> c, String tit)
 	{
 		ans = "";
 		setData(c);

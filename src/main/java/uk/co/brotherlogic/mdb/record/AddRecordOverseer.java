@@ -140,7 +140,7 @@ public class AddRecordOverseer implements ActionListener
 		for (int i = 0; i < rec.getNoTracks(); i++)
 		{
 			Track currTrack = rec.getTrack(i + 1);
-			addGroopsToGUI(currTrack.getGroops(), i + 1);
+			addGroopsToGUI(currTrack.getLineUps(), i + 1);
 			gui.setTrackTitle(currTrack.getTitle(), i + 1);
 			setTrackTime(currTrack.getLengthInSeconds(), i + 1);
 		}
@@ -293,10 +293,10 @@ public class AddRecordOverseer implements ActionListener
 						.getNoTracks());
 
 				// Iterate each number and add the group
-				Iterator nIt = numbers.iterator();
+				Iterator<Integer> nIt = numbers.iterator();
 				while (nIt.hasNext())
 				{
-					int trackNum = ((Integer) nIt.next()).intValue();
+					int trackNum = (nIt.next()).intValue();
 					addGroopsToGUI(groupsToAdd, trackNum);
 					curr.setGroops(trackNum, groupsToAdd);
 				}
@@ -313,7 +313,7 @@ public class AddRecordOverseer implements ActionListener
 	public void addGroop(int trackNumber)
 	{
 		Collection<Groop> chGrps = new LinkedList<Groop>();
-		for (LineUp lineup : curr.getTrack(trackNumber).getGroops())
+		for (LineUp lineup : curr.getTrack(trackNumber).getLineUps())
 			if (groops.containsKey(lineup.getGroop().getGroopName()))
 				chGrps.add(groops.get(lineup.getGroop().getGroopName()));
 
@@ -329,11 +329,10 @@ public class AddRecordOverseer implements ActionListener
 
 		if (grpBuild.getTrackNumber() > 0)
 		{
-			addGroopsToGUI(
-					curr.getTrack(grpBuild.getTrackNumber()).getGroops(),
-					trackNumber);
+			addGroopsToGUI(curr.getTrack(grpBuild.getTrackNumber())
+					.getLineUps(), trackNumber);
 			curr.setGroops(trackNumber, curr
-					.getTrack(grpBuild.getTrackNumber()).getGroops());
+					.getTrack(grpBuild.getTrackNumber()).getLineUps());
 		}
 		else if (tempGrps != null)
 		{
@@ -783,8 +782,8 @@ public class AddRecordOverseer implements ActionListener
 	public void newCategory() throws SQLException
 	{
 		// Put up the new category dialog
-		CategoryBuilderGUI catgui = new CategoryBuilderGUI(gui, new TreeSet(),
-				new TreeSet());
+		CategoryBuilderGUI catgui = new CategoryBuilderGUI(gui,
+				new TreeSet<Category>(), new TreeSet<Format>());
 
 		// Get the new category
 		Category cat = catgui.makeNewCategory();
@@ -828,7 +827,7 @@ public class AddRecordOverseer implements ActionListener
 				// Set the details
 				gui.setTrackTitle(currTrack.getTitle(), currTrack
 						.getTrackNumber());
-				addGroopsToGUI(currTrack.getGroops(), currTrack
+				addGroopsToGUI(currTrack.getLineUps(), currTrack
 						.getTrackNumber());
 				setTrackTime(currTrack.getLengthInSeconds(), currTrack
 						.getTrackNumber());

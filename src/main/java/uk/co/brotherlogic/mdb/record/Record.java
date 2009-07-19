@@ -22,6 +22,7 @@ import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.Format;
 import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
 
 public class Record implements Comparable<Record>
@@ -71,9 +72,9 @@ public class Record implements Comparable<Record>
 		notes = " ";
 		year = -1;
 		boughtDate = Calendar.getInstance();
-		catnos = new LinkedList();
-		labels = new LinkedList();
-		tracks = new LinkedList();
+		catnos = new LinkedList<String>();
+		labels = new LinkedList<Label>();
+		tracks = new LinkedList<Track>();
 
 		price = 0.0;
 
@@ -82,7 +83,8 @@ public class Record implements Comparable<Record>
 	}
 
 	public Record(String title, Format format, Calendar boughtDate,
-			Collection catnos, Collection labels, Collection tracks)
+			Collection<String> catnos, Collection<Label> labels,
+			Collection<Track> tracks)
 	{
 		this();
 		this.title = title;
@@ -103,7 +105,7 @@ public class Record implements Comparable<Record>
 		labels.add(label);
 	}
 
-	public void addPersonnel(int trackNumber, Collection pers)
+	public void addPersonnel(int trackNumber, Collection<Artist> pers)
 	{
 		Track intTrack = getTrack(trackNumber);
 		intTrack.addPersonnel(pers);
@@ -117,14 +119,14 @@ public class Record implements Comparable<Record>
 	public void addTracks(int addPoint, int noToAdd)
 	{
 		// Work through the tracks
-		Iterator tIt = tracks.iterator();
-		Collection groops = new Vector();
-		Collection pers = new Vector();
+		Iterator<Track> tIt = tracks.iterator();
+		Collection<LineUp> groops = new Vector<LineUp>();
+		Collection<Artist> pers = new Vector<Artist>();
 
 		while (tIt.hasNext())
 		{
 			// Get the current track
-			Track currTrack = (Track) tIt.next();
+			Track currTrack = tIt.next();
 
 			// If the track is beyond the addition point - move it along
 			if (currTrack.getTrackNumber() > addPoint)
@@ -133,7 +135,7 @@ public class Record implements Comparable<Record>
 			else if (currTrack.getTrackNumber() == addPoint)
 			{
 				// Collect the information from the previous track
-				groops = currTrack.getGroops();
+				groops = currTrack.getLineUps();
 				pers = currTrack.getPersonnel();
 				// currTrack.setTrackNumber(currTrack.getTrackNumber() +
 				// noToAdd);
@@ -155,16 +157,17 @@ public class Record implements Comparable<Record>
 	public void createTracks(int noTracks)
 	{
 		for (int i = 0; i < noTracks; i++)
-			tracks.add(new Track("", 0, new Vector(), new Vector(), i + 1));
+			tracks.add(new Track("", 0, new Vector<LineUp>(),
+					new Vector<Artist>(), i + 1));
 	}
 
-	public Collection getAllGroops()
+	public Collection<LineUp> getAllLineUps()
 	{
-		Collection allGroops = new Vector();
+		Collection<LineUp> allGroops = new Vector<LineUp>();
 
-		Iterator tIt = tracks.iterator();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext())
-			allGroops.addAll(((Track) tIt.next()).getGroops());
+			allGroops.addAll((tIt.next()).getLineUps());
 
 		return allGroops;
 	}
@@ -187,7 +190,7 @@ public class Record implements Comparable<Record>
 	public String getCatNoString()
 	{
 		String ret = "";
-		Iterator cIt = catnos.iterator();
+		Iterator<String> cIt = catnos.iterator();
 		while (cIt.hasNext())
 			ret += cIt.next();
 
@@ -226,8 +229,8 @@ public class Record implements Comparable<Record>
 	public String getGroopString()
 	{
 		// Construct the groop string
-		Collection main = getMainGroops();
-		Iterator gIt = main.iterator();
+		Collection<String> main = getMainGroops();
+		Iterator<String> gIt = main.iterator();
 		String groop = "";
 		while (gIt.hasNext())
 			groop += gIt.next() + " & ";
@@ -247,26 +250,27 @@ public class Record implements Comparable<Record>
 		return labels;
 	}
 
-	public Collection getMainGroops()
+	public Collection<String> getMainGroops()
 	{
 		// A Map of groopName --> Count
-		Map mainGroopMap = new TreeMap();
-		Collection mainGroops = new Vector();
+		Map<String, Integer> mainGroopMap = new TreeMap<String, Integer>();
+		Collection<String> mainGroops = new Vector<String>();
 
-		Iterator tIt = tracks.iterator();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext())
 		{
 			// Increment the count for each groop
-			Collection groops = ((Track) tIt.next()).getGroops();
-			Iterator gIt = groops.iterator();
+			Collection<LineUp> groops = (tIt.next()).getLineUps();
+			Iterator<LineUp> gIt = groops.iterator();
 			while (gIt.hasNext())
 			{
-				String groopName = ((Groop) gIt.next()).getName();
+				Groop grp = gIt.next().getGroop();
+				String groopName = grp.getGroopName();
 
 				Integer intVal;
 				if (mainGroopMap.containsKey(groopName))
 				{
-					intVal = (Integer) mainGroopMap.get(groopName);
+					intVal = mainGroopMap.get(groopName);
 					intVal = new Integer(intVal.intValue() + 1);
 				}
 				else
@@ -277,13 +281,12 @@ public class Record implements Comparable<Record>
 		}
 
 		// Select only groops who appear on the right number of tracks
-		Iterator mIt = mainGroopMap.keySet().iterator();
+		Iterator<String> mIt = mainGroopMap.keySet().iterator();
 		while (mIt.hasNext())
 		{
-			String keyGroop = (String) mIt.next();
+			String keyGroop = mIt.next();
 
-			if ((((Integer) mainGroopMap.get(keyGroop)).doubleValue() / tracks
-					.size()) > GROOP_RATIO)
+			if (((mainGroopMap.get(keyGroop)).doubleValue() / tracks.size()) > GROOP_RATIO)
 				mainGroops.add(keyGroop);
 		}
 
@@ -353,10 +356,10 @@ public class Record implements Comparable<Record>
 
 		// Search all the tracks
 		boolean found = false;
-		Iterator tIt = tracks.iterator();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext() && !found)
 		{
-			Track currTrack = (Track) tIt.next();
+			Track currTrack = tIt.next();
 			if (currTrack.getTrackNumber() == trackNumber)
 			{
 				ret = currTrack;
@@ -366,17 +369,17 @@ public class Record implements Comparable<Record>
 		return ret;
 	}
 
-	public Collection getTracks()
+	public Collection<Track> getTracks()
 	{
 		return tracks;
 	}
 
-	public Collection getTrackTitles()
+	public Collection<String> getTrackTitles()
 	{
-		Collection retSet = new Vector();
-		Iterator tIt = tracks.iterator();
+		Collection<String> retSet = new Vector<String>();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext())
-			retSet.add(((Track) tIt.next()).getTitle());
+			retSet.add((tIt.next()).getTitle());
 
 		return retSet;
 	}
@@ -402,18 +405,18 @@ public class Record implements Comparable<Record>
 				+ category.getName() + "~" + category.getMP3Number();
 
 		// Now add the labels to this
-		Iterator lIt = labels.iterator();
+		Iterator<Label> lIt = labels.iterator();
 		while (lIt.hasNext())
-			ret += "~" + ((Label) lIt.next()).getName();
+			ret += "~" + (lIt.next()).getName();
 		ret += "\n";
 
 		// Now print the cat nos
-		Iterator cIt = catnos.iterator();
+		Iterator<String> cIt = catnos.iterator();
 		while (cIt.hasNext())
 			ret += cIt.next() + "~";
 		ret += "\n";
 		// Now print the tracks
-		Iterator tIt = tracks.iterator();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext())
 			ret += tIt.next();
 		return ret;
@@ -476,13 +479,13 @@ public class Record implements Comparable<Record>
 		format = form;
 	}
 
-	public void setGroops(int trackNumber, Collection grps)
+	public void setGroops(int trackNumber, Collection<LineUp> lineups)
 	{
 		Track intTrack = getTrack(trackNumber);
-		intTrack.setGroops(grps);
+		intTrack.setLineUps(lineups);
 	}
 
-	public void setLabels(Collection labs)
+	public void setLabels(Collection<Label> labs)
 	{
 		// Remove and add
 		labels.clear();
@@ -504,7 +507,7 @@ public class Record implements Comparable<Record>
 		owner = in;
 	}
 
-	public void setPersonnel(int trackNumber, Collection pers)
+	public void setPersonnel(int trackNumber, Collection<Artist> pers)
 	{
 		Track intTrack = getTrack(trackNumber);
 		intTrack.setPersonnel(pers);
@@ -538,7 +541,7 @@ public class Record implements Comparable<Record>
 		title = tit;
 	}
 
-	public void setTracks(Collection tracksIn)
+	public void setTracks(Collection<Track> tracksIn)
 	{
 		tracks.clear();
 		tracks.addAll(tracksIn);
@@ -547,11 +550,11 @@ public class Record implements Comparable<Record>
 	public void setTracks(int maxNumber)
 	{
 		// Only include relevant tracks
-		Collection newTracks = new LinkedList();
-		Iterator trIt = tracks.iterator();
+		Collection<Track> newTracks = new LinkedList<Track>();
+		Iterator<Track> trIt = tracks.iterator();
 		while (trIt.hasNext())
 		{
-			Track currTrack = (Track) trIt.next();
+			Track currTrack = trIt.next();
 			if (currTrack.getTrackNumber() <= maxNumber)
 				newTracks.add(currTrack);
 		}
@@ -568,8 +571,8 @@ public class Record implements Comparable<Record>
 
 	public String toString()
 	{
-		Collection fullGroops = getMainGroops();
-		Iterator fIt = fullGroops.iterator();
+		Collection<String> fullGroops = getMainGroops();
+		Iterator<String> fIt = fullGroops.iterator();
 		String grp = "";
 		while (fIt.hasNext())
 			grp += fIt.next() + " & ";
@@ -583,12 +586,12 @@ public class Record implements Comparable<Record>
 		ret += grp + " - " + title + "(" + format + ") " + labels + category
 				+ "\n";
 
-		Iterator tIt = tracks.iterator();
+		Iterator<Track> tIt = tracks.iterator();
 		while (tIt.hasNext())
 		{
-			Track next = (Track) tIt.next();
+			Track next = tIt.next();
 			ret += next.getTrackNumber() + ": ";
-			ret += next.getGroops() + " - ";
+			ret += next.getLineUps() + " - ";
 			ret += next.getTitle() + "[";
 			ret += next.getPersonnel() + "]";
 			ret += " / " + next.getTrackRefNumber() + "\n";

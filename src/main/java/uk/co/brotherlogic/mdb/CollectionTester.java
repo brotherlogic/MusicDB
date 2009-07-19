@@ -1,57 +1,54 @@
 package uk.co.brotherlogic.mdb;
+
 /**
  * Class to assess the collection ability
  */
 
- import java.util.*;
- import javax.swing.*;
- import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
- public class CollectionTester
- {
+import javax.swing.JFileChooser;
 
-  public CollectionTester() throws Exception
-  {
+public class CollectionTester
+{
 
-     //Open a file open dialog thingy
-    JFileChooser choose = new JFileChooser("e:\\records\\java\\version4.0\\");
-    choose.setFileFilter(new javax.swing.filechooser.FileFilter(){
-      public boolean accept(File in)
-      {
-	return in.getName().endsWith(".txt");
-      }
+	public CollectionTester() throws Exception
+	{
 
-      public String getDescription()
-      {
-	return "what?";
-      }
-    });
+		// Open a file open dialog thingy
+		JFileChooser choose = new JFileChooser(
+				"e:\\records\\java\\version4.0\\");
+		choose.setFileFilter(new javax.swing.filechooser.FileFilter()
+		{
+			public boolean accept(File in)
+			{
+				return in.getName().endsWith(".txt");
+			}
 
-    int retVal = choose.showOpenDialog(null);
-    File chosen = choose.getSelectedFile();
-    choose = null;
+			public String getDescription()
+			{
+				return "what?";
+			}
+		});
 
-    //Open a reader which reads by file
-    FileReader fr = new FileReader(chosen);
-    BufferedReader br = new BufferedReader(fr);
+		File chosen = choose.getSelectedFile();
+		choose = null;
 
-    int count = 0;
-    String line = br.readLine();
-    while(line != null)
-    {
-      if (line.startsWith("TITLE"))
-      {
-	 count++;
-      }
+		// Open a reader which reads by file
+		FileReader fr = new FileReader(chosen);
+		BufferedReader br = new BufferedReader(fr);
 
-	 line = br.readLine();
-    }
+		int count = 0;
+		String line = br.readLine();
+		while (line != null)
+		{
+			if (line.startsWith("TITLE"))
+				count++;
 
-  }
+			line = br.readLine();
+		}
 
-  public static void main(String[] args) throws Exception
-  {
-    CollectionTester mine = new CollectionTester();
-  }
+	}
 
 }

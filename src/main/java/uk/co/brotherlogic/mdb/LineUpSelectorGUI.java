@@ -85,7 +85,6 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 			if (listMain.getSelectedValue() != null)
 			{
 				// First remove this item from the main list
-				@SuppressWarnings("unchecked")
 				Artist selected = (Artist) listMain.getSelectedValue();
 				addElem(selected);
 			}
@@ -100,7 +99,6 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		}
 		else if (e.getActionCommand() == "remove")
 		{
-			@SuppressWarnings("unchecked")
 			Artist selected = (Artist) listAdded.getSelectedValue();
 			remElem(selected);
 		}
@@ -113,7 +111,6 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 
 			{
 				// First remove this item from the main list
-				@SuppressWarnings("unchecked")
 				Artist selected = (Artist) listMain.getSelectedValue();
 				addElem(selected);
 			}
@@ -327,11 +324,11 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		{
 			// Add the keys into the drop-down box
 			comboNumber.removeAllItems();
-			Iterator keyIt = currentGroop.getLineUps().iterator();
+			Iterator<LineUp> keyIt = currentGroop.getLineUps().iterator();
 			LineUp currLineUp;
 			while (keyIt.hasNext())
 			{
-				currLineUp = (LineUp) keyIt.next();
+				currLineUp = keyIt.next();
 				comboNumber.addItem(new Integer(currLineUp.getLineUpNumber()));
 			}
 

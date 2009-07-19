@@ -32,9 +32,8 @@ import javax.swing.event.CaretListener;
 
 public class ViewerGUI extends JFrame implements CaretListener
 {
-
 	// Data elements
-	SortedSet objs;
+	SortedSet<Object> objs;
 	DefaultListModel listMod;
 	Object[] elems;
 
@@ -57,7 +56,7 @@ public class ViewerGUI extends JFrame implements CaretListener
 	{
 		// Prepare the data holders
 		listMod = new DefaultListModel();
-		objs = new TreeSet();
+		objs = new TreeSet<Object>();
 		listMain = new JList(listMod);
 
 		this.setSize(300, 300);
@@ -103,7 +102,7 @@ public class ViewerGUI extends JFrame implements CaretListener
 	public Object getClosest(Object attempt)
 	{
 		// Retrieve the tail of the selection set
-		SortedSet temp = objs.tailSet(attempt);
+		SortedSet<Object> temp = objs.tailSet(attempt);
 
 		// Return the relevant item
 		if (temp.size() > 0)
@@ -170,7 +169,7 @@ public class ViewerGUI extends JFrame implements CaretListener
 		jScrollPane1.getViewport().add(listMain, null);
 	}
 
-	public void setData(Collection listElems)
+	public void setData(Collection<Object> listElems)
 	{
 		// Clear the current lists
 		clearLists();
