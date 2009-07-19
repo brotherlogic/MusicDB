@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb.record;
+package uk.co.brotherlogic.mdb.record.discogs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,15 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
+
+import uk.co.brotherlogic.mdb.App;
+import uk.co.brotherlogic.mdb.GetArtists;
+import uk.co.brotherlogic.mdb.GetCategories;
+import uk.co.brotherlogic.mdb.GetFormats;
+import uk.co.brotherlogic.mdb.GetGroops;
+import uk.co.brotherlogic.mdb.GetLabels;
+import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
+import uk.co.brotherlogic.mdb.record.Record;
 
 public class DiscogsReaderBuilder
 {
@@ -43,6 +52,8 @@ public class DiscogsReaderBuilder
 		{
 			String rURL = "http://www.discogs.com/release/"
 					+ record.getDiscogsURI() + "?f=xml&api_key=" + API_KEY;
+			System.out.println("http://www.discogs.com/release/"
+					+ record.getDiscogsURI() + "?f=xml&api_key=" + API_KEY);
 			InputStream rIs = new GZIPInputStream(new URL(rURL).openStream());
 			DiscogsReaderParser parser = new DiscogsReaderParser(record);
 			SAXParser p = SAXParserFactory.newInstance().newSAXParser();
@@ -93,10 +104,16 @@ public class DiscogsReaderBuilder
 		return records;
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		DiscogsReaderBuilder builder = new DiscogsReaderBuilder();
-		System.out.println(builder.buildRecordFromDiscogs("Leonard Nimoy",
+		Record rec = (builder.buildRecordFromDiscogs("Leonard Nimoy",
 				"The Touch Of Leonard Nimoy"));
+		AddRecordOverseer over = new AddRecordOverseer(new App(), GetArtists
+				.create().getArtists(), GetLabels.create().getLabels(),
+				GetFormats.create().getFormats(), GetGroops.build()
+						.getGroopMap(), GetCategories.build().getCategories(),
+				rec);
+		System.out.println(over);
 	}
 }

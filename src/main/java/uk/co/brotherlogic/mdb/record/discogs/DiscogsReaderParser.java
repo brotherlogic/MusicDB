@@ -1,8 +1,9 @@
-package uk.co.brotherlogic.mdb.record;
+package uk.co.brotherlogic.mdb.record.discogs;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -10,10 +11,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.GetArtists;
+import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
+import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.record.Record;
 
 public class DiscogsReaderParser extends DefaultHandler
 {
@@ -25,13 +29,13 @@ public class DiscogsReaderParser extends DefaultHandler
 	private static final int READING_TRACK = 3;
 	private int state = NULL_STATE;
 
-	Collection<LineUp> overallLineUps = new LinkedList<LineUp>();
+	private final Collection<Groop> overallGroops = new LinkedList<Groop>();
 
-	Track currTrack;
+	private Track currTrack;
 
 	private String text = "";
 
-	int trackNumber = 1;
+	private int trackNumber = 1;
 
 	public DiscogsReaderParser(Record record)
 	{
@@ -56,7 +60,7 @@ public class DiscogsReaderParser extends DefaultHandler
 			try
 			{
 				Artist art = GetArtists.create().getArtistFromShowName(text);
-				// overallGroups.add(GetGroops.build().getGroop(text));
+				overallGroops.add(GetGroops.build().getGroop(text));
 				rec.setAuthor(art.getShowName());
 			}
 			catch (SQLException e)
@@ -78,6 +82,8 @@ public class DiscogsReaderParser extends DefaultHandler
 			currTrack.setTrackNumber(trackNumber++);
 		else if (name.equals("title") && state == READING_TRACK)
 			currTrack.setTitle(text);
+		else if (name.equals("title") && state == NULL_STATE)
+			rec.setTitle(text);
 		else if (name.equals("duration") && state == READING_TRACK)
 		{
 			String[] elems = text.split(":");
@@ -114,7 +120,37 @@ public class DiscogsReaderParser extends DefaultHandler
 		{
 			currTrack = new Track();
 			if (!rec.getAuthor().equalsIgnoreCase("various"))
-				currTrack.setLineUps(overallLineUps);
+			{
+				List<LineUp> finishedLineUps = new LinkedList<LineUp>();
+				for (Groop grp : overallGroops)
+				{
+					List<LineUp> lineups = new LinkedList<LineUp>(grp
+							.getLineUps());
+					if (lineups.size() == 0)
+					{
+						List<Artist> artists = new LinkedList<Artist>();
+						try
+						{
+							artists.add(GetArtists.create()
+									.getArtistFromShowName(grp.getGroopName()));
+						}
+						catch (SQLException e)
+						{
+							e.printStackTrace();
+						}
+						LineUp nLineUp = new LineUp(1, artists, grp);
+						finishedLineUps.add(nLineUp);
+					}
+					else
+						finishedLineUps.add(lineups.get(0));
+				}
+
+				for (Track track : rec.getTracks())
+					track.setLineUps(finishedLineUps);
+				{
+
+				}
+			}
 			state = READING_TRACK;
 		}
 

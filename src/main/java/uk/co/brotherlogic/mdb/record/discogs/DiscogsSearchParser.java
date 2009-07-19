@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb.record;
+package uk.co.brotherlogic.mdb.record.discogs;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -7,6 +7,8 @@ import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import uk.co.brotherlogic.mdb.record.Record;
 
 public class DiscogsSearchParser extends DefaultHandler
 {

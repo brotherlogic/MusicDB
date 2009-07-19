@@ -54,9 +54,6 @@ public class AddRecordOverseer implements ActionListener
 	// The record that we are creating
 	Record curr;
 
-	// Flag, indicating whether we are editing or not
-	boolean editFlag;
-
 	Map<String, Groop> groops;
 
 	// The gui to be used
@@ -80,7 +77,6 @@ public class AddRecordOverseer implements ActionListener
 
 		// No parameters mean that we are creating, not editing
 		curr = new Record();
-		editFlag = false;
 
 		// Create the gui
 		gui = new AddRecordGUI(labels, formats, this);
@@ -111,7 +107,6 @@ public class AddRecordOverseer implements ActionListener
 		this.categories = categories;
 
 		// We are editing a record
-		editFlag = true;
 		gui = new AddRecordGUI(labels, formats, this);
 
 		// Prepare the gui
@@ -121,16 +116,17 @@ public class AddRecordOverseer implements ActionListener
 		gui.displayLabels(rec.getLabels());
 
 		// Set the format of the record
-		if (formats.contains(rec.getFormat()))
-			gui.selectFormat(rec.getFormat());
-		else
-		{
-			gui.addFormat(rec.getFormat());
-			gui.selectFormat(rec.getFormat());
-		}
+		if (rec.getFormat() != null)
+			if (formats.contains(rec.getFormat()))
+				gui.selectFormat(rec.getFormat());
+			else
+			{
+				gui.addFormat(rec.getFormat());
+				gui.selectFormat(rec.getFormat());
+			}
+		setForSelectedFormat();
 
 		// Set the selected categories
-		setForSelectedFormat();
 		gui.selectCategory(rec.getCategory());
 
 		gui.displayCats(rec.getCatNos());
@@ -163,69 +159,76 @@ public class AddRecordOverseer implements ActionListener
 
 	public void actionPerformed(ActionEvent e)
 	{
-		try
+
+		if (e.getActionCommand().equals("label"))
+			doLabels();
+		else if (e.getActionCommand().equals("done"))
 		{
-			if (e.getActionCommand().equals("label"))
-				doLabels();
-			else if (e.getActionCommand().equals("done"))
+			// For now just parse the gui
+			if (collectDataFromGUI())
 			{
-				// For now just parse the gui
-				if (collectDataFromGUI())
-				{
-					gui.setVisible(false);
-
-					// Destroy the gui!
-					gui.dispose();
-
-					// Add the record!
-					complete = true;
-
-					if (call != null)
-						call.addDone();
-				}
-			}
-			else if (e.getActionCommand().equals("cancel"))
-			{
-				// Set the current record to null and make the frame invisible
 				gui.setVisible(false);
 
 				// Destroy the gui!
 				gui.dispose();
 
-				call.cancel();
+				// Add the record!
+				complete = true;
+
+				if (call != null)
+					call.addDone();
 			}
-			else if (e.getActionCommand().equals("newformat"))
-				newFormat();
-			else if (e.getActionCommand().equals("addcategory"))
+		}
+		else if (e.getActionCommand().equals("cancel"))
+		{
+			// Set the current record to null and make the frame invisible
+			gui.setVisible(false);
+
+			// Destroy the gui!
+			gui.dispose();
+
+			call.cancel();
+		}
+		else if (e.getActionCommand().equals("newformat"))
+			newFormat();
+		else if (e.getActionCommand().equals("addcategory"))
+			try
+			{
 				newCategory();
-			else if (e.getActionCommand().equals("format"))
-				setForSelectedFormat();
-			else if (e.getActionCommand().equals("cat"))
-				doCat();
-			else if (e.getActionCommand().equals("tracks"))
-				newTracks();
-			else if (e.getActionCommand().equals("addtracks"))
-				addTracks();
-			else if (e.getActionCommand().equals("pers"))
-				addPersonnel();
-			else if (e.getActionCommand().equals("groop"))
-				addGroop();
-			else if (e.getActionCommand().startsWith("tpers"))
-			{
-				// Get the track number
-				int trackNumber = Integer.parseInt(e.getActionCommand()
-						.substring(5));
-				addPersonnel(trackNumber);
 			}
-			else if (e.getActionCommand().startsWith("tgroop"))
+			catch (SQLException ex)
 			{
-				// Get the track number
-				int trackNumber = Integer.parseInt(e.getActionCommand()
-						.substring(6));
-				addGroop(trackNumber);
-				updateAuthor();
+				ex.printStackTrace();
 			}
-			else if (e.getActionCommand().startsWith("comp"))
+		else if (e.getActionCommand().equals("format"))
+			setForSelectedFormat();
+		else if (e.getActionCommand().equals("cat"))
+			doCat();
+		else if (e.getActionCommand().equals("tracks"))
+			newTracks();
+		else if (e.getActionCommand().equals("addtracks"))
+			addTracks();
+		else if (e.getActionCommand().equals("pers"))
+			addPersonnel();
+		else if (e.getActionCommand().equals("groop"))
+			addGroop();
+		else if (e.getActionCommand().startsWith("tpers"))
+		{
+			// Get the track number
+			int trackNumber = Integer.parseInt(e.getActionCommand()
+					.substring(5));
+			addPersonnel(trackNumber);
+		}
+		else if (e.getActionCommand().startsWith("tgroop"))
+		{
+			// Get the track number
+			int trackNumber = Integer.parseInt(e.getActionCommand()
+					.substring(6));
+			addGroop(trackNumber);
+			updateAuthor();
+		}
+		else if (e.getActionCommand().startsWith("comp"))
+			try
 			{
 				// Deal with the compiler
 				// Bring up the personnel selection screen
@@ -239,11 +242,10 @@ public class AddRecordOverseer implements ActionListener
 				curr.setCompilers(tempComps);
 				updateCompiler();
 			}
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
+			catch (SQLException ex)
+			{
+				ex.printStackTrace();
+			}
 	}
 
 	public void addGroop()
@@ -715,7 +717,7 @@ public class AddRecordOverseer implements ActionListener
 			if (ret != null)
 				if (ret.trim().equalsIgnoreCase(""))
 					for (int i = 1; i <= max; i++)
-						trckList.add(new Integer(i));
+						trckList.add(Integer.valueOf(i));
 				else
 				{
 					StringTokenizer tok = new StringTokenizer(ret, ",");
@@ -736,7 +738,7 @@ public class AddRecordOverseer implements ActionListener
 
 							for (int i = start.intValue(); i <= end.intValue(); i++)
 								if (i <= max)
-									trckList.add(new Integer(i));
+									trckList.add(Integer.valueOf(i));
 						}
 						else // String is just one number
 						if (Integer.parseInt(currTok) <= max)

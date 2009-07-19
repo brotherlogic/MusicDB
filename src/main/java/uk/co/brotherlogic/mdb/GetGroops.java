@@ -52,8 +52,9 @@ public class GetGroops
 			{
 				// Add the groop name and get the number
 				p.getConnection().runUpdate(
-						"INSERT INTO Groops (GroopName) VALUES (\'"
-								+ p.cleanString(in.getGroopName()) + "\')");
+						"INSERT INTO Groops (sort_name,show_name) VALUES (\'"
+								+ p.cleanString(in.getSortName()) + "\',\'"
+								+ p.cleanString(in.getShowName()) + "\')");
 
 				// Now get the group number
 				Statement s = p.getConnection().getStatement();
@@ -162,7 +163,8 @@ public class GetGroops
 		if (groops.containsKey(groopName))
 			return groops.get(groopName);
 		else
-			return null;
+			// Construct the groop with the required groop name
+			return new Groop(groopName);
 	}
 
 	public Map<String, Groop> getGroopMap()

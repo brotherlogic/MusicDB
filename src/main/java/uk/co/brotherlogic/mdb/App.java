@@ -55,25 +55,6 @@ public class App extends JFrame
 			e.printStackTrace();
 			pers = null;
 		}
-
-		// Now construct the gui
-		try
-		{
-			jbInit();
-			this.setSize(500, 500);
-
-			// Center the frame on screen
-			this.setLocationRelativeTo(null);
-
-			// Display the giu
-			this.setVisible(true);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
-
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -135,7 +116,6 @@ public class App extends JFrame
 		catch (SQLException ex)
 		{
 			ex.printStackTrace();
-			System.exit(1);
 		}
 	}
 
@@ -192,7 +172,6 @@ public class App extends JFrame
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			System.exit(1);
 		}
 	}
 
@@ -220,7 +199,6 @@ public class App extends JFrame
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			System.exit(1);
 		}
 
 	}
@@ -284,6 +262,28 @@ public class App extends JFrame
 		jPanel1.add(butAuth, null);
 	}
 
+	public void runApp()
+	{
+
+		// Now construct the gui
+		try
+		{
+			jbInit();
+			this.setSize(500, 500);
+
+			// Center the frame on screen
+			this.setLocationRelativeTo(null);
+
+			// Display the giu
+			this.setVisible(true);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
 	public void setFileString(String in)
 	{
 		fileString = in;
@@ -311,6 +311,7 @@ public class App extends JFrame
 			System.out.println("Running For Unix!");
 			c.setFileString("/usr/share/hancock_multimedia/");
 		}
+		c.runApp();
 	}
 
 }

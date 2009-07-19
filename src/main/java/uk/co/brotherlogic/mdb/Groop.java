@@ -8,41 +8,41 @@ package uk.co.brotherlogic.mdb;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Vector;
 
-public class Groop extends AbstractGroop implements Comparable<Groop>,
-		Builder<Groop>
+public class Groop implements Comparable<Groop>, Builder<Groop>
 {
-	LineUp chosenLineup;
+	// Groop properties
+	private String sortName = "";
+	private String showName = "";
+	private int groopNumber;
+	private Collection<LineUp> lineUps = new LinkedList<LineUp>();
 
-	public Groop()
+	public Groop(String sortName, String showName)
 	{
-
+		this.sortName = sortName;
+		this.showName = showName;
+		groopNumber = -1;
 	}
 
-	public Groop(String name, int num)
+	public Groop(String sortName, String showName, int num)
 	{
 		// Set the variables
-		groopName = name;
+		this.sortName = sortName;
+		this.showName = showName;
 		groopNumber = num;
-		this.lineUps = null;
 	}
 
-	public Groop(String name, int num, Collection<LineUp> lineUps)
+	public Groop(String sortName, String showName, int num,
+			Collection<LineUp> lineUps)
 	{
 		// Set the variables
-		groopName = name;
+		this.sortName = sortName;
+		this.showName = showName;
 		groopNumber = num;
 		this.lineUps = new Vector<LineUp>();
 		this.lineUps.addAll(lineUps);
-	}
-
-	public Groop(String name, int num, Collection<LineUp> lineUps,
-			LineUp chosenLineup)
-	{
-		this(name, num, lineUps);
-		this.chosenLineup = chosenLineup;
-		lineUps.add(chosenLineup);
 	}
 
 	public void addLineUp(LineUp in)
@@ -58,13 +58,13 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 	@Override
 	public Groop build(String name)
 	{
-		return new Groop(name, -1);
+		return new Groop(name, name, -1);
 	}
 
 	@Override
 	public int compareTo(Groop o)
 	{
-		return -groopName.toLowerCase().compareTo(o.groopName.toLowerCase());
+		return -sortName.toLowerCase().compareTo(o.sortName.toLowerCase());
 	}
 
 	private void fillLineUp()
@@ -103,12 +103,11 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 		return ret;
 	}
 
-	@Override
 	public Collection<LineUp> getLineUps()
 	{
 		if (lineUps == null)
 			fillLineUp();
-		return super.getLineUps();
+		return lineUps;
 	}
 
 	public int getNoLineUps()
@@ -116,29 +115,54 @@ public class Groop extends AbstractGroop implements Comparable<Groop>,
 		return lineUps.size();
 	}
 
-	public String getTidyName()
+	public int getNumber()
 	{
-		String name = groopName;
-		if (groopName.indexOf(",") >= 0)
-		{
-			// Get the location of the first comman
-			int loc = groopName.indexOf(",");
+		return groopNumber;
+	}
 
-			// Flip the string around the comman
-			name = groopName.substring(loc + 2) + " "
-					+ groopName.substring(0, loc);
+	public String getShowName()
+	{
+		return showName;
+	}
 
-		}
+	public String getSimpRep()
+	{
+		return "G" + groopNumber;
+	}
 
-		return name;
+	public String getSortName()
+	{
+		return sortName;
+	}
 
+	public void setLineUps(Collection<LineUp> lineUpsIn)
+	{
+		// Clear and add lineUpsIn
+		lineUps.clear();
+		lineUps.addAll(lineUpsIn);
+	}
+
+	public void setNumber(int in)
+	{
+		groopNumber = in;
+	}
+
+	public void setShowName(String groopIn)
+	{
+		showName = groopIn;
+	}
+
+	// Set methods
+	public void setSortName(String groopIn)
+	{
+		sortName = groopIn;
 	}
 
 	public String toString()
 	{
 		// Simple for now
 		String ret = "";
-		ret += groopName;
+		ret += showName;
 
 		return ret;
 	}
