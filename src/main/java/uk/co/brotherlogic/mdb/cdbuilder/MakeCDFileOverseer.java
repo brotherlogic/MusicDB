@@ -287,7 +287,7 @@ public class MakeCDFileOverseer
 			String grps = "";
 			Iterator<Groop> grIt = groops.iterator();
 			while (grIt.hasNext())
-				grps += grIt.next().getTidyName() + " & ";
+				grps += grIt.next().getShowName() + " & ";
 			grps = grps.substring(0, grps.length() - 3);
 
 			w.println((i + 1) + "~" + grps + "~" + trackNumber + "~"

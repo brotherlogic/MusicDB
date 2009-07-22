@@ -132,7 +132,7 @@ public class DiscogsReaderParser extends DefaultHandler
 						try
 						{
 							artists.add(GetArtists.create()
-									.getArtistFromShowName(grp.getGroopName()));
+									.getArtistFromShowName(grp.getShowName()));
 						}
 						catch (SQLException e)
 						{

@@ -19,6 +19,11 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 	private int groopNumber;
 	private Collection<LineUp> lineUps = new LinkedList<LineUp>();
 
+	public Groop()
+	{
+
+	}
+
 	public Groop(String sortName, String showName)
 	{
 		this.sortName = sortName;

@@ -56,7 +56,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 	public LineUpSelectorGUI(Groop grp, JFrame refIn)
 	{
 		// Set up the display and list models
-		super(refIn, grp.getGroopName(), true);
+		super(refIn, grp.getSortName(), true);
 		currentGroop = grp;
 
 		listMod = new DefaultListModel();

@@ -265,7 +265,7 @@ public class Record implements Comparable<Record>
 			while (gIt.hasNext())
 			{
 				Groop grp = gIt.next().getGroop();
-				String groopName = grp.getGroopName();
+				String groopName = grp.getSortName();
 
 				Integer intVal;
 				if (mainGroopMap.containsKey(groopName))

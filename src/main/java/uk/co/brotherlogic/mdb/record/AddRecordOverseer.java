@@ -316,8 +316,8 @@ public class AddRecordOverseer implements ActionListener
 	{
 		Collection<Groop> chGrps = new LinkedList<Groop>();
 		for (LineUp lineup : curr.getTrack(trackNumber).getLineUps())
-			if (groops.containsKey(lineup.getGroop().getGroopName()))
-				chGrps.add(groops.get(lineup.getGroop().getGroopName()));
+			if (groops.containsKey(lineup.getGroop().getSortName()))
+				chGrps.add(groops.get(lineup.getGroop().getSortName()));
 
 		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops",
 				gui, new Groop());
@@ -384,7 +384,7 @@ public class AddRecordOverseer implements ActionListener
 			while (cIt.hasNext())
 			{
 				LineUp tempGroop = cIt.next();
-				rep = tempGroop.getGroop().getGroopName();
+				rep = tempGroop.getGroop().getSortName();
 			}
 		}
 
