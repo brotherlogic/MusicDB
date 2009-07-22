@@ -17,7 +17,7 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 	private String sortName = "";
 	private String showName = "";
 	private int groopNumber;
-	private Collection<LineUp> lineUps = new LinkedList<LineUp>();
+	private Collection<LineUp> lineUps = null;
 
 	public Groop()
 	{
@@ -29,6 +29,7 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		this.sortName = sortName;
 		this.showName = showName;
 		groopNumber = -1;
+		lineUps = new LinkedList<LineUp>();
 	}
 
 	public Groop(String sortName, String showName, int num)
@@ -52,11 +53,15 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 
 	public void addLineUp(LineUp in)
 	{
+		if (lineUps == null)
+			lineUps = new LinkedList<LineUp>();
 		lineUps.add(in);
 	}
 
 	public void addLineUps(Collection<LineUp> lineUpsToAdd)
 	{
+		if (lineUps == null)
+			lineUps = new LinkedList<LineUp>();
 		lineUps.addAll(lineUpsToAdd);
 	}
 

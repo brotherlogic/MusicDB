@@ -139,6 +139,8 @@ public class GetGroops
 
 	public Groop getGroop(int num) throws SQLException
 	{
+		System.err.println("Getting Groop: " + num);
+
 		// Get the groop name
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
@@ -159,6 +161,8 @@ public class GetGroops
 
 	public Groop getGroop(String groopName)
 	{
+		System.err.println("GETTING GROOP: " + groopName);
+
 		if (groops.containsKey(groopName))
 			return groops.get(groopName);
 		else
