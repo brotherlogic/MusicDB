@@ -283,7 +283,7 @@ public class GetGroops
 			return groopMap.get(num);
 
 		// Get a statement and run the query
-		String sql = "SELECT Groops.GroopNumber, GroopName, LineUp.LineUpNumber, ArtistNumber FROM Groops,LineUp,LineUpDetails WHERE Groops.groopnumber = ? AND Groops.GroopNumber = LineUp.GroopNumber AND LineUp.LineUpNumber = LineUpDetails.LineUpNumber ORDER BY GroopName, LineUp.LineUpNumber ASC";
+		String sql = "SELECT Groops.GroopNumber, groops.sort_name, groops.show_name, LineUp.LineUpNumber, ArtistNumber FROM Groops,LineUp,LineUpDetails WHERE Groops.groopnumber = ? AND Groops.GroopNumber = LineUp.GroopNumber AND LineUp.LineUpNumber = LineUpDetails.LineUpNumber ORDER BY sort_name, LineUp.LineUpNumber ASC";
 		PreparedStatement ps = p.getConnection().getPreparedStatement(sql);
 		ps.setInt(1, num);
 		ps.execute();
@@ -295,30 +295,31 @@ public class GetGroops
 		{
 			// Read the info
 			int groopNumber = rs.getInt(1);
-			String groopName = rs.getString(2);
-			int lineUpNumber = rs.getInt(3);
-			int artistNumber = rs.getInt(4);
+			String sortName = rs.getString(2);
+			String showName = rs.getString(3);
+			int lineUpNumber = rs.getInt(4);
+			int artistNumber = rs.getInt(5);
 
 			if (currGroop == null)
 			{
-				System.out.println("Creaing: " + groopName);
+				System.out.println("Creaing: " + sortName);
 				// Construct the current groop and line up
-				currGroop = new Groop(groopName, groopName, groopNumber,
+				currGroop = new Groop(sortName, showName, groopNumber,
 						new TreeSet<LineUp>());
 				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
 						currGroop);
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
 			}
-			else if (!groopName.equals(currGroop.getSortName()))
+			else if (!sortName.equals(currGroop.getSortName()))
 			{
-				System.out.println("New Groop: " + groopName);
+				System.out.println("New Groop: " + sortName);
 				// Add the groop and create a new one
 				// Ensure that we add the last lineUp
 				currGroop.addLineUp(currLineUp);
 
 				// Construct the current groop and line up
-				currGroop = new Groop(groopName, groopName, groopNumber,
+				currGroop = new Groop(sortName, showName, groopNumber,
 						new TreeSet<LineUp>());
 				currLineUp = new LineUp(lineUpNumber, new TreeSet<Artist>(),
 						currGroop);
