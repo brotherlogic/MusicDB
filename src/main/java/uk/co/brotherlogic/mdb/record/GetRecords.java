@@ -28,13 +28,13 @@ import uk.co.brotherlogic.mdb.EntitySelector;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
 import uk.co.brotherlogic.mdb.GetFormats;
-import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.groop.GetGroops;
+import uk.co.brotherlogic.mdb.groop.Groop;
 
 public class GetRecords
 {

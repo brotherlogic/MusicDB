@@ -8,6 +8,8 @@ package uk.co.brotherlogic.mdb;
 import java.util.Collection;
 import java.util.Vector;
 
+import uk.co.brotherlogic.mdb.groop.Groop;
+
 public class LineUp implements Comparable<LineUp>
 {
 	// Lineup properties

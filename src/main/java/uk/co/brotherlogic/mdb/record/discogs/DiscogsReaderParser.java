@@ -11,12 +11,12 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.GetArtists;
-import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.groop.GetGroops;
+import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.record.Record;
 
 public class DiscogsReaderParser extends DefaultHandler

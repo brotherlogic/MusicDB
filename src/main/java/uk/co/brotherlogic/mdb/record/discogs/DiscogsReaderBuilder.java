@@ -17,8 +17,8 @@ import uk.co.brotherlogic.mdb.App;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
 import uk.co.brotherlogic.mdb.GetFormats;
-import uk.co.brotherlogic.mdb.GetGroops;
 import uk.co.brotherlogic.mdb.GetLabels;
+import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
 import uk.co.brotherlogic.mdb.record.Record;
 

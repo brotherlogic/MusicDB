@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb;
+package uk.co.brotherlogic.mdb.groop;
 
 /**
  * Class to deal with getting groops
@@ -16,6 +16,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import uk.co.brotherlogic.mdb.Artist;
+import uk.co.brotherlogic.mdb.GetArtists;
+import uk.co.brotherlogic.mdb.LineUp;
+import uk.co.brotherlogic.mdb.Persistent;
+import uk.co.brotherlogic.mdb.Utils;
+
 public class GetGroops
 {
 	private static Map<Integer, Groop> groopMap = new TreeMap<Integer, Groop>();
@@ -28,6 +34,8 @@ public class GetGroops
 	// Temporary store of groop name -> lineup
 	Map<String, Groop> tempStore;
 
+	PreparedStatement updateState;
+
 	private static GetGroops singleton = null;
 
 	private GetGroops() throws SQLException
@@ -36,6 +44,11 @@ public class GetGroops
 		p = Persistent.create();
 		tempStore = new TreeMap<String, Groop>();
 		groops = new TreeMap<String, Groop>();
+
+		updateState = p
+				.getConnection()
+				.getPreparedStatement(
+						"UPDATE groops SET sort_name = ?, show_name = ? WHERE groopnumber = ?");
 	}
 
 	public void addLineUp(LineUp lineup) throws SQLException
@@ -118,17 +131,18 @@ public class GetGroops
 		groops = new TreeMap<String, Groop>();
 
 		// Get the bare bones of the groops
-		String sql = "SELECT sort_name, GroopNumber from Groops";
+		String sql = "SELECT sort_name, show_name, GroopNumber from Groops";
 		PreparedStatement ps = p.getConnection().getPreparedStatement(sql);
 		ps.execute();
 		ResultSet rs = ps.getResultSet();
 		while (rs.next())
 		{
-			String groopName = rs.getString(1);
-			int groopNumber = rs.getInt(2);
+			String sortName = rs.getString(1);
+			String showName = rs.getString(2);
+			int groopNumber = rs.getInt(3);
 
-			Groop fGroop = new Groop(groopName, groopName, groopNumber);
-			groops.put(groopName, fGroop);
+			Groop fGroop = new Groop(sortName, showName, groopNumber);
+			groops.put(sortName, fGroop);
 		}
 	}
 
@@ -139,24 +153,24 @@ public class GetGroops
 
 	public Groop getGroop(int num) throws SQLException
 	{
-		System.err.println("Getting Groop: " + num);
-
 		// Get the groop name
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
-				.executeQuery("SELECT GroopName FROM Groops WHERE GroopNumber = "
+				.executeQuery("SELECT sort_name, show_name FROM Groops WHERE GroopNumber = "
 						+ num);
 
-		Groop ret = new Groop("ERROR!", "ERROR!", 1, new TreeSet<LineUp>());
-		while (rs.next())
-			ret = getGroop(rs.getString(1));
+		if (rs.next())
+		{
+			Groop ret = new Groop(rs.getString(1), rs.getString(2), num);
+			rs.close();
 
-		rs.close();
+			// Cache the groop
+			groopMap.put(ret.getNumber(), ret);
 
-		// Cache the groop
-		groopMap.put(ret.getNumber(), ret);
-
-		return ret;
+			return ret;
+		}
+		else
+			return null;
 	}
 
 	public Groop getGroop(String groopName)
@@ -167,7 +181,7 @@ public class GetGroops
 			return groops.get(groopName);
 		else
 			// Construct the groop with the required groop name
-			return new Groop(groopName, groopName);
+			return new Groop(groopName, Utils.flipString(groopName));
 	}
 
 	public Map<String, Groop> getGroopMap()
@@ -359,6 +373,17 @@ public class GetGroops
 		return currGroop;
 	}
 
+	public void save(Groop g) throws SQLException
+	{
+		updateState.setString(1, g.getSortName());
+		updateState.setString(2, g.getShowName());
+		updateState.setInt(3, g.getNumber());
+
+		System.err.println("SAVING: " + g.getNumber());
+		System.err.println(updateState.toString());
+		updateState.execute();
+	}
+
 	public String toString()
 	{
 		return "Groops";
@@ -370,5 +395,39 @@ public class GetGroops
 			singleton = new GetGroops();
 
 		return singleton;
+	}
+
+	public static void main(String[] args)
+	{
+		try
+		{
+			Map<String, Groop> gMap = GetGroops.build().getGroopMap();
+			int count = 0;
+			for (Groop grp : gMap.values())
+				if (grp.getShowName() == null
+						|| grp.getShowName().equals("null"))
+				{
+					System.err.println("GROOP = " + grp.getNumber());
+					System.err.println("SHOW = " + grp.getShowName());
+					System.err.println("SORT = " + grp.getSortName());
+
+					grp.setShowName(Utils.flipString(grp.getSortName()));
+
+					System.err.println("SHOW = " + grp.getShowName());
+					System.err.println("SORT = " + grp.getSortName());
+
+					grp.save();
+					System.err.println(grp);
+					System.exit(1);
+					count++;
+
+				}
+
+			System.err.println("Done " + count);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

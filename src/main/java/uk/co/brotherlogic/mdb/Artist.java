@@ -18,14 +18,6 @@ public class Artist implements Comparable<Artist>, Builder<Artist>
 		// Do Nothing
 	}
 
-	public Artist(String sortName, int id)
-	{
-		this.sortName = sortName;
-		this.id = id;
-
-		showName = resolve(sortName);
-	}
-
 	public Artist(String sortName, int number, String showName)
 	{
 		this.sortName = sortName;
@@ -33,10 +25,17 @@ public class Artist implements Comparable<Artist>, Builder<Artist>
 		this.showName = showName;
 	}
 
+	public Artist(String sortName, String showName, int id)
+	{
+		this.sortName = sortName;
+		this.id = id;
+		this.showName = showName;
+	}
+
 	@Override
 	public Artist build(String name)
 	{
-		return new Artist(name, -1);
+		return new Artist(name, Utils.flipString(name), -1);
 	}
 
 	@Override
@@ -63,16 +62,6 @@ public class Artist implements Comparable<Artist>, Builder<Artist>
 	public String getSortName()
 	{
 		return sortName;
-	}
-
-	private String resolve(final String name)
-	{
-		int commaPos = name.indexOf(',');
-		if (commaPos > 0)
-			return name.substring(commaPos).trim() + " "
-					+ name.substring(0, commaPos);
-		else
-			return name;
 	}
 
 	public void setId(int id)

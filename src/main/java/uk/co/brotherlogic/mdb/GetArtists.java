@@ -187,7 +187,7 @@ public class GetArtists
 			else
 			{
 				rs.close();
-				return new Artist(name, -1);
+				return new Artist(name, Utils.flipString(name), -1);
 			}
 		}
 	}
@@ -219,7 +219,7 @@ public class GetArtists
 			else
 			{
 				rs.close();
-				return new Artist(name, -1);
+				return new Artist(name, Utils.flipString(name), -1);
 			}
 		}
 	}

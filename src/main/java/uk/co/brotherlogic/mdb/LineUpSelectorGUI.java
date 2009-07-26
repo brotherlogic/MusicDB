@@ -27,6 +27,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import uk.co.brotherlogic.mdb.groop.Groop;
+
 public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		CaretListener
 {
@@ -116,7 +118,8 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 			}
 			else
 				// Add a label by just placing it into the addlist
-				addElem(new Artist(textIn.getText(), -1));
+				addElem(new Artist(textIn.getText(), Utils.flipString(textIn
+						.getText()), -1));
 		}
 		else if (e.getActionCommand() == "all")
 		{

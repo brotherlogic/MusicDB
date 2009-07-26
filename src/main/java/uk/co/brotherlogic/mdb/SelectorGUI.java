@@ -115,7 +115,8 @@ public class SelectorGUI extends JDialog implements ActionListener,
 
 	public Object getClosest(String attempt)
 	{
-		SortedSet<Artist> temp = objs.tailSet(new Artist(attempt, -1));
+		SortedSet<Artist> temp = objs.tailSet(new Artist(attempt, Utils
+				.flipString(attempt), -1));
 
 		if (temp.size() > 0)
 			return temp.first();

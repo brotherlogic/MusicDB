@@ -22,10 +22,10 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import uk.co.brotherlogic.mdb.EntitySelector;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.TrackChooser;
+import uk.co.brotherlogic.mdb.groop.Groop;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
 

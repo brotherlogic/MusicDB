@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb;
+package uk.co.brotherlogic.mdb.groop;
 
 /**
  * Class to represent a full groop with all the lineups
@@ -11,6 +11,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import uk.co.brotherlogic.mdb.Builder;
+import uk.co.brotherlogic.mdb.LineUp;
+import uk.co.brotherlogic.mdb.Utils;
+
 public class Groop implements Comparable<Groop>, Builder<Groop>
 {
 	// Groop properties
@@ -18,6 +22,8 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 	private String showName = "";
 	private int groopNumber;
 	private Collection<LineUp> lineUps = null;
+
+	private boolean updated = false;
 
 	public Groop()
 	{
@@ -68,7 +74,7 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 	@Override
 	public Groop build(String name)
 	{
-		return new Groop(name, name, -1);
+		return new Groop(name, Utils.flipString(name), -1);
 	}
 
 	@Override
@@ -145,6 +151,12 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		return sortName;
 	}
 
+	public void save() throws SQLException
+	{
+		if (updated)
+			GetGroops.build().save(this);
+	}
+
 	public void setLineUps(Collection<LineUp> lineUpsIn)
 	{
 		// Clear and add lineUpsIn
@@ -160,12 +172,14 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 	public void setShowName(String groopIn)
 	{
 		showName = groopIn;
+		updated = true;
 	}
 
 	// Set methods
 	public void setSortName(String groopIn)
 	{
 		sortName = groopIn;
+		updated = true;
 	}
 
 	public String toString()

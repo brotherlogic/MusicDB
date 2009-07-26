@@ -20,10 +20,10 @@ import java.util.Vector;
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.Format;
-import uk.co.brotherlogic.mdb.Groop;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.groop.Groop;
 
 public class Record implements Comparable<Record>
 {
