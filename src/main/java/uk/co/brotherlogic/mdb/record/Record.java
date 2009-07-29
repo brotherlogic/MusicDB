@@ -66,6 +66,9 @@ public class Record implements Comparable<Record>
 
 	Collection<Artist> compilers;
 
+	/** The location of the record on it's respective shelf */
+	private int shelfpos;
+
 	public Record()
 	{
 		title = "";
@@ -84,7 +87,7 @@ public class Record implements Comparable<Record>
 
 	public Record(String title, Format format, Calendar boughtDate,
 			Collection<String> catnos, Collection<Label> labels,
-			Collection<Track> tracks)
+			Collection<Track> tracks, int shelfpos)
 	{
 		this();
 		this.title = title;
@@ -93,6 +96,7 @@ public class Record implements Comparable<Record>
 		this.catnos = catnos;
 		this.labels = labels;
 		this.tracks = tracks;
+		this.shelfpos = shelfpos;
 	}
 
 	public void addCatNo(String catNo)
@@ -340,6 +344,11 @@ public class Record implements Comparable<Record>
 		return year;
 	}
 
+	public int getShelfPos()
+	{
+		return shelfpos;
+	}
+
 	public String getTitle()
 	{
 		return title;
@@ -422,6 +431,13 @@ public class Record implements Comparable<Record>
 		return ret;
 	}
 
+	private void resetShelfPos()
+	{
+		System.err.println("RESETTING SHELF POS: " + shelfpos);
+		if (shelfpos > 0)
+			shelfpos = 0;
+	}
+
 	public void save() throws SQLException
 	{
 		GetRecords.create().saveCompilers(this);
@@ -476,6 +492,8 @@ public class Record implements Comparable<Record>
 
 	public void setFormat(Format form)
 	{
+		// Reset the shelfpos
+		resetShelfPos();
 		format = form;
 	}
 

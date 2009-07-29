@@ -201,7 +201,10 @@ public class AddRecordOverseer implements ActionListener
 				ex.printStackTrace();
 			}
 		else if (e.getActionCommand().equals("format"))
+		{
 			setForSelectedFormat();
+			curr.setFormat(gui.getFormat());
+		}
 		else if (e.getActionCommand().equals("cat"))
 			doCat();
 		else if (e.getActionCommand().equals("tracks"))
@@ -563,9 +566,6 @@ public class AddRecordOverseer implements ActionListener
 
 			curr.setCatNos(tempCats);
 		}
-
-		// Get the format
-		curr.setFormat(gui.getFormat());
 
 		// Set the category
 		curr.setCategory(gui.getCategory());

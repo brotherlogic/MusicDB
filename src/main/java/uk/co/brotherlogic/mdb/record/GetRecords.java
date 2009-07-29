@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -90,7 +91,7 @@ public class GetRecords
 		updateRecord = p
 				.getConnection()
 				.getPreparedStatement(
-						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ? WHERE RecordNumber = ?");
+						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ? WHERE RecordNumber = ?");
 
 	}
 
@@ -588,7 +589,7 @@ public class GetRecords
 		// Run the query
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
-				.executeQuery("Select Title, BoughtDate, Notes, ReleaseYear, FormatName, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price FROM Records, Categories, Formats WHERE Categories.CategoryNumber = Records.Category AND Formats.FormatNumber = Records.Format AND RecordNumber = "
+				.executeQuery("Select Title, BoughtDate, Notes, ReleaseYear, FormatName, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories, Formats WHERE Categories.CategoryNumber = Records.Category AND Formats.FormatNumber = Records.Format AND RecordNumber = "
 						+ recNumber);
 
 		// Prepare the objects
@@ -599,7 +600,8 @@ public class GetRecords
 		{
 
 			String title = rs.getString(1);
-			String boughtdate = rs.getString(2);
+			Calendar boughtDate = Calendar.getInstance();
+			boughtDate.setTimeInMillis(rs.getDate(2).getTime());
 			String format = rs.getString(5);
 			String notes = rs.getString(3);
 			int year = rs.getInt(4);
@@ -609,10 +611,12 @@ public class GetRecords
 			String aut = rs.getString(9);
 			int own = rs.getInt(10);
 			double price = rs.getDouble(11);
+			int shelfpos = rs.getInt(12);
 
+			currRec = new Record(title, GetFormats.create().getFormat(format),
+					boughtDate, getCatNos(recNumber), getLabels(recNumber),
+					getTracks(recNumber), shelfpos);
 			currRec.setNumber(recNumber);
-			currRec.setTitle(title);
-			currRec.setDate(boughtdate);
 			currRec.setNotes(notes);
 			currRec.setYear(year);
 			currRec.setReleaseMonth(month);
@@ -621,13 +625,9 @@ public class GetRecords
 			currRec.setOwner(own);
 			currRec.setPrice(price);
 
-			currRec.setFormat(GetFormats.create().getFormat(format));
-			currRec.setTracks(getTracks(recNumber));
 			currRec
 					.setCategory(GetCategories.build()
 							.getCategory(category, -1));
-			currRec.setLabels(getLabels(recNumber));
-			currRec.setCatNos(getCatNos(recNumber));
 
 			// Return this record
 			return currRec;
@@ -795,8 +795,8 @@ public class GetRecords
 		updateRecord.setInt(9, in.getReleaseType());
 		updateRecord.setInt(10, in.getOwner());
 		updateRecord.setDouble(11, in.getPrice());
-
-		updateRecord.setInt(12, in.getNumber());
+		updateRecord.setInt(12, in.getShelfPos());
+		updateRecord.setInt(13, in.getNumber());
 
 		updateRecord.execute();
 		int recordNumber = in.getNumber();
