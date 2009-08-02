@@ -1,6 +1,5 @@
 Finish off the discogs parser
 Update
-	Fix the format display on record edit
 	Fix the record updating so that it works properly
 Improvements
 	Add a base_format column to formats so that e.g. 2x12"->12"
