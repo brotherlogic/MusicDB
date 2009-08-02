@@ -190,8 +190,6 @@ public class GetFormats
 				int num = rs.getInt(1);
 				rs.close();
 				s.close();
-				System.out.println("get_format: "
-						+ ((System.currentTimeMillis() - sTime) / 1000.0));
 				return new Format(num, in);
 			}
 			else

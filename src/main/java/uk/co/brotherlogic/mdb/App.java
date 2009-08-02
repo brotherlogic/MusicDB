@@ -308,10 +308,7 @@ public class App extends JFrame
 
 		App c = new App();
 		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
-		{
-			System.out.println("Running For Unix!");
 			c.setFileString("/usr/share/hancock_multimedia/");
-		}
 		c.runApp();
 	}
 

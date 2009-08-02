@@ -13,11 +13,4 @@ public class Utils
 		else
 			return toFlip;
 	}
-
-	public static void main(String[] args)
-	{
-		System.out.println(Utils.flipString("donkey"));
-		System.out.println(Utils.flipString("Dyble, Judy"));
-		System.out.println(Utils.flipString("Earth, Wind and Fire"));
-	}
 }

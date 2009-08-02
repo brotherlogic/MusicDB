@@ -261,7 +261,6 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 	public Collection<X> getData()
 	{
 		// Return the data
-		System.out.println("Getting: " + selectedObjs);
 		return selectedObjs;
 	}
 
@@ -336,9 +335,7 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 	{
 		// Remove the data from the lists and objects
 		selectTo.removeElement(in);
-		System.out.println(in + " " + in.getClass() + " => " + selectedObjs);
 		selectedObjs.remove(in);
-		System.out.println(in + " " + in.getClass() + " => " + selectedObjs);
 
 		// Find the point at which the val should be added
 		Object near = getClosest(in.toString());
@@ -359,7 +356,6 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 
 	public void setData(Collection<X> listElems, Collection<X> chosen)
 	{
-		System.out.println("CHOSEN = " + chosen);
 		// Keep one of the lists for cancellation purposes
 		originalElements = new TreeSet<X>(chosen);
 
@@ -390,8 +386,6 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 
 		// Initialise the thing
 		start();
-
-		System.out.println("SELECTED = " + selectedObjs);
 	}
 
 	public void setData(Collection<X> listElems, Collection<X> chosen,

@@ -57,8 +57,8 @@ public class GetRecords
 
 	Collection<Record> records;
 	PreparedStatement updateTrack;
-
 	PreparedStatement updateRecord;
+	PreparedStatement getPersonnel;
 
 	private static GetRecords singleton;
 
@@ -92,6 +92,11 @@ public class GetRecords
 				.getConnection()
 				.getPreparedStatement(
 						"UPDATE Records SET Title = ?, BoughtDate = ?, Format = ?, Notes = ?, ReleaseYear = ?, Category = ?, Author = ?, ReleaseMonth = ?, ReleaseType = ?, modified = now(), owner = ?, purchase_price = ?, shelfpos = ? WHERE RecordNumber = ?");
+
+		getPersonnel = p
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT Personnel.TrackNumber, Artists.sort_name FROM Artists INNER JOIN Personnel ON Artists.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)=?))");
 
 	}
 
@@ -440,8 +445,6 @@ public class GetRecords
 			int lineUpNumber = rs.getInt(1);
 			int groopNumber = rs.getInt(2);
 
-			System.out.println("building lineup " + lineUpNumber);
-
 			Groop tempGroop = GetGroops.build().getSingleGroop(groopNumber);
 			retSet.add(tempGroop.getLineUp(lineUpNumber));
 		}
@@ -461,22 +464,16 @@ public class GetRecords
 
 	public Set<Artist> getPersonnel(int trackNumber) throws SQLException
 	{
-		System.out.println("Getting personnel for track " + trackNumber);
 		Set<Artist> retSet = new TreeSet<Artist>();
 
 		// Set the parameter
-		Statement s = p.getConnection().getStatement();
-		ResultSet rs = s
-				.executeQuery("SELECT Personnel.TrackNumber, Artists.sort_name FROM Artists INNER JOIN Personnel ON Artists.artist_id = Personnel.ArtistNumber WHERE (((Personnel.TrackNumber)="
-						+ trackNumber + "))");
-
-		System.out.println("Ran query");
+		getPersonnel.setInt(1, trackNumber);
+		ResultSet rs = getPersonnel.executeQuery();
 
 		while (rs.next())
 			retSet.add(GetArtists.create().getArtist(rs.getString(2)));
 
 		rs.close();
-		s.close();
 
 		return retSet;
 	}
@@ -584,7 +581,7 @@ public class GetRecords
 	public Record getSingleRecord(int recNumber) throws SQLException,
 			ParseException
 	{
-		System.out.println("Getting: " + recNumber);
+		long sTime = System.currentTimeMillis();
 
 		// Run the query
 		Statement s = p.getConnection().getStatement();
@@ -629,6 +626,9 @@ public class GetRecords
 					.setCategory(GetCategories.build()
 							.getCategory(category, -1));
 
+			System.err.println("TIME = " + (System.currentTimeMillis() - sTime)
+					/ 1000.0);
+
 			// Return this record
 			return currRec;
 		}
@@ -648,11 +648,10 @@ public class GetRecords
 						+ recNumber + " ORDER BY TrackNumber");
 		// Naive approach to check for spped
 		Track currTrack;
+		long cTime = 0;
 		while (rs.next())
 		{
 			int trckNum = rs.getInt(4);
-
-			System.out.println("Getting track: " + trckNum);
 
 			// Create new track
 			String name = rs.getString(2);
@@ -666,7 +665,9 @@ public class GetRecords
 			currTrack.setTrackNumber(trckNum);
 			currTrack.setTrackRefNumber(refNum);
 
+			long sTime = System.currentTimeMillis();
 			currTrack.setPersonnel(getPersonnel(refNum));
+			cTime += System.currentTimeMillis() - sTime;
 			currTrack.setLineUps(getLineUps(refNum));
 
 			retSet.add(currTrack);
@@ -674,6 +675,7 @@ public class GetRecords
 		rs.close();
 		s.close();
 
+		System.err.println("TIME = " + cTime / 1000.0);
 		return retSet;
 	}
 
@@ -921,5 +923,10 @@ public class GetRecords
 		if (singleton == null)
 			singleton = new GetRecords();
 		return singleton;
+	}
+
+	public static void main(String[] args) throws Exception
+	{
+		GetRecords.create().getSingleRecord(9811);
 	}
 }

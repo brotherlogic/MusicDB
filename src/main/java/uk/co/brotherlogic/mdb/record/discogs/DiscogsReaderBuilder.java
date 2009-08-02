@@ -107,8 +107,8 @@ public class DiscogsReaderBuilder
 	public static void main(String[] args) throws Exception
 	{
 		DiscogsReaderBuilder builder = new DiscogsReaderBuilder();
-		Record rec = (builder.buildRecordFromDiscogs("Leonard Nimoy",
-				"The Touch Of Leonard Nimoy"));
+		Record rec = (builder.buildRecordFromDiscogs("Sharon Van Etten",
+				"Because I Was Love"));
 		AddRecordOverseer over = new AddRecordOverseer(new App(), GetArtists
 				.create().getArtists(), GetLabels.create().getLabels(),
 				GetFormats.create().getFormats(), GetGroops.build()

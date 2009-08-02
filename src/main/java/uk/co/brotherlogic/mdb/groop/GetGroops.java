@@ -295,8 +295,6 @@ public class GetGroops
 
 	public Groop getSingleGroop(int num) throws SQLException
 	{
-		System.out.println("build_groop: " + num);
-
 		if (groopMap.containsKey(num))
 			return groopMap.get(num);
 
@@ -320,7 +318,6 @@ public class GetGroops
 
 			if (currGroop == null)
 			{
-				System.out.println("Creaing: " + sortName);
 				// Construct the current groop and line up
 				currGroop = new Groop(sortName, showName, groopNumber,
 						new TreeSet<LineUp>());
@@ -331,7 +328,6 @@ public class GetGroops
 			}
 			else if (!sortName.equals(currGroop.getSortName()))
 			{
-				System.out.println("New Groop: " + sortName);
 				// Add the groop and create a new one
 				// Ensure that we add the last lineUp
 				currGroop.addLineUp(currLineUp);
@@ -347,7 +343,6 @@ public class GetGroops
 			}
 			else if (currLineUp.getLineUpNumber() != lineUpNumber)
 			{
-				System.out.println("Adding lineup: " + lineUpNumber);
 				// Add the line up
 				currGroop.addLineUp(currLineUp);
 
@@ -358,18 +353,14 @@ public class GetGroops
 						.getArtist(artistNumber));
 			}
 			else
-			{
-				System.out.println("Adding artist:" + artistNumber);
 				currLineUp.addArtist(GetArtists.create()
 						.getArtist(artistNumber));
-			}
 		}
 
 		currGroop.addLineUp(currLineUp);
 
 		groopMap.put(currGroop.getNumber(), currGroop);
 
-		System.out.println("Built");
 		return currGroop;
 	}
 
@@ -379,8 +370,6 @@ public class GetGroops
 		updateState.setString(2, g.getShowName());
 		updateState.setInt(3, g.getNumber());
 
-		System.err.println("SAVING: " + g.getNumber());
-		System.err.println(updateState.toString());
 		updateState.execute();
 
 		p.getConnection().commitTrans();
