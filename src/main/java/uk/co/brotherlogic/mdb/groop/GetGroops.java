@@ -382,6 +382,8 @@ public class GetGroops
 		System.err.println("SAVING: " + g.getNumber());
 		System.err.println(updateState.toString());
 		updateState.execute();
+
+		p.getConnection().commitTrans();
 	}
 
 	public String toString()
@@ -418,7 +420,6 @@ public class GetGroops
 
 					grp.save();
 					System.err.println(grp);
-					System.exit(1);
 					count++;
 
 				}
