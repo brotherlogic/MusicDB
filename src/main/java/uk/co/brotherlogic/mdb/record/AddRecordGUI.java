@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -818,7 +819,11 @@ public class AddRecordGUI extends JFrame
 
 	public void selectFormat(Format formIn)
 	{
+		System.err.println("SELECT FORMAT: " + formIn.hashCode());
+		int index = -1;
+		ComboBoxModel mod = comboFormat.getModel();
 		comboFormat.setSelectedItem(formIn);
+		System.err.println("SELECTED: " + comboFormat.getSelectedIndex());
 	}
 
 	public void setAuthor(String in)

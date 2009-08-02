@@ -46,6 +46,15 @@ public class Format implements Comparable<Format>
 		return name.compareTo(o.getName());
 	}
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Format)
+			return compareTo((Format) o) == 0;
+		else
+			return false;
+	}
+
 	public String fullString()
 	{
 		String out = formatNumber + ": " + name + "\n";
