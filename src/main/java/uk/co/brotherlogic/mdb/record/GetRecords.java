@@ -28,12 +28,12 @@ import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.EntitySelector;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
-import uk.co.brotherlogic.mdb.GetFormats;
 import uk.co.brotherlogic.mdb.GetLabels;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
 

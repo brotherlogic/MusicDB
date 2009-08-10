@@ -10,6 +10,9 @@ import java.util.Collection;
 
 import javax.swing.JFrame;
 
+import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.format.GetFormats;
+
 public class CategoryBuilderOverseer
 {
 	// The GUI

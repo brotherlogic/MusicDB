@@ -30,13 +30,14 @@ import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.Builder;
 import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.CategoryBuilderGUI;
-import uk.co.brotherlogic.mdb.Format;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.LineUpSelectorGUI;
-import uk.co.brotherlogic.mdb.NewFormatGUI;
 import uk.co.brotherlogic.mdb.SetBuilder;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.format.GetFormats;
+import uk.co.brotherlogic.mdb.format.NewFormatGUI;
 import uk.co.brotherlogic.mdb.groop.Groop;
 
 public class AddRecordOverseer implements ActionListener
@@ -47,6 +48,8 @@ public class AddRecordOverseer implements ActionListener
 	App call = null;
 
 	Collection<Category> categories;
+
+	Collection<String> baseFormats;
 
 	// Flag indicating if we are done now
 	boolean complete = false;
@@ -84,7 +87,6 @@ public class AddRecordOverseer implements ActionListener
 		Date today = new Date();
 		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
 		gui.setDate(myForm.format(today));
-		showGUI(c);
 		DateFormat yForm = new SimpleDateFormat("yyyy");
 		gui.setYear(yForm.format(today));
 
@@ -152,9 +154,6 @@ public class AddRecordOverseer implements ActionListener
 		gui.setPrice(rec.getPrice());
 
 		updateCompiler();
-
-		// Create the gui
-		showGUI(c);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -799,7 +798,7 @@ public class AddRecordOverseer implements ActionListener
 	public void newFormat()
 	{
 		// Ask for a new format
-		NewFormatGUI formGUI = new NewFormatGUI(categories, gui);
+		NewFormatGUI formGUI = new NewFormatGUI(categories, baseFormats, gui);
 		formGUI.setVisible(true);
 		Format newFormat = formGUI.getFormat();
 
@@ -835,7 +834,14 @@ public class AddRecordOverseer implements ActionListener
 						.getTrackNumber());
 			}
 
-			showGUI(call);
+			try
+			{
+				showGUI(call);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		else
 		{
@@ -880,8 +886,10 @@ public class AddRecordOverseer implements ActionListener
 		gui.setLength(tStr, trackNumber);
 	}
 
-	private void showGUI(Window parent)
+	public void showGUI(Window parent) throws SQLException
 	{
+		baseFormats = GetFormats.create().getBaseFormats();
+
 		// Set the right size
 		gui.setSize(700, 700);
 

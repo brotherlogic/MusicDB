@@ -1,23 +1,30 @@
-package uk.co.brotherlogic.mdb;
+package uk.co.brotherlogic.mdb.format;
 
 /**
  * Class to deal with getting formats
  * @author Simon Tucker
  */
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import uk.co.brotherlogic.mdb.Category;
+import uk.co.brotherlogic.mdb.GetCategories;
+import uk.co.brotherlogic.mdb.Persistent;
 
 public class GetFormats
 {
 	// Maps format name to format
 	Map<String, Format> formats;
+	Set<String> baseFormats;
 	Persistent p;
 
 	private static GetFormats singleton;
@@ -28,6 +35,38 @@ public class GetFormats
 		p = Persistent.create();
 
 		formats = new TreeMap<String, Format>();
+	}
+
+	public Format addFormat(Format in) throws SQLException
+	{
+		// Check if this format is already present
+		if (formats.keySet().contains(in.getName()))
+			return formats.get(in);
+
+		// Totally new format! need to manually construct this one
+
+		// Add the new format and commit the update
+		PreparedStatement ps = p.getConnection().prepState(
+				"INSERT INTO Formats (FormatName, baseformat) VALUES (?,?)");
+		ps.setString(1, in.getName());
+		ps.setString(2, in.getBaseFormat());
+		ps.execute();
+
+		// Get the new format number
+		PreparedStatement ps2 = p.getConnection().prepState(
+				"SELECT FormatNumber FROM Formats WHERE FormatName = ?");
+		ps2.setString(1, in.getName());
+		ResultSet rs = ps2.executeQuery();
+		rs.next();
+		int val = rs.getInt(1);
+
+		Format ret = new Format(val, in.getName(), in.getBaseFormat());
+
+		// Close the database objects
+		rs.close();
+
+		return ret;
+
 	}
 
 	public Format addFormat(Format toAdd, Category relCat) throws SQLException
@@ -88,37 +127,6 @@ public class GetFormats
 		return toAdd;
 	}
 
-	public Format addFormat(String in) throws SQLException
-	{
-		// Check if this format is already present
-		if (formats.keySet().contains(in))
-			return formats.get(in);
-
-		// Totally new format! need to manually construct this one
-
-		// Add the new format and commit the update
-		p.getConnection().runUpdate(
-				"INSERT INTO Formats (FormatName) VALUES (\'" + in + "\')");
-
-		// Get the new format number
-		Statement s = p.getConnection().getStatement();
-		ResultSet rs = s
-				.executeQuery("SELECT FormatNumber FROM Formats WHERE FormatName = \'"
-						+ in + "\'");
-
-		rs.next();
-		int val = rs.getInt(1);
-
-		Format ret = new Format(val, in);
-
-		// Close the database objects
-		rs.close();
-		s.close();
-
-		return ret;
-
-	}
-
 	public void cancel()
 	{
 		// Necessary for this to finish, so just leave in background
@@ -134,25 +142,42 @@ public class GetFormats
 		// Get a statement and run the query
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
-				.executeQuery("SELECT FormatName,FormatNumber FROM Formats");
+				.executeQuery("SELECT FormatName,FormatNumber,baseformat  FROM Formats");
+
+		baseFormats = new TreeSet<String>();
 
 		// Fill the set
 		while (rs.next())
 		{
 			// Construct the new format
-			Format temp = new Format();
-			temp.setName(rs.getString(1));
-			temp.setNumber(rs.getInt(2));
+			Format temp = new Format(rs.getInt(2), rs.getString(1), rs
+					.getString(3));
 
 			// Now add the corresponding categories
 			temp.setCategories(getCategories(temp.getNumber()));
 
+			baseFormats.add(temp.getBaseFormat());
 			formats.put(temp.getName(), temp);
 		}
 
 		// Close the database objects
 		rs.close();
 		s.close();
+	}
+
+	public Collection<String> getBaseFormats()
+	{
+		if (baseFormats == null)
+			try
+			{
+				execute();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+
+		return baseFormats;
 	}
 
 	public Collection<Category> getCategories(int num) throws SQLException
@@ -182,21 +207,22 @@ public class GetFormats
 		{
 			Statement s = p.getConnection().getStatement();
 			ResultSet rs = s
-					.executeQuery("SELECT FormatNumber FROM Formats WHERE FormatName = \'"
+					.executeQuery("SELECT FormatNumber, baseformat FROM Formats WHERE FormatName = \'"
 							+ in + "\'");
 
 			if (rs.next())
 			{
 				int num = rs.getInt(1);
+				String base = rs.getString(2);
 				rs.close();
 				s.close();
-				return new Format(num, in);
+				return new Format(num, in, base);
 			}
 			else
 			{
 				rs.close();
 				s.close();
-				return new Format(-1, in);
+				return new Format(-1, in, "");
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb;
+package uk.co.brotherlogic.mdb.format;
 
 /**
  * Class to deal with adding a new format
@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -24,6 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import uk.co.brotherlogic.mdb.Category;
+import uk.co.brotherlogic.mdb.GetCategories;
+
 public class NewFormatGUI extends JDialog implements ActionListener
 {
 	GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -34,11 +38,13 @@ public class NewFormatGUI extends JDialog implements ActionListener
 	JButton butOK = new JButton();
 	JButton butCancel = new JButton();
 	JPanel jPanel1 = new JPanel();
+	JComboBox comboBase = new JComboBox();
 
 	// Flag to indicate cancellation
 	boolean cancelled = false;
 
-	public NewFormatGUI(Collection<Category> categories, JFrame in)
+	public NewFormatGUI(Collection<Category> categories,
+			Collection<String> baseFormats, JFrame in)
 	{
 		super(in, true);
 		Vector<Category> cats = new Vector<Category>();
@@ -46,7 +52,7 @@ public class NewFormatGUI extends JDialog implements ActionListener
 
 		try
 		{
-			jbInit(cats);
+			jbInit(cats, baseFormats);
 		}
 		catch (Exception e)
 		{
@@ -54,16 +60,11 @@ public class NewFormatGUI extends JDialog implements ActionListener
 		}
 
 		// Set the size and center in the screen
-		this.setSize(379, 149);
+		this.pack();
 		this.setResizable(false);
 
 		// Center the frame on screen
-		int xSi = (int) this.getToolkit().getScreenSize().getWidth();
-		int ySi = (int) this.getToolkit().getScreenSize().getHeight();
-		Dimension d = this.getSize();
-		int xCo = (xSi / 2) - d.width / 2;
-		int yCo = (ySi / 2) - d.height / 2;
-		this.setLocation(xCo, yCo);
+		this.setLocationRelativeTo(null);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -89,25 +90,31 @@ public class NewFormatGUI extends JDialog implements ActionListener
 			Format other = (Format) comboOther.getSelectedItem();
 
 			if (other != null)
-				ret = new Format(-1, textFormat.getText(), ((Format) comboOther
+				ret = new Format(-1, textFormat.getText(), (String) comboBase
+						.getSelectedItem(), ((Format) comboOther
 						.getSelectedItem()).getCategories());
 			else
-				ret = new Format(-1, textFormat.getText(),
-						new TreeSet<Category>());
+				ret = new Format(-1, textFormat.getText(), (String) comboBase
+						.getSelectedItem(), new TreeSet<Category>());
 
 			return ret;
 		}
 	}
 
-	private void jbInit(Vector<Category> categories) throws Exception
+	private void jbInit(Vector<Category> categories, Collection<String> base)
+			throws Exception
 	{
 		// Construct the Categories thing accordingly
 		comboOther = new JComboBox(categories);
+		comboBase = new JComboBox(base.toArray(new String[0]));
 
 		jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
 		jLabel1.setText("Format :");
 		this.getContentPane().setLayout(gridBagLayout1);
 		jLabel2.setText("Take Category From: ");
+
+		JLabel baseLabel = new JLabel("Base: ");
+
 		textFormat.setMaximumSize(new Dimension(2147483647, 30));
 		textFormat.setMinimumSize(new Dimension(4, 30));
 		textFormat.setPreferredSize(new Dimension(4, 30));
@@ -116,6 +123,9 @@ public class NewFormatGUI extends JDialog implements ActionListener
 		comboOther.setMaximumSize(new Dimension(32767, 30));
 		comboOther.setMinimumSize(new Dimension(31, 30));
 		comboOther.setPreferredSize(new Dimension(31, 30));
+		comboBase.setMaximumSize(new Dimension(32767, 30));
+		comboBase.setMinimumSize(new Dimension(31, 30));
+		comboBase.setPreferredSize(new Dimension(31, 30));
 		butOK.setMaximumSize(new Dimension(75, 30));
 		butOK.setMinimumSize(new Dimension(75, 30));
 		butOK.setPreferredSize(new Dimension(75, 30));
@@ -135,10 +145,21 @@ public class NewFormatGUI extends JDialog implements ActionListener
 						GridBagConstraints.EAST, GridBagConstraints.NONE,
 						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
-				jLabel2,
+				baseLabel,
 				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				comboBase,
+				new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				jLabel2,
+				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 0, 0), 0, 0));
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				textFormat,
 				new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0,
@@ -147,25 +168,32 @@ public class NewFormatGUI extends JDialog implements ActionListener
 						0, 0));
 		this.getContentPane().add(
 				comboOther,
-				new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0,
+				new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0,
 						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5),
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
 						0, 0));
 		this.getContentPane().add(
 				butOK,
-				new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
+				new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
 						GridBagConstraints.EAST, GridBagConstraints.NONE,
 						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butCancel,
-				new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
+				new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0,
 						GridBagConstraints.EAST, GridBagConstraints.NONE,
 						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				jPanel1,
-				new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0,
+				new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
 						GridBagConstraints.CENTER,
 						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 						0, 0));
+	}
+
+	public static void main(String[] args) throws SQLException
+	{
+		NewFormatGUI gui = new NewFormatGUI(GetCategories.build()
+				.getCategories(), GetFormats.create().getBaseFormats(), null);
+		gui.setVisible(true);
 	}
 }

@@ -30,6 +30,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import uk.co.brotherlogic.mdb.format.Format;
+
 public class CategoryBuilderGUI extends JDialog implements ActionListener
 {
 	// MP3 Codes are at end of file

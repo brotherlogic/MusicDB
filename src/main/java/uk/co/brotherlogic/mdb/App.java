@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import uk.co.brotherlogic.mdb.cdbuilder.MakeCDFileOverseer;
+import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
 import uk.co.brotherlogic.mdb.record.GetRecords;
@@ -72,7 +73,7 @@ public class App extends JFrame
 				GetLabels.create().getLabels(), GetFormats.create()
 						.getFormats(), GetGroops.build().getGroopMap(),
 				GetCategories.build().getCategories());
-
+		over.showGUI(this);
 	}
 
 	public void addDone()
@@ -195,6 +196,7 @@ public class App extends JFrame
 						GetFormats.create().getFormats(), GetGroops.build()
 								.getGroopMap(), GetCategories.build()
 								.getCategories(), examine);
+				over.showGUI(this);
 			}
 		}
 		catch (Exception ex)

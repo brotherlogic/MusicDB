@@ -1,4 +1,4 @@
-package uk.co.brotherlogic.mdb;
+package uk.co.brotherlogic.mdb.format;
 
 /**
  * Class to represent a format
@@ -9,30 +9,36 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import uk.co.brotherlogic.mdb.Category;
+
 public class Format implements Comparable<Format>
 {
 	String name;
+	private final String baseFormat;
 	TreeSet<Category> categories;
 	int formatNumber;
 
 	public Format()
 	{
 		name = "";
+		baseFormat = "";
 		categories = new TreeSet<Category>();
 		formatNumber = 0;
 	}
 
-	public Format(int num, String sIn)
+	public Format(int num, String sIn, String base)
 	{
 		name = sIn;
 		formatNumber = num;
+		baseFormat = base;
 		categories = new TreeSet<Category>();
 	}
 
-	public Format(int num, String sIn, Collection<Category> cats)
+	public Format(int num, String sIn, String base, Collection<Category> cats)
 	{
 		name = sIn;
 		formatNumber = num;
+		baseFormat = base;
 		categories = new TreeSet<Category>(cats);
 	}
 
@@ -63,6 +69,11 @@ public class Format implements Comparable<Format>
 			out += cIt.next() + ", ";
 
 		return out;
+	}
+
+	public String getBaseFormat()
+	{
+		return baseFormat;
 	}
 
 	public Collection<Category> getCategories()

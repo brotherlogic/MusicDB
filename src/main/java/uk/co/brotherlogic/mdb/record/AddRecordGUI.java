@@ -28,8 +28,8 @@ import javax.swing.border.TitledBorder;
 
 import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.FilledTextArea;
-import uk.co.brotherlogic.mdb.Format;
 import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.format.Format;
 
 public class AddRecordGUI extends JFrame
 {

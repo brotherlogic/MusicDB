@@ -1,5 +1,3 @@
 Finish off the discogs parser
-Update
-	Fix the record updating so that it works properly
-Improvements
-	Add a base_format column to formats so that e.g. 2x12"->12"
+Start converting over each element
+Start building up the tests
