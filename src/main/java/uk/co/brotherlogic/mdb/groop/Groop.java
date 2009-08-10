@@ -184,11 +184,7 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 
 	public String toString()
 	{
-		// Simple for now
-		String ret = "";
-		ret += showName;
-
-		return ret;
+		return sortName;
 	}
 
 }
