@@ -1,3 +1,2 @@
 Finish off the discogs parser
-Start converting over each element
-Start building up the tests
+Convert over the format to the new add/update/delete lifecycle
