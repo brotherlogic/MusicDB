@@ -11,19 +11,35 @@ import java.util.TreeSet;
 
 import uk.co.brotherlogic.mdb.Category;
 
+/**
+ * Represents a format
+ * 
+ * @author sat
+ * 
+ */
 public class Format implements Comparable<Format>
 {
-	String name;
+	/** The name of the format */
+	private final String name;
+
+	/** The base name of the format */
 	private final String baseFormat;
-	TreeSet<Category> categories;
-	int formatNumber;
+
+	/** The categories represented by this format */
+	private final Collection<Category> categories;
+
+	/** The id number of this format */
+	private final int formatNumber;
+
+	/** Flag indicating if this format has been changed */
+	private final boolean formatUpdated = false;
 
 	public Format()
 	{
 		name = "";
 		baseFormat = "";
 		categories = new TreeSet<Category>();
-		formatNumber = 0;
+		formatNumber = -1;
 	}
 
 	public Format(int num, String sIn, String base)
@@ -49,7 +65,7 @@ public class Format implements Comparable<Format>
 
 	public int compareTo(Format o)
 	{
-		return name.compareTo(o.getName());
+		return name.compareTo(o.name);
 	}
 
 	@Override
@@ -71,26 +87,6 @@ public class Format implements Comparable<Format>
 		return out;
 	}
 
-	public String getBaseFormat()
-	{
-		return baseFormat;
-	}
-
-	public Collection<Category> getCategories()
-	{
-		return categories;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public int getNumber()
-	{
-		return formatNumber;
-	}
-
 	@Override
 	public int hashCode()
 	{
@@ -104,16 +100,6 @@ public class Format implements Comparable<Format>
 
 		// Add the new formats
 		categories.addAll(vec);
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	public void setNumber(int number)
-	{
-		formatNumber = number;
 	}
 
 	@Override
