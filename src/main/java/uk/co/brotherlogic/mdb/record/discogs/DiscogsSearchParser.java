@@ -13,7 +13,6 @@ import uk.co.brotherlogic.mdb.record.Record;
 public class DiscogsSearchParser extends DefaultHandler
 {
 	List<Record> records = new LinkedList<Record>();
-	boolean reading = false;
 	Record currRecord = null;
 	String text;
 
@@ -33,7 +32,6 @@ public class DiscogsSearchParser extends DefaultHandler
 
 		if (name.equalsIgnoreCase("result"))
 		{
-			reading = false;
 			if (currRecord != null)
 				records.add(currRecord);
 		}
@@ -58,9 +56,6 @@ public class DiscogsSearchParser extends DefaultHandler
 		text = "";
 		if (name.equalsIgnoreCase("result"))
 			if (attributes.getValue("type").equalsIgnoreCase("release"))
-			{
 				currRecord = new Record();
-				reading = true;
-			}
 	}
 }

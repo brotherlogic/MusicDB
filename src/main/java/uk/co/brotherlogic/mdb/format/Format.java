@@ -91,6 +91,12 @@ public class Format implements Comparable<Format>
 		return formatNumber;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		return name.hashCode();
+	}
+
 	public void setCategories(Collection<Category> vec)
 	{
 		// Clear the old categories
@@ -110,6 +116,7 @@ public class Format implements Comparable<Format>
 		formatNumber = number;
 	}
 
+	@Override
 	public String toString()
 	{
 		return name;

@@ -18,15 +18,9 @@ public class CategoryBuilderOverseer
 	// The GUI
 	CategoryBuilderGUI gui;
 
-	// Persistent so we can use the database
-	Persistent pers;
-
-	public CategoryBuilderOverseer(JFrame par, Persistent pers,
-			Collection<Category> categories, Collection<Format> formats)
+	public CategoryBuilderOverseer(JFrame par, Collection<Category> categories,
+			Collection<Format> formats)
 	{
-		// Set the persistent object
-		this.pers = pers;
-
 		// Make the gui
 		gui = new CategoryBuilderGUI(par, categories, formats);
 
@@ -34,12 +28,9 @@ public class CategoryBuilderOverseer
 		gui.setVisible(true);
 	}
 
-	public CategoryBuilderOverseer(JFrame par, Persistent pers,
-			Collection<Category> categories, Collection<Format> formats,
-			Format newFormat)
+	public CategoryBuilderOverseer(JFrame par, Collection<Category> categories,
+			Collection<Format> formats, Format newFormat)
 	{
-		this.pers = pers;
-
 		// Add the new format to the format selection
 		formats.add(newFormat);
 

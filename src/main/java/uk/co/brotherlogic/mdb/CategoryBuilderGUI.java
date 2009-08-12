@@ -152,7 +152,8 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		try
 		{
 			jbInit();
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -169,7 +170,8 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 				Category selected = (Category) listMain.getSelectedValue();
 				addElem(selected);
 			}
-		} else if (e.getActionCommand() == "ok")
+		}
+		else if (e.getActionCommand() == "ok")
 			this.setVisible(false);
 		else if (e.getActionCommand() == "same")
 		{
@@ -197,19 +199,22 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 				while (tIt.hasNext())
 					addElem(tIt.next());
 			}
-		} else if (e.getActionCommand().equalsIgnoreCase("cancel"))
+		}
+		else if (e.getActionCommand().equalsIgnoreCase("cancel"))
 		{
 			cancelled = true;
 
 			// Remove all the data and return
 			selectObjs.clear();
 			this.setVisible(false);
-		} else if (e.getActionCommand() == "remove")
+		}
+		else if (e.getActionCommand() == "remove")
 		{
 			Category selected = (Category) listAdded.getSelectedValue();
 			if (selected != null)
 				remElem(selected);
-		} else if (e.getActionCommand() == "all")
+		}
+		else if (e.getActionCommand() == "all")
 		{
 			int res = JOptionPane.showConfirmDialog(this, "Are You Sure?",
 					"Confirm", JOptionPane.YES_NO_OPTION);
@@ -223,7 +228,8 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 					listAdded.setSelectedIndex(0);
 					remElem((Category) listAdded.getSelectedValue());
 				}
-		} else if (e.getActionCommand() == "format")
+		}
+		else if (e.getActionCommand() == "format")
 			// Make for the new format
 			makeForFormat();
 		else if (e.getActionCommand() == "newcat")
@@ -251,7 +257,7 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		// Build a tree map for the mp3 genres
 		MP3Codes = new TreeMap<String, Integer>();
 		for (int i = 0; i < MP3s.length; i++)
-			MP3Codes.put(MP3s[i], new Integer(i));
+			MP3Codes.put(MP3s[i], i);
 
 		// Now sort the array
 		Arrays.sort(MP3s);

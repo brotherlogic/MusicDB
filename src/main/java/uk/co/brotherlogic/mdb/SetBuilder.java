@@ -40,7 +40,6 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 	private final DefaultListModel selectTo;
 
 	// The collection of objects
-	Collection<X> listElements;
 	List<X> sortedObjs;
 	Collection<X> selectedObjs;
 	Collection<X> originalElements;
@@ -226,8 +225,6 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 		// Now remove all of the data
 		selectFrom.clear();
 		selectTo.clear();
-		if (listElements != null)
-			listElements.clear();
 		sortedObjs.clear();
 		selectedObjs.clear();
 		originalElements.clear();

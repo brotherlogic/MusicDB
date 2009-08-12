@@ -83,6 +83,15 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		return -sortName.toLowerCase().compareTo(o.sortName.toLowerCase());
 	}
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Groop)
+			return this.compareTo((Groop) o) == 0;
+		else
+			return false;
+	}
+
 	private void fillLineUp()
 	{
 		try
@@ -93,7 +102,6 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		catch (SQLException e)
 		{
 			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
@@ -151,6 +159,12 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		return sortName;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		return sortName.hashCode();
+	}
+
 	public void save() throws SQLException
 	{
 		if (updated)
@@ -182,6 +196,7 @@ public class Groop implements Comparable<Groop>, Builder<Groop>
 		updated = true;
 	}
 
+	@Override
 	public String toString()
 	{
 		return sortName;

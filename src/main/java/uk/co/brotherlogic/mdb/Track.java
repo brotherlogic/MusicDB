@@ -51,6 +51,15 @@ public class Track implements Comparable<Track>
 		return trackNumber - otherNum;
 	}
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Track)
+			return this.compareTo((Track) o) == 0;
+		else
+			return false;
+	}
+
 	public int getLengthInSeconds()
 	{
 		return lengthInSeconds;
@@ -80,6 +89,12 @@ public class Track implements Comparable<Track>
 	public int getTrackRefNumber()
 	{
 		return refNumber;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return title.hashCode() + refNumber;
 	}
 
 	public void setLengthInSeconds(int secondsIn)
@@ -115,6 +130,7 @@ public class Track implements Comparable<Track>
 		refNumber = in;
 	}
 
+	@Override
 	public String toString()
 	{
 		String ret = "";

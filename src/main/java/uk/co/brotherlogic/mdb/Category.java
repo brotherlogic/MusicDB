@@ -31,6 +31,14 @@ public class Category implements Comparable<Category>
 		return this.toString().compareTo(o.toString());
 	}
 
+	public boolean equals(Object o)
+	{
+		if (o instanceof Category)
+			return this.compareTo((Category) o) == 0;
+		else
+			return false;
+	}
+
 	public int getMP3Number()
 	{
 		return mp3Number;
@@ -44,6 +52,11 @@ public class Category implements Comparable<Category>
 	public int getNumber()
 	{
 		return catNumber;
+	}
+
+	public int hashCode()
+	{
+		return catName.hashCode();
 	}
 
 	public String print()

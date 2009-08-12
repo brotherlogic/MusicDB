@@ -35,6 +35,14 @@ public class Label implements Comparable<Label>, Builder<Label>
 		return -labelName.toLowerCase().compareTo(o.labelName.toLowerCase());
 	}
 
+	public boolean equals(Object o)
+	{
+		if (o instanceof Label)
+			return this.compareTo((Label) o) == 0;
+		else
+			return false;
+	}
+
 	public String getName()
 	{
 		return labelName;
@@ -43,6 +51,11 @@ public class Label implements Comparable<Label>, Builder<Label>
 	public int getNumber()
 	{
 		return labNo;
+	}
+
+	public int hashCode()
+	{
+		return labelName.hashCode();
 	}
 
 	public void setNumber(int num)

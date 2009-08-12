@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.Category;
@@ -39,8 +40,6 @@ public class Record implements Comparable<Record>
 	Category category;
 
 	Collection<String> catnos = new LinkedList<String>();
-
-	DateFormat df;
 
 	Format format;
 
@@ -80,9 +79,6 @@ public class Record implements Comparable<Record>
 		tracks = new LinkedList<Track>();
 
 		price = 0.0;
-
-		// Assuming no date alteration is required here
-		df = new SimpleDateFormat();
 	}
 
 	public Record(String title, Format format, Calendar boughtDate,
@@ -163,6 +159,15 @@ public class Record implements Comparable<Record>
 		for (int i = 0; i < noTracks; i++)
 			tracks.add(new Track("", 0, new Vector<LineUp>(),
 					new Vector<Artist>(), i + 1));
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Record)
+			return this.compareTo((Record) o) == 0;
+		else
+			return false;
 	}
 
 	public Collection<LineUp> getAllLineUps()
@@ -275,24 +280,19 @@ public class Record implements Comparable<Record>
 				if (mainGroopMap.containsKey(groopName))
 				{
 					intVal = mainGroopMap.get(groopName);
-					intVal = new Integer(intVal.intValue() + 1);
+					intVal = intVal.intValue() + 1;
 				}
 				else
-					intVal = new Integer(1);
+					intVal = 1;
 
 				mainGroopMap.put(groopName, intVal);
 			}
 		}
 
 		// Select only groops who appear on the right number of tracks
-		Iterator<String> mIt = mainGroopMap.keySet().iterator();
-		while (mIt.hasNext())
-		{
-			String keyGroop = mIt.next();
-
-			if (((mainGroopMap.get(keyGroop)).doubleValue() / tracks.size()) > GROOP_RATIO)
-				mainGroops.add(keyGroop);
-		}
+		for (Entry<String, Integer> ent : mainGroopMap.entrySet())
+			if (((ent.getValue()).doubleValue() / tracks.size()) > GROOP_RATIO)
+				mainGroops.add(ent.getKey());
 
 		return mainGroops;
 
@@ -396,6 +396,12 @@ public class Record implements Comparable<Record>
 	public int getYear()
 	{
 		return year;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return number;
 	}
 
 	public String printRecord()
@@ -587,6 +593,7 @@ public class Record implements Comparable<Record>
 		year = in;
 	}
 
+	@Override
 	public String toString()
 	{
 		Collection<String> fullGroops = getMainGroops();

@@ -197,12 +197,10 @@ public class ViewerGUI extends JFrame implements CaretListener
 		catch (MalformedURLException e)
 		{
 			e.printStackTrace();
-			System.exit(0);
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			System.exit(0);
 		}
 	}
 }

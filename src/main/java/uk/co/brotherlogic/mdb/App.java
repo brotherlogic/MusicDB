@@ -106,8 +106,8 @@ public class App extends JFrame
 		{
 			// Bring up the category manager
 			CategoryBuilderOverseer over = new CategoryBuilderOverseer(this,
-					pers, GetCategories.build().getCategories(), GetFormats
-							.create().getFormats());
+					GetCategories.build().getCategories(), GetFormats.create()
+							.getFormats());
 
 			// And deal with the data
 			over.dealWithData();

@@ -34,7 +34,7 @@ public class RecordSelectorGUI extends JDialog implements ActionListener,
 	// List model for the text list
 	DefaultListModel listMod;
 	Object[] elems;
-	List<Record> listElements;
+	List<Record> listElements = new LinkedList<Record>();
 	List<Record> objs;
 
 	// The resulting selected object

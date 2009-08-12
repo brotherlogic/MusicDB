@@ -69,15 +69,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 
 		// Initialise the Display
 		setResizable(false);
-		try
-		{
-			jbInit();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		jbInit();
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -225,7 +217,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 			return null;
 	}
 
-	private void jbInit() throws Exception
+	private void jbInit()
 	{
 		textIn.setEnabled(false);
 		textIn.setBounds(new Rectangle(8, 45, 173, 27));
@@ -332,7 +324,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 			while (keyIt.hasNext())
 			{
 				currLineUp = keyIt.next();
-				comboNumber.addItem(new Integer(currLineUp.getLineUpNumber()));
+				comboNumber.addItem(currLineUp.getLineUpNumber());
 			}
 
 			// Prepare for current line up

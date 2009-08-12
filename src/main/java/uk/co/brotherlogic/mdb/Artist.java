@@ -49,6 +49,14 @@ public class Artist implements Comparable<Artist>, Builder<Artist>
 		return sortName;
 	}
 
+	public boolean equals(Object o)
+	{
+		if (o instanceof Artist)
+			return this.compareTo((Artist) o) == 0;
+		else
+			return false;
+	}
+
 	public int getId()
 	{
 		return id;
@@ -62,6 +70,11 @@ public class Artist implements Comparable<Artist>, Builder<Artist>
 	public String getSortName()
 	{
 		return sortName;
+	}
+
+	public int hashCode()
+	{
+		return sortName.hashCode();
 	}
 
 	public void setId(int id)

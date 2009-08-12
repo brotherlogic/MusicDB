@@ -41,7 +41,7 @@ public class GetFormats
 	{
 		// Check if this format is already present
 		if (formats.keySet().contains(in.getName()))
-			return formats.get(in);
+			return formats.get(in.getName());
 
 		// Totally new format! need to manually construct this one
 
@@ -200,7 +200,6 @@ public class GetFormats
 
 	public Format getFormat(String in) throws SQLException
 	{
-		long sTime = System.currentTimeMillis();
 		if (formats.keySet().contains(in))
 			return formats.get(in);
 		else

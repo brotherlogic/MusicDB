@@ -21,9 +21,6 @@ public class Persistent
 {
 	private static Persistent singleton;
 
-	// Have we got graphics
-	boolean headless = false;
-
 	// Database connection
 	Connect con;
 
@@ -92,7 +89,7 @@ public class Persistent
 		ResultSet rs = s.executeQuery("SELECT RecordNumber FROM Records");
 
 		while (rs.next())
-			retSet.add(new Integer(rs.getInt(1)));
+			retSet.add(rs.getInt(1));
 
 		rs.close();
 		s.close();
@@ -125,7 +122,7 @@ public class Persistent
 		while (rs.next())
 		{
 			int temp = rs.getInt(1);
-			retSet.add(new Integer(temp));
+			retSet.add(temp);
 		}
 
 		rs.close();

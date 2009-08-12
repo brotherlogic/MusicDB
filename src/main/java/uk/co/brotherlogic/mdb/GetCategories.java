@@ -21,9 +21,6 @@ public class GetCategories
 	Map<String, Category> categories;
 	Persistent p;
 
-	// Temporary store of category name -> category
-	Map<String, Category> tempStore;
-
 	// Stores the insert query
 	PreparedStatement insertQuery;
 	PreparedStatement collectQuery;
@@ -34,7 +31,6 @@ public class GetCategories
 	{
 		// Set the required parameters
 		p = Persistent.create();
-		tempStore = new TreeMap<String, Category>();
 		categories = new TreeMap<String, Category>();
 
 		insertQuery = p

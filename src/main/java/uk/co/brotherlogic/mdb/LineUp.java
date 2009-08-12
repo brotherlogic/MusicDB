@@ -45,6 +45,15 @@ public class LineUp implements Comparable<LineUp>
 		return this.toString().compareTo(o.toString());
 	}
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof LineUp)
+			return this.compareTo((LineUp) o) == 0;
+		else
+			return false;
+	}
+
 	public Collection<Artist> getArtists()
 	{
 		return artists;
@@ -60,11 +69,18 @@ public class LineUp implements Comparable<LineUp>
 		return lineUpNumber;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		return grp.getShowName().hashCode() + lineUpNumber;
+	}
+
 	public void setLineUpNumber(int numberIn)
 	{
 		lineUpNumber = numberIn;
 	}
 
+	@Override
 	public String toString()
 	{
 		return "" + lineUpNumber + artists;

@@ -254,7 +254,7 @@ public class GetRecords
 
 		// Commit the record
 		records.add(in);
-		numberToRecords.put(new Integer(in.getNumber()), in);
+		numberToRecords.put(in.getNumber(), in);
 
 		// Commit the transaction
 		p.getConnection().commitTrans();
@@ -328,8 +328,7 @@ public class GetRecords
 					currRec.setLabels(labels);
 					currRec.setCatNos(catnos);
 					records.add(currRec);
-					numberToRecords.put(new Integer(currRec.getNumber()),
-							currRec);
+					numberToRecords.put(currRec.getNumber(), currRec);
 
 				}
 				else
@@ -378,7 +377,7 @@ public class GetRecords
 			currRec.setLabels(labels);
 			currRec.setCatNos(catnos);
 			records.add(currRec);
-			numberToRecords.put(new Integer(currRec.getNumber()), currRec);
+			numberToRecords.put(currRec.getNumber(), currRec);
 		}
 
 		// Close the statements
@@ -483,15 +482,15 @@ public class GetRecords
 		Record rec = null;
 		try
 		{
-			if (numberToRecords.keySet().contains(new Integer(recNumber)))
-				rec = numberToRecords.get(new Integer(recNumber));
+			if (numberToRecords.keySet().contains(recNumber))
+				rec = numberToRecords.get(recNumber);
 			else
 			{
 				// Get the single record
 				rec = getSingleRecord(recNumber);
 
 				// Add this to the map
-				numberToRecords.put(new Integer(recNumber), rec);
+				numberToRecords.put(recNumber, rec);
 				// rec = getSingleRecord2(recNumber);
 			}
 		}
@@ -512,7 +511,7 @@ public class GetRecords
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s.executeQuery("SELECT RecordNumber FROM Records");
 		while (rs.next())
-			titleSet.add(new Integer(rs.getInt(1)));
+			titleSet.add(rs.getInt(1));
 		rs.close();
 		s.close();
 
@@ -531,7 +530,7 @@ public class GetRecords
 		ResultSet rs = s
 				.executeQuery("SELECT RecordNumber FROM Records WHERE Author is null");
 		while (rs.next())
-			titleSet.add(new Integer(rs.getInt(1)));
+			titleSet.add(rs.getInt(1));
 		rs.close();
 		s.close();
 
@@ -550,7 +549,7 @@ public class GetRecords
 				.executeQuery("SELECT RecordNumber FROM Records WHERE Title = '"
 						+ p.cleanString(title) + "'");
 		while (rs.next())
-			numbers.add(new Integer(rs.getInt(1)));
+			numbers.add(rs.getInt(1));
 		rs.close();
 		s.close();
 
@@ -589,8 +588,7 @@ public class GetRecords
 				.executeQuery("Select Title, BoughtDate, Notes, ReleaseYear, FormatName, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories, Formats WHERE Categories.CategoryNumber = Records.Category AND Formats.FormatNumber = Records.Format AND RecordNumber = "
 						+ recNumber);
 
-		// Prepare the objects
-		Record currRec = new Record();
+		Record currRec;
 
 		// Move the pointer on
 		if (rs.next())

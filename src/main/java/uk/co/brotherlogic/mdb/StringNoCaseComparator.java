@@ -5,9 +5,10 @@ package uk.co.brotherlogic.mdb;
  * @author Simon Tucker
  */
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-class StringNoCaseComparator implements Comparator<String>
+class StringNoCaseComparator implements Comparator<String>, Serializable
 {
 	public int compare(String o1, String o2)
 	{

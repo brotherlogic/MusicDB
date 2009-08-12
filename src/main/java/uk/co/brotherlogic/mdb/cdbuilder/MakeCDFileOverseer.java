@@ -31,10 +31,9 @@ import uk.co.brotherlogic.mdb.record.Record;
 
 public class MakeCDFileOverseer
 {
-	GetRecords rec;
 	Record outRec;
 	File outFile;
-	File outDir = new File("/usr/share/hancock_multimedia/convert/");
+	File outDir;
 	boolean nonOver;
 
 	// Where the CD files should be stored
@@ -46,9 +45,6 @@ public class MakeCDFileOverseer
 		{
 			// Set the file location
 			fileLoc = fileString;
-
-			// Set the get records
-			rec = recIn;
 
 			// Get the record
 			outRec = recIn.selectRecord(null);
@@ -72,7 +68,6 @@ public class MakeCDFileOverseer
 					"Error in file selection/writing: " + e, "Error!",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
-			System.exit(1);
 		}
 		catch (NullPointerException e)
 		{
@@ -107,7 +102,6 @@ public class MakeCDFileOverseer
 					"Error in file selection/writing: " + e, "Error!",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
-			System.exit(1);
 		}
 		catch (NullPointerException e)
 		{
@@ -159,54 +153,6 @@ public class MakeCDFileOverseer
 			ret = null;
 		return ret;
 	}
-
-	/** Copys directory from to the new directory to and tidies up */
-	/*
-	 * private void copyDir(String from, String to) { long start =
-	 * System.currentTimeMillis(); File toCopyFrom = new
-	 * File(outDir.getAbsolutePath() + File.separator + from); File toCopyTo =
-	 * new File(outDir.getAbsoluteFile() + File.separator + to); if
-	 * (!toCopyFrom.exists() || !toCopyTo.exists()) {
-	 * System.err.println("Cannot locate: " + toCopyFrom + " => " +
-	 * toCopyFrom.exists()); System.err.println("Cannot locate: " + toCopyTo +
-	 * " => " + toCopyFrom.exists()); System.exit(1); }
-	 * 
-	 * // Get the current maximal number int offset = 1; for (String name :
-	 * toCopyTo.list()) if (name.toLowerCase().endsWith("mp3") ||
-	 * name.toLowerCase().endsWith("wav")) offset++;
-	 * 
-	 * // Perform the copy operation List<File> lFiles =
-	 * Arrays.asList(toCopyFrom.listFiles()); Collections.sort(lFiles);
-	 * 
-	 * for (File f : lFiles) copyFile(f, toCopyTo, offset++);
-	 * 
-	 * // Delete the directory toCopyFrom.delete();
-	 * 
-	 * System.out.println("Time taken: " + ((System.currentTimeMillis() - start)
-	 * / 1000.0)); }
-	 * 
-	 * private void copyFile(File toCopy, File outputDir, int num) { // Sort out
-	 * the track number String numStr = "" + num; if (num < 10) numStr = "0" +
-	 * numStr;
-	 * 
-	 * File outputFile = new File(outputDir.getAbsolutePath() + File.separator +
-	 * numStr + "-Track_" + numStr +
-	 * toCopy.getName().substring(toCopy.getName().length() - 4));
-	 * 
-	 * System.out.println(num + " Copying " + toCopy + " to " + outputFile); try
-	 * { InputStream is = new BufferedInputStream( new FileInputStream(toCopy));
-	 * OutputStream os = new BufferedOutputStream(new FileOutputStream(
-	 * outputFile));
-	 * 
-	 * byte[] barr = new byte[1024]; int read = is.read(barr); while (read > 0)
-	 * { os.write(barr, 0, read); read = is.read(barr); } os.close();
-	 * is.close();
-	 * 
-	 * // Now delete the last file toCopy.delete(); } catch (IOException e) {
-	 * e.printStackTrace(); System.exit(1); }
-	 * 
-	 * }
-	 */
 
 	// Function to write the info file
 	public boolean writeFile(boolean auto) throws IOException
