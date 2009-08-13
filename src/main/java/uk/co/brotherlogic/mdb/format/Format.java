@@ -50,12 +50,12 @@ public class Format implements Comparable<Format>
 		categories = new TreeSet<Category>();
 	}
 
-	public Format(int num, String sIn, String base, Collection<Category> cats)
+	public Format(int num, String sIn, String base, Format categoryCopy)
 	{
 		name = sIn;
 		formatNumber = num;
 		baseFormat = base;
-		categories = new TreeSet<Category>(cats);
+		categories = categoryCopy.categories;
 	}
 
 	public void addCategory(Category cat)
@@ -85,6 +85,11 @@ public class Format implements Comparable<Format>
 			out += cIt.next() + ", ";
 
 		return out;
+	}
+
+	public int getNumber()
+	{
+		return formatNumber;
 	}
 
 	@Override

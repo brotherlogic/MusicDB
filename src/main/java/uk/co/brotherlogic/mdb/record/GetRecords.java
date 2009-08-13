@@ -33,6 +33,7 @@ import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.format.Format;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
@@ -137,11 +138,11 @@ public class GetRecords
 	public void addRecord(Record in) throws SQLException, InterruptedException
 	{
 		// First get the format number
-		int formatNumber = (GetFormats.create().addFormat(in.getFormat(), in
-				.getCategory())).getNumber();
+		Format recForm = (GetFormats.create().addFormat(in.getFormat(), in
+				.getCategory()));
 
 		// Re set the format!
-		in.getFormat().setNumber(formatNumber);
+		in.setFormat(recForm);
 
 		// Get tbe category number
 		int catNum = GetCategories.build().addCategory(in.getCategory());
@@ -154,7 +155,7 @@ public class GetRecords
 		addRecord.setString(1, in.getTitle());
 		addRecord.setDate(2,
 				new java.sql.Date(in.getDate().getTime().getTime()));
-		addRecord.setInt(3, formatNumber);
+		addRecord.setInt(3, recForm.getNumber());
 		addRecord.setString(4, in.getNotes());
 		addRecord.setInt(5, in.getReleaseYear());
 		addRecord.setInt(6, catNum);
@@ -168,7 +169,7 @@ public class GetRecords
 		getRecord.setString(1, in.getTitle());
 		getRecord.setDate(2,
 				new java.sql.Date(in.getDate().getTime().getTime()));
-		getRecord.setInt(3, formatNumber);
+		getRecord.setInt(3, recForm.getNumber());
 		getRecord.setString(4, in.getNotes());
 		ResultSet rs = getRecord.executeQuery();
 		rs.next();

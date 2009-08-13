@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -91,11 +90,10 @@ public class NewFormatGUI extends JDialog implements ActionListener
 
 			if (other != null)
 				ret = new Format(-1, textFormat.getText(), (String) comboBase
-						.getSelectedItem(), ((Format) comboOther
-						.getSelectedItem()).getCategories());
+						.getSelectedItem(), other);
 			else
 				ret = new Format(-1, textFormat.getText(), (String) comboBase
-						.getSelectedItem(), new TreeSet<Category>());
+						.getSelectedItem());
 
 			return ret;
 		}

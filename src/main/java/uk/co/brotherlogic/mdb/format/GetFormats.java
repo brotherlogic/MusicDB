@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Map;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -23,7 +23,7 @@ import uk.co.brotherlogic.mdb.Persistent;
 public class GetFormats
 {
 	// Maps format name to format
-	Map<String, Format> formats;
+	Collection<Format> formats;
 	Set<String> baseFormats;
 	Persistent p;
 
@@ -34,14 +34,15 @@ public class GetFormats
 		// Set the required parameters
 		p = Persistent.create();
 
-		formats = new TreeMap<String, Format>();
+		formats = new LinkedList<Format>()
 	}
 
 	public Format addFormat(Format in) throws SQLException
 	{
 		// Check if this format is already present
-		if (formats.keySet().contains(in.getName()))
-			return formats.get(in.getName());
+		for (Format f : formats)
+			if (f.equals(in))
+				return f;
 
 		// Totally new format! need to manually construct this one
 

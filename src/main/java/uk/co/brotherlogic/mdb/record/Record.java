@@ -404,39 +404,6 @@ public class Record implements Comparable<Record>
 		return number;
 	}
 
-	public String printRecord()
-	{
-		String ret = "";
-
-		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
-
-		String tempNotes = notes;
-		if (tempNotes.length() < 1)
-			tempNotes = " ";
-
-		// Do the static record stuff
-		ret += "#R#~" + title + "~" + myForm.format(boughtDate.getTime()) + "~"
-				+ format.getName() + "~" + tempNotes + "~" + year + "~"
-				+ category.getName() + "~" + category.getMP3Number();
-
-		// Now add the labels to this
-		Iterator<Label> lIt = labels.iterator();
-		while (lIt.hasNext())
-			ret += "~" + (lIt.next()).getName();
-		ret += "\n";
-
-		// Now print the cat nos
-		Iterator<String> cIt = catnos.iterator();
-		while (cIt.hasNext())
-			ret += cIt.next() + "~";
-		ret += "\n";
-		// Now print the tracks
-		Iterator<Track> tIt = tracks.iterator();
-		while (tIt.hasNext())
-			ret += tIt.next();
-		return ret;
-	}
-
 	private void resetShelfPos()
 	{
 		System.err.println("RESETTING SHELF POS: " + shelfpos);
