@@ -12,7 +12,6 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -33,112 +32,10 @@ public class GetFormats
 	{
 		// Set the required parameters
 		p = Persistent.create();
-
-		formats = new LinkedList<Format>()
+		formats = new LinkedList<Format>();
 	}
 
-	public Format addFormat(Format in) throws SQLException
-	{
-		// Check if this format is already present
-		for (Format f : formats)
-			if (f.equals(in))
-				return f;
-
-		// Totally new format! need to manually construct this one
-
-		// Add the new format and commit the update
-		PreparedStatement ps = p.getConnection().prepState(
-				"INSERT INTO Formats (FormatName, baseformat) VALUES (?,?)");
-		ps.setString(1, in.getName());
-		ps.setString(2, in.getBaseFormat());
-		ps.execute();
-
-		// Get the new format number
-		PreparedStatement ps2 = p.getConnection().prepState(
-				"SELECT FormatNumber FROM Formats WHERE FormatName = ?");
-		ps2.setString(1, in.getName());
-		ResultSet rs = ps2.executeQuery();
-		rs.next();
-		int val = rs.getInt(1);
-
-		Format ret = new Format(val, in.getName(), in.getBaseFormat());
-
-		// Close the database objects
-		rs.close();
-
-		return ret;
-
-	}
-
-	public Format addFormat(Format toAdd, Category relCat) throws SQLException
-	{
-		// Check that the format is not already present
-		if (toAdd.getNumber() > 0)
-		{
-			// Do Nothing
-		}
-		else if (formats.containsKey(toAdd.getName()))
-			toAdd = formats.get(toAdd.getName());
-		else
-		{
-
-			// Totally new format! need to manually construct this one
-
-			// Add the new format and commit the update
-			p.getConnection().runUpdate(
-					"INSERT INTO Formats (FormatName) VALUES (\'"
-							+ toAdd.getName() + "\')");
-
-			// Get the new format number
-			Statement s = p.getConnection().getStatement();
-			ResultSet rs = s
-					.executeQuery("SELECT FormatNumber FROM Formats WHERE FormatName = \'"
-							+ toAdd.getName() + "\'");
-
-			rs.next();
-			int val = rs.getInt(1);
-
-			toAdd.setNumber(val);
-
-			// Close the database objects
-			rs.close();
-			s.close();
-		}
-
-		// Now we've got the definitive format we need to check on the category
-		// The category could be part of the format already - but if it's not we
-		// need to add it!
-		if (!toAdd.getCategories().contains(relCat))
-		{
-			// Get the category number
-			int catNum = GetCategories.build().addCategory(relCat);
-
-			// Set this category number
-			relCat.setNumber(catNum);
-
-			// Add the category to the catform table
-			// p.getConnection().runDelete(
-			// "INSERT INTO CatForm (FormatNumber, CategoryNumber) VALUES (" +
-			// toAdd.getNumber() + "," + catNum + ")");
-
-			// And add it to the format
-			toAdd.getCategories().add(relCat);
-		}
-
-		return toAdd;
-	}
-
-	public void cancel()
-	{
-		// Necessary for this to finish, so just leave in background
-	}
-
-	public void commitFormat(Format in)
-	{
-		formats.put(in.getName(), in);
-	}
-
-	public void execute() throws SQLException
+	private void fillAll() throws SQLException
 	{
 		// Get a statement and run the query
 		Statement s = p.getConnection().getStatement();
@@ -158,7 +55,7 @@ public class GetFormats
 			temp.setCategories(getCategories(temp.getNumber()));
 
 			baseFormats.add(temp.getBaseFormat());
-			formats.put(temp.getName(), temp);
+			formats.add(temp);
 		}
 
 		// Close the database objects
@@ -171,7 +68,7 @@ public class GetFormats
 		if (baseFormats == null)
 			try
 			{
-				execute();
+				fillAll();
 			}
 			catch (SQLException e)
 			{
@@ -199,32 +96,23 @@ public class GetFormats
 		return ret;
 	}
 
-	public Format getFormat(String in) throws SQLException
+	public Format getFormat(int formatNumber) throws SQLException
 	{
-		if (formats.keySet().contains(in))
-			return formats.get(in);
-		else
-		{
-			Statement s = p.getConnection().getStatement();
-			ResultSet rs = s
-					.executeQuery("SELECT FormatNumber, baseformat FROM Formats WHERE FormatName = \'"
-							+ in + "\'");
+		// Get a statement and run the query
+		PreparedStatement s = p
+				.getConnection()
+				.getPreparedStatement(
+						"SELECT formatname,baseformat FROM Formats WHERE formatnumber = ?");
+		s.setInt(1, formatNumber);
+		ResultSet rs = s.executeQuery();
 
-			if (rs.next())
-			{
-				int num = rs.getInt(1);
-				String base = rs.getString(2);
-				rs.close();
-				s.close();
-				return new Format(num, in, base);
-			}
-			else
-			{
-				rs.close();
-				s.close();
-				return new Format(-1, in, "");
-			}
-		}
+		Format toReturn = null;
+		if (rs.next())
+			toReturn = new Format(formatNumber, rs.getString(1), rs
+					.getString(2));
+
+		rs.close();
+		return toReturn;
 	}
 
 	public Collection<Format> getFormats()
@@ -232,36 +120,38 @@ public class GetFormats
 		try
 		{
 			if (formats.size() == 0)
-				execute();
+				fillAll();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
 
-		return new TreeSet<Format>(formats.values());
+		return formats;
 	}
 
-	public void updateFormat(Format toUpdate) throws SQLException
+	public int save(Format in) throws SQLException
 	{
-		// We need to remove all the old categories and change the format name
-		// First the name
+		// Add the new format and commit the update
+		PreparedStatement ps = p.getConnection().prepState(
+				"INSERT INTO formats (formatname, baseformat) VALUES (?,?)");
+		ps.setString(1, in.getName());
+		ps.setString(2, in.getBaseFormat());
+		ps.execute();
 
-		String newName = toUpdate.getName();
-		int id = toUpdate.getNumber();
-		p.getConnection().runUpdate(
-				"UPDATE Formats SET FormatName = \'" + newName
-						+ "\' WHERE FormatNumber = " + id);
+		// Get the new format number
+		PreparedStatement ps2 = p.getConnection().prepState(
+				"SELECT FormatNumber FROM Formats WHERE FormatName = ?");
+		ps2.setString(1, in.getName());
+		ResultSet rs = ps2.executeQuery();
+		rs.next();
 
-		// Now delete all the old categories
-		p.getConnection().runDelete(
-				"DELETE FROM CatForm WHERE FormNumber = " + id);
+		int val = rs.getInt(1);
 
-		// And add all the new categories
-		for (Category cat : toUpdate.getCategories())
-			p.getConnection().runUpdate(
-					"INSERT INTO CatForm (CatNumber,FormNumber) VALUES ("
-							+ cat.getNumber() + "," + id + ")");
+		// Close the database objects
+		rs.close();
+
+		return val;
 
 	}
 

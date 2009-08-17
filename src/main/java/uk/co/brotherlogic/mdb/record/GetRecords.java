@@ -33,7 +33,6 @@ import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.Persistent;
 import uk.co.brotherlogic.mdb.Track;
-import uk.co.brotherlogic.mdb.format.Format;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
@@ -44,8 +43,6 @@ public class GetRecords
 	static Persistent p;
 
 	PreparedStatement addRecord;
-
-	boolean cancelled;
 
 	PreparedStatement getRecord;
 
@@ -138,11 +135,7 @@ public class GetRecords
 	public void addRecord(Record in) throws SQLException, InterruptedException
 	{
 		// First get the format number
-		Format recForm = (GetFormats.create().addFormat(in.getFormat(), in
-				.getCategory()));
-
-		// Re set the format!
-		in.setFormat(recForm);
+		int formatNumber = in.getFormat().save();
 
 		// Get tbe category number
 		int catNum = GetCategories.build().addCategory(in.getCategory());
@@ -155,7 +148,7 @@ public class GetRecords
 		addRecord.setString(1, in.getTitle());
 		addRecord.setDate(2,
 				new java.sql.Date(in.getDate().getTime().getTime()));
-		addRecord.setInt(3, recForm.getNumber());
+		addRecord.setInt(3, formatNumber);
 		addRecord.setString(4, in.getNotes());
 		addRecord.setInt(5, in.getReleaseYear());
 		addRecord.setInt(6, catNum);
@@ -169,7 +162,7 @@ public class GetRecords
 		getRecord.setString(1, in.getTitle());
 		getRecord.setDate(2,
 				new java.sql.Date(in.getDate().getTime().getTime()));
-		getRecord.setInt(3, recForm.getNumber());
+		getRecord.setInt(3, formatNumber);
 		getRecord.setString(4, in.getNotes());
 		ResultSet rs = getRecord.executeQuery();
 		rs.next();
@@ -241,9 +234,6 @@ public class GetRecords
 		// Commit the label
 		GetLabels.create().commitLabels(in.getLabels());
 
-		// Commit the formats
-		GetFormats.create().commitFormat(in.getFormat());
-
 		// Commit the artists
 		GetArtists.create().commitArtists();
 
@@ -300,91 +290,6 @@ public class GetRecords
 		p.getConnection().runDelete(
 				"DELETE FROM Tracks WHERE RecordNumber = " + recordNumber
 						+ " AND TrackNumber = " + trackNumber);
-	}
-
-	public void execute() throws SQLException
-	{
-		// Run the query
-		Statement s = p.getConnection().getStatement();
-		ResultSet rs = s.executeQuery("Select * FROM GetAllRecords");
-
-		// Prepare the objects
-		boolean first = true;
-		Record currRec = new Record();
-		Collection<Label> labels = new Vector<Label>();
-		Collection<String> catnos = new Vector<String>();
-		int currNum = -1;
-
-		while (rs.next())
-		{
-			// Get the record number
-			int recNum = rs.getInt(1);
-
-			if (recNum != currNum)
-			{
-				// New record
-				if (!first)
-				{
-					// Add the record
-					currRec.setLabels(labels);
-					currRec.setCatNos(catnos);
-					records.add(currRec);
-					numberToRecords.put(currRec.getNumber(), currRec);
-
-				}
-				else
-					first = false;
-
-				// Create new bits
-				currRec = new Record();
-				labels = new Vector<Label>();
-				catnos = new Vector<String>();
-
-				String title = rs.getString(2);
-
-				String boughtdate = rs.getString(3);
-				String format = rs.getString(4);
-				currRec.setNumber(recNum);
-				currRec.setTitle(title);
-				try
-				{
-					currRec.setDate(boughtdate);
-				}
-				catch (ParseException e)
-				{
-					// Cheeky!
-					throw new SQLException("ERROR IN DATE PARSING");
-				}
-				currRec.setFormat(GetFormats.create().getFormat(format));
-				currRec.setTracks(getTracks(recNum));
-
-				String label = rs.getString(5);
-				String catno = rs.getString(6);
-				labels.add(GetLabels.create().getLabel(label));
-				catnos.add(catno);
-				currNum = recNum;
-			}
-			else
-			{
-				String catNo = rs.getString(6);
-				String lab = rs.getString(5);
-				labels.add(GetLabels.create().getLabel(lab));
-				catnos.add(catNo);
-			}
-		}
-
-		if (!cancelled)
-		{
-			currRec.setLabels(labels);
-			currRec.setCatNos(catnos);
-			records.add(currRec);
-			numberToRecords.put(currRec.getNumber(), currRec);
-		}
-
-		// Close the statements
-		rs.close();
-		s.close();
-
 	}
 
 	public Set<String> getCatNos(int recNumber) throws SQLException
@@ -586,7 +491,7 @@ public class GetRecords
 		// Run the query
 		Statement s = p.getConnection().getStatement();
 		ResultSet rs = s
-				.executeQuery("Select Title, BoughtDate, Notes, ReleaseYear, FormatName, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories, Formats WHERE Categories.CategoryNumber = Records.Category AND Formats.FormatNumber = Records.Format AND RecordNumber = "
+				.executeQuery("Select Title, BoughtDate, Notes, ReleaseYear, Format, CategoryName,ReleaseMonth,ReleaseType,Author, Owner, purchase_price,shelfpos FROM Records, Categories WHERE Categories.CategoryNumber = Records.Category  AND RecordNumber = "
 						+ recNumber);
 
 		Record currRec;
@@ -598,7 +503,7 @@ public class GetRecords
 			String title = rs.getString(1);
 			Calendar boughtDate = Calendar.getInstance();
 			boughtDate.setTimeInMillis(rs.getDate(2).getTime());
-			String format = rs.getString(5);
+			int format = rs.getInt(5);
 			String notes = rs.getString(3);
 			int year = rs.getInt(4);
 			String category = rs.getString(6);
@@ -777,8 +682,7 @@ public class GetRecords
 			InterruptedException
 	{
 		// First get the format number
-		int formatNumber = GetFormats.create().addFormat(in.getFormat(),
-				in.getCategory()).getNumber();
+		int formatNumber = in.getFormat().save();
 
 		// Get the new category number
 		int catNum = GetCategories.build().addCategory(in.getCategory());

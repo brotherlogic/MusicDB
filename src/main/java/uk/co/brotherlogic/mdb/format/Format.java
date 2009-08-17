@@ -5,6 +5,7 @@ package uk.co.brotherlogic.mdb.format;
  * @author Simon Tucker
  */
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -29,10 +30,10 @@ public class Format implements Comparable<Format>
 	private final Collection<Category> categories;
 
 	/** The id number of this format */
-	private final int formatNumber;
+	private int formatNumber;
 
 	/** Flag indicating if this format has been changed */
-	private final boolean formatUpdated = false;
+	private boolean formatUpdated = false;
 
 	public Format()
 	{
@@ -87,6 +88,21 @@ public class Format implements Comparable<Format>
 		return out;
 	}
 
+	public String getBaseFormat()
+	{
+		return baseFormat;
+	}
+
+	public Collection<Category> getCategories()
+	{
+		return categories;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
 	public int getNumber()
 	{
 		return formatNumber;
@@ -98,6 +114,14 @@ public class Format implements Comparable<Format>
 		return name.hashCode();
 	}
 
+	public int save() throws SQLException
+	{
+		if (formatNumber == -1 || formatUpdated)
+			formatNumber = GetFormats.create().save(this);
+
+		return formatNumber;
+	}
+
 	public void setCategories(Collection<Category> vec)
 	{
 		// Clear the old categories
@@ -105,6 +129,8 @@ public class Format implements Comparable<Format>
 
 		// Add the new formats
 		categories.addAll(vec);
+
+		formatUpdated = true;
 	}
 
 	@Override

@@ -100,27 +100,6 @@ public class App extends JFrame
 		this.setVisible(true);
 	}
 
-	void butCat_actionPerformed(ActionEvent e)
-	{
-		try
-		{
-			// Bring up the category manager
-			CategoryBuilderOverseer over = new CategoryBuilderOverseer(this,
-					GetCategories.build().getCategories(), GetFormats.create()
-							.getFormats());
-
-			// And deal with the data
-			over.dealWithData();
-
-			// And commit these changes
-			pers.getConnection().commitTrans();
-		}
-		catch (SQLException ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-
 	void buttonAdd_actionPerformed(ActionEvent e)
 	{
 		try
