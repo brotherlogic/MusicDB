@@ -135,7 +135,8 @@ public class App extends JFrame
 			this.setVisible(false);
 
 			// Get a record
-			Record toDelete = GetRecords.create().selectRecord(this);
+			RecordSelector selector = new RecordSelector();
+			Record toDelete = selector.selectRecord(this);
 			toDelete = GetRecords.create()
 					.getSingleRecord(toDelete.getNumber());
 
@@ -161,7 +162,8 @@ public class App extends JFrame
 		try
 		{
 			// Choose a file to examine
-			Record examine = GetRecords.create().selectRecord(this);
+			RecordSelector sel = new RecordSelector();
+			Record examine = sel.selectRecord(this);
 
 			if (examine != null)
 			{

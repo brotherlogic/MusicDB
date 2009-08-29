@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import uk.co.brotherlogic.mdb.EntitySelector;
 import uk.co.brotherlogic.mdb.LineUp;
+import uk.co.brotherlogic.mdb.RecordSelector;
 import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.TrackChooser;
 import uk.co.brotherlogic.mdb.groop.Groop;
@@ -43,12 +44,14 @@ public class MakeCDFileOverseer
 	{
 		try
 		{
+			RecordSelector sel = new RecordSelector();
+
 			// Set the file location
 			fileLoc = fileString;
 
 			// Get the record
-			outRec = recIn.selectRecord(null);
-			nonOver = recIn.getMyState();
+			outRec = sel.selectRecord(null);
+			nonOver = sel.getMyState();
 
 			// Get the output point
 			outFile = chooseFile();
