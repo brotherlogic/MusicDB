@@ -164,7 +164,16 @@ public class MakeCDFileOverseer
 		// Check that the number of tracks is equal to the number of files
 		int noFiles = outDir.listFiles().length;
 
-		TrackChooser track = new TrackChooser(null, outRec.getTracks());
+		TrackChooser track;
+		try
+		{
+			track = new TrackChooser(null, outRec.getTracks());
+		}
+		catch (SQLException e)
+		{
+			throw new IOException(e);
+		}
+
 		if (!auto && noFiles != outRec.getNoTracks())
 			// Build a viewer to deal with the tracks
 			track.setVisible(true);

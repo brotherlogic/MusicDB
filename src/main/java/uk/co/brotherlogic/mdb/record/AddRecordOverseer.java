@@ -97,7 +97,7 @@ public class AddRecordOverseer implements ActionListener
 	public AddRecordOverseer(App c, Collection<Artist> artists,
 			Collection<Label> labels, Collection<Format> formats,
 			Map<String, Groop> groops, Collection<Category> categories,
-			Record rec)
+			Record rec) throws SQLException
 	{
 		call = c;
 		curr = rec;
@@ -160,24 +160,36 @@ public class AddRecordOverseer implements ActionListener
 	{
 
 		if (e.getActionCommand().equals("label"))
-			doLabels();
-		else if (e.getActionCommand().equals("done"))
-		{
-			// For now just parse the gui
-			if (collectDataFromGUI())
+			try
 			{
-				gui.setVisible(false);
-
-				// Destroy the gui!
-				gui.dispose();
-
-				// Add the record!
-				complete = true;
-
-				if (call != null)
-					call.addDone();
+				doLabels();
 			}
-		}
+			catch (SQLException e2)
+			{
+				e2.printStackTrace();
+			}
+		else if (e.getActionCommand().equals("done"))
+			try
+			{
+				// For now just parse the gui
+				if (collectDataFromGUI())
+				{
+					gui.setVisible(false);
+
+					// Destroy the gui!
+					gui.dispose();
+
+					// Add the record!
+					complete = true;
+
+					if (call != null)
+						call.addDone();
+				}
+			}
+			catch (SQLException e2)
+			{
+				e2.printStackTrace();
+			}
 		else if (e.getActionCommand().equals("cancel"))
 		{
 			// Set the current record to null and make the frame invisible
@@ -205,7 +217,14 @@ public class AddRecordOverseer implements ActionListener
 			curr.setFormat(gui.getFormat());
 		}
 		else if (e.getActionCommand().equals("cat"))
-			doCat();
+			try
+			{
+				doCat();
+			}
+			catch (SQLException e2)
+			{
+				e2.printStackTrace();
+			}
 		else if (e.getActionCommand().equals("tracks"))
 			newTracks();
 		else if (e.getActionCommand().equals("addtracks"))
@@ -235,7 +254,15 @@ public class AddRecordOverseer implements ActionListener
 				// Deal with the compiler
 				// Bring up the personnel selection screen
 				SetBuilder<Artist> persBuild = new SetBuilder<Artist>(
-						"Select Compilers", gui, new Artist());
+						"Select Compilers", gui, new Builder<Artist>()
+						{
+							@Override
+							public Artist build(String name)
+							{
+								return Artist.build(name);
+							}
+
+						});
 				persBuild.setData(artists, curr.getCompilers());
 				persBuild.setVisible(true);
 
@@ -254,7 +281,14 @@ public class AddRecordOverseer implements ActionListener
 	{
 		// Bring up the group selection screen
 		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groop", gui,
-				new Groop());
+				new Builder<Groop>()
+				{
+					@Override
+					public Groop build(String name)
+					{
+						return new Groop(name);
+					}
+				});
 		grpBuild.setData(groops.values(), new Vector<Groop>());
 		grpBuild.setVisible(true);
 
@@ -322,7 +356,14 @@ public class AddRecordOverseer implements ActionListener
 				chGrps.add(groops.get(lineup.getGroop().getSortName()));
 
 		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops",
-				gui, new Groop());
+				gui, new Builder<Groop>()
+				{
+					@Override
+					public Groop build(String name)
+					{
+						return new Groop(name);
+					}
+				});
 		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1),
 				curr.getNoTracks());
 		grpBuild.setVisible(true);
@@ -398,7 +439,16 @@ public class AddRecordOverseer implements ActionListener
 	{
 		// Bring up the personnel selection screen
 		SetBuilder<Artist> persBuild = new SetBuilder<Artist>(
-				"Select Personnel", gui, new Artist());
+				"Select Personnel", gui, new Builder<Artist>()
+				{
+
+					@Override
+					public Artist build(String name)
+					{
+						return Artist.build(name);
+					}
+
+				});
 		persBuild.setData(artists, new Vector<Artist>());
 		persBuild.setVisible(true);
 
@@ -449,7 +499,15 @@ public class AddRecordOverseer implements ActionListener
 	{
 		// Bring up the personnel selection screen
 		SetBuilder<Artist> persBuild = new SetBuilder<Artist>(
-				"Select Personnel", gui, new Artist());
+				"Select Personnel", gui, new Builder<Artist>()
+				{
+					@Override
+					public Artist build(String name)
+					{
+						return Artist.build(name);
+					}
+
+				});
 		persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(),
 				Math.max(1, trackNumber - 1), curr.getNoTracks());
 		persBuild.setVisible(true);
@@ -507,7 +565,7 @@ public class AddRecordOverseer implements ActionListener
 		}
 	}
 
-	public boolean collectDataFromGUI()
+	public boolean collectDataFromGUI() throws SQLException
 	{
 		boolean done = true;
 
@@ -642,7 +700,7 @@ public class AddRecordOverseer implements ActionListener
 		return done;
 	}
 
-	public void doCat()
+	public void doCat() throws SQLException
 	{
 		// Bring up a set selector using the catalogue list
 		SetBuilder<String> catBuild = new SetBuilder<String>("Select Cat. Nos",
@@ -673,11 +731,19 @@ public class AddRecordOverseer implements ActionListener
 		}
 	}
 
-	public void doLabels()
+	public void doLabels() throws SQLException
 	{
 		// Bring up a set selector using the label list
 		SetBuilder<Label> labBuild = new SetBuilder<Label>("Select Labels",
-				gui, new Label());
+				gui, new Builder<Label>()
+				{
+					@Override
+					public Label build(String name)
+					{
+						return new Label(name);
+					}
+
+				});
 		labBuild.setData(labels, curr.getLabels());
 		labBuild.setVisible(true);
 

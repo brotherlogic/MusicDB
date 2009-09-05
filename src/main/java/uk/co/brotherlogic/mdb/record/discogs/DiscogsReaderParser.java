@@ -145,15 +145,19 @@ public class DiscogsReaderParser extends DefaultHandler
 						finishedLineUps.add(lineups.get(0));
 				}
 
-				for (Track track : rec.getTracks())
-					track.setLineUps(finishedLineUps);
+				try
 				{
-
+					for (Track track : rec.getTracks())
+						track.setLineUps(finishedLineUps);
 				}
+				catch (SQLException e)
+				{
+					throw new SAXException(e);
+				}
+				state = READING_TRACK;
 			}
-			state = READING_TRACK;
-		}
 
-		text = "";
+			text = "";
+		}
 	}
 }
