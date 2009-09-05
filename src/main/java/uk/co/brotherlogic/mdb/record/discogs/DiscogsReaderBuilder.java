@@ -13,7 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-import uk.co.brotherlogic.mdb.App;
+import uk.co.brotherlogic.mdb.MDBApp;
 import uk.co.brotherlogic.mdb.GetArtists;
 import uk.co.brotherlogic.mdb.GetCategories;
 import uk.co.brotherlogic.mdb.GetLabels;
@@ -109,7 +109,7 @@ public class DiscogsReaderBuilder
 		DiscogsReaderBuilder builder = new DiscogsReaderBuilder();
 		Record rec = (builder.buildRecordFromDiscogs("Sharon Van Etten",
 				"Because I Was Love"));
-		AddRecordOverseer over = new AddRecordOverseer(new App(), GetArtists
+		AddRecordOverseer over = new AddRecordOverseer(new MDBApp(), GetArtists
 				.create().getArtists(), GetLabels.create().getLabels(),
 				GetFormats.create().getFormats(), GetGroops.build()
 						.getGroopMap(), GetCategories.build().getCategories(),

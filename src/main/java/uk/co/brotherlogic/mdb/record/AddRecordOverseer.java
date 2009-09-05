@@ -25,7 +25,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import uk.co.brotherlogic.mdb.App;
 import uk.co.brotherlogic.mdb.Artist;
 import uk.co.brotherlogic.mdb.Builder;
 import uk.co.brotherlogic.mdb.Category;
@@ -33,6 +32,7 @@ import uk.co.brotherlogic.mdb.CategoryBuilderGUI;
 import uk.co.brotherlogic.mdb.Label;
 import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.LineUpSelectorGUI;
+import uk.co.brotherlogic.mdb.MDBApp;
 import uk.co.brotherlogic.mdb.SetBuilder;
 import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.format.Format;
@@ -45,7 +45,7 @@ public class AddRecordOverseer implements ActionListener
 	Collection<Artist> artists;
 
 	// THe control centre to call back to
-	App call = null;
+	MDBApp call = null;
 
 	Collection<Category> categories;
 
@@ -65,7 +65,7 @@ public class AddRecordOverseer implements ActionListener
 	// Collections to be used for making
 	Collection<Label> labels;
 
-	public AddRecordOverseer(App c, Collection<Artist> artists,
+	public AddRecordOverseer(MDBApp c, Collection<Artist> artists,
 			Collection<Label> labels, Collection<Format> formats,
 			Map<String, Groop> groops, Collection<Category> categories)
 	{
@@ -94,7 +94,7 @@ public class AddRecordOverseer implements ActionListener
 			setForSelectedFormat();
 	}
 
-	public AddRecordOverseer(App c, Collection<Artist> artists,
+	public AddRecordOverseer(MDBApp c, Collection<Artist> artists,
 			Collection<Label> labels, Collection<Format> formats,
 			Map<String, Groop> groops, Collection<Category> categories,
 			Record rec) throws SQLException
@@ -183,7 +183,7 @@ public class AddRecordOverseer implements ActionListener
 					complete = true;
 
 					if (call != null)
-						call.addDone();
+						call.addDone(curr);
 				}
 			}
 			catch (SQLException e2)
