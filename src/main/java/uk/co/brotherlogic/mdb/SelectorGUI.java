@@ -25,8 +25,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-public class SelectorGUI extends JDialog implements ActionListener,
-		CaretListener
+import uk.co.brotherlogic.mdb.artist.Artist;
+
+public class SelectorGUI extends JDialog implements ActionListener, CaretListener
 {
 	// List model for the text list
 	DefaultListModel listMod;
@@ -102,10 +103,8 @@ public class SelectorGUI extends JDialog implements ActionListener,
 
 		// Make sure that the selection is visible and the index doesn't
 		// overflow
-		listMain.ensureIndexIsVisible(Math.max(listMain.getSelectedIndex() - 5,
-				1));
-		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4,
-				objs.size() + 1));
+		listMain.ensureIndexIsVisible(Math.max(listMain.getSelectedIndex() - 5, 1));
+		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4, objs.size() + 1));
 	}
 
 	public void caretUpdate(CaretEvent e)
@@ -115,8 +114,7 @@ public class SelectorGUI extends JDialog implements ActionListener,
 
 	public Object getClosest(String attempt)
 	{
-		SortedSet<Artist> temp = objs.tailSet(new Artist(attempt, Utils
-				.flipString(attempt), -1));
+		SortedSet<Artist> temp = objs.tailSet(new Artist(attempt, Utils.flipString(attempt), -1));
 
 		if (temp.size() > 0)
 			return temp.first();
@@ -155,8 +153,7 @@ public class SelectorGUI extends JDialog implements ActionListener,
 		this.getContentPane().add(butOK, null);
 		this.getContentPane().add(buttCancel, null);
 		jScrollPane1.getViewport().add(listMain, null);
-		listMain.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
+		listMain.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	public void setData(Collection<Artist> listElems)

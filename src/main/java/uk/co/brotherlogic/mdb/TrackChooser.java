@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import uk.co.brotherlogic.mdb.record.Track;
+
 public class TrackChooser extends JDialog implements ActionListener
 {
 
@@ -70,8 +72,8 @@ public class TrackChooser extends JDialog implements ActionListener
 		else
 		{
 			// Button pressed - get the number
-			int buttonPressed = Integer.parseInt(e.getActionCommand()
-					.substring(3, e.getActionCommand().length()));
+			int buttonPressed = Integer.parseInt(e.getActionCommand().substring(3,
+					e.getActionCommand().length()));
 
 			if (buttonPressed > 0)
 			{

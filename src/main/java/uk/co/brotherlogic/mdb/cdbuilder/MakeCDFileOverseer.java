@@ -22,13 +22,13 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import uk.co.brotherlogic.mdb.EntitySelector;
-import uk.co.brotherlogic.mdb.LineUp;
 import uk.co.brotherlogic.mdb.RecordSelector;
-import uk.co.brotherlogic.mdb.Track;
 import uk.co.brotherlogic.mdb.TrackChooser;
 import uk.co.brotherlogic.mdb.groop.Groop;
+import uk.co.brotherlogic.mdb.groop.LineUp;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
+import uk.co.brotherlogic.mdb.record.Track;
 
 public class MakeCDFileOverseer
 {
@@ -62,26 +62,25 @@ public class MakeCDFileOverseer
 		}
 		catch (SQLException e)
 		{
-			JOptionPane.showMessageDialog(null, "Error in CD Making" + e,
-					"Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Error in CD Making" + e, "Error!",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		catch (IOException e)
 		{
-			JOptionPane.showMessageDialog(null,
-					"Error in file selection/writing: " + e, "Error!",
+			JOptionPane.showMessageDialog(null, "Error in file selection/writing: " + e, "Error!",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 		catch (NullPointerException e)
 		{
-			JOptionPane.showMessageDialog(null, "Can't find server: " + e,
-					"Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Can't find server: " + e, "Error!",
+					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}
 
-	public MakeCDFileOverseer(Record recIn, File of, boolean no,
-			String fileString)
+	public MakeCDFileOverseer(Record recIn, File of, boolean no, String fileString)
+			throws SQLException
 	{
 		try
 		{
@@ -101,15 +100,14 @@ public class MakeCDFileOverseer
 		}
 		catch (IOException e)
 		{
-			JOptionPane.showMessageDialog(null,
-					"Error in file selection/writing: " + e, "Error!",
+			JOptionPane.showMessageDialog(null, "Error in file selection/writing: " + e, "Error!",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 		catch (NullPointerException e)
 		{
-			JOptionPane.showMessageDialog(null, "Can't find server: " + e,
-					"Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Can't find server: " + e, "Error!",
+					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 
@@ -126,8 +124,7 @@ public class MakeCDFileOverseer
 		Map<String, String> trans = new TreeMap<String, String>();
 
 		// Construct the correct file
-		File sDir = new File(musicDir.getCanonicalPath() + File.separator
-				+ "convert");
+		File sDir = new File(musicDir.getCanonicalPath() + File.separator + "convert");
 
 		// Search the sub-directories of this too!
 		File[] dirs2 = sDir.listFiles();
@@ -148,8 +145,7 @@ public class MakeCDFileOverseer
 		File ret;
 		if (resultingDir != null)
 		{
-			ret = new File(trans.get(resultingDir) + File.separator
-					+ "CDout.txt");
+			ret = new File(trans.get(resultingDir) + File.separator + "CDout.txt");
 			outDir = new File(trans.get(resultingDir));
 		}
 		else
@@ -158,21 +154,14 @@ public class MakeCDFileOverseer
 	}
 
 	// Function to write the info file
-	public boolean writeFile(boolean auto) throws IOException
+	public boolean writeFile(boolean auto) throws SQLException, IOException
 	{
 
 		// Check that the number of tracks is equal to the number of files
 		int noFiles = outDir.listFiles().length;
 
 		TrackChooser track;
-		try
-		{
-			track = new TrackChooser(null, outRec.getTracks());
-		}
-		catch (SQLException e)
-		{
-			throw new IOException(e);
-		}
+		track = new TrackChooser(null, outRec.getTracks());
 
 		if (!auto && noFiles != outRec.getNoTracks())
 			// Build a viewer to deal with the tracks
@@ -248,8 +237,7 @@ public class MakeCDFileOverseer
 				grps += grIt.next().getShowName() + " & ";
 			grps = grps.substring(0, grps.length() - 3);
 
-			w.println((i + 1) + "~" + grps + "~" + trackNumber + "~"
-					+ trackName);
+			w.println((i + 1) + "~" + grps + "~" + trackNumber + "~" + trackName);
 		}
 
 		// Return the error value

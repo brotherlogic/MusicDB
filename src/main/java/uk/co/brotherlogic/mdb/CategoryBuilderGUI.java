@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.format.Format;
 
 public class CategoryBuilderGUI extends JDialog implements ActionListener
@@ -64,34 +65,26 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 	Map<String, Integer> MP3Codes;
 
 	String[] MP3s = new String[]
-	{ "Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk", "Grunge",
-			"Hip-Hop", "Jazz", "Metal", "New Age", "Oldies", "Other", "Pop",
-			"R&B", "Rap", "Reggae", "Rock", "Techno", "Industrial",
-			"Alternative", "Ska", "Death Metal", "Pranks", "Soundtrack",
-			"Euro-Techno", "Ambient", "Trip-Hop", "Vocal", "Jazz+Funk",
-			"Fusion", "Trance", "Classical", "Instrumental", "Acid", "House",
-			"Game", "Sound Clip", "Gospel", "Noise", "AlternRock", "Bass",
-			"Soul", "Punk", "Space", "Meditative", "Instrumental Pop",
-			"Instrumental Rock", "Ethnic", "Gothic", "Darkwave",
-			"Techno-Industrial", "Electronic", "Pop-Folk", "Eurodance",
-			"Dream", "Southern Rock", "Comedy", "Cult", "Gangsta", "Top 40",
-			"Christian Rap", "Pop/Funk", "Jungle", "Native American",
-			"Cabaret", "New Wave", "Psychadelic", "Rave", "Showtunes",
-			"Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz", "Polka",
-			"Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk",
-			"Folk-Rock", "National Folk", "Swing", "Fast Fusion", "Bebob",
-			"Latin", "Revival", "Celtic", "Bluegrass", "Avantgarde",
-			"Gothic Rock", "Progressive Rock", "Psychedelic Rock",
-			"Symphonic Rock", "Slow Rock", "Big Band", "Chorus",
-			"Easy Listening", "Acoustic", "Humour", "Speech", "Chanson",
-			"Opera", "Chamber Music", "Sonata", "Symphony", "Booty Bass",
-			"Primus", "Porn Groove", "Satire", "Slow Jam", "Club", "Tango",
-			"Samba", "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul",
-			"Freestyle", "Duet", "Punk Rock", "Drum Solo", "Acapella",
-			"Euro-House", "Dance Hall" };
+	{ "Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk", "Grunge", "Hip-Hop", "Jazz",
+			"Metal", "New Age", "Oldies", "Other", "Pop", "R&B", "Rap", "Reggae", "Rock", "Techno",
+			"Industrial", "Alternative", "Ska", "Death Metal", "Pranks", "Soundtrack",
+			"Euro-Techno", "Ambient", "Trip-Hop", "Vocal", "Jazz+Funk", "Fusion", "Trance",
+			"Classical", "Instrumental", "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise",
+			"AlternRock", "Bass", "Soul", "Punk", "Space", "Meditative", "Instrumental Pop",
+			"Instrumental Rock", "Ethnic", "Gothic", "Darkwave", "Techno-Industrial", "Electronic",
+			"Pop-Folk", "Eurodance", "Dream", "Southern Rock", "Comedy", "Cult", "Gangsta",
+			"Top 40", "Christian Rap", "Pop/Funk", "Jungle", "Native American", "Cabaret",
+			"New Wave", "Psychadelic", "Rave", "Showtunes", "Trailer", "Lo-Fi", "Tribal",
+			"Acid Punk", "Acid Jazz", "Polka", "Retro", "Musical", "Rock & Roll", "Hard Rock",
+			"Folk", "Folk-Rock", "National Folk", "Swing", "Fast Fusion", "Bebob", "Latin",
+			"Revival", "Celtic", "Bluegrass", "Avantgarde", "Gothic Rock", "Progressive Rock",
+			"Psychedelic Rock", "Symphonic Rock", "Slow Rock", "Big Band", "Chorus",
+			"Easy Listening", "Acoustic", "Humour", "Speech", "Chanson", "Opera", "Chamber Music",
+			"Sonata", "Symphony", "Booty Bass", "Primus", "Porn Groove", "Satire", "Slow Jam",
+			"Club", "Tango", "Samba", "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul",
+			"Freestyle", "Duet", "Punk Rock", "Drum Solo", "Acapella", "Euro-House", "Dance Hall" };
 
-	public CategoryBuilderGUI(JFrame refIn, Collection<Category> cats,
-			Collection<Format> forms)
+	public CategoryBuilderGUI(JFrame refIn, Collection<Category> cats, Collection<Format> forms)
 	{
 		// Set up the display and list models
 		super(refIn, "Build Categories", true);
@@ -180,25 +173,8 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 
 			// Choose another format which this is the same as
 			Format sameFormat = (Format) JOptionPane.showInputDialog(this,
-					"Select the similar format", "Format selector",
-					JOptionPane.QUESTION_MESSAGE, null, combo.toArray(),
-					currFormat);
-
-			// Add leech it's elements
-			if (sameFormat != null)
-			{
-				Collection<Category> categories = sameFormat.getCategories();
-
-				// Remove the current categories
-				Iterator<Category> cIt = selectObjs.iterator();
-				while (cIt.hasNext())
-					remElem(cIt.next());
-
-				// And replace them
-				Iterator<Category> tIt = categories.iterator();
-				while (tIt.hasNext())
-					addElem(tIt.next());
-			}
+					"Select the similar format", "Format selector", JOptionPane.QUESTION_MESSAGE,
+					null, combo.toArray(), currFormat);
 		}
 		else if (e.getActionCommand().equalsIgnoreCase("cancel"))
 		{
@@ -216,8 +192,8 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		}
 		else if (e.getActionCommand() == "all")
 		{
-			int res = JOptionPane.showConfirmDialog(this, "Are You Sure?",
-					"Confirm", JOptionPane.YES_NO_OPTION);
+			int res = JOptionPane.showConfirmDialog(this, "Are You Sure?", "Confirm",
+					JOptionPane.YES_NO_OPTION);
 
 			// Assuming 0 means no
 			if (res < 1)
@@ -281,14 +257,9 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 
 		// Check that cancel wasn't pressed and that formats were available
 		if (!cancelled && comboNumber.getItemCount() > 0)
-		{
 			// Create a new format using the chosen format name and the selected
 			// data
 			retForm = (Format) comboNumber.getSelectedItem();
-
-			// Reset the categories in this format
-			retForm.setCategories(selectObjs);
-		}
 
 		return retForm;
 	}
@@ -342,57 +313,44 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		butNew.addActionListener(this);
 		this.getContentPane().add(
 				comboNumber,
-				new GridBagConstraints(0, 0, 1, 1, 4.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+				new GridBagConstraints(0, 0, 1, 1, 4.0, 0.0, GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butAdd,
-				new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butRem,
-				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.NORTH, GridBagConstraints.NONE,
-						new Insets(5, 5, 0, 5), 0, 0));
+				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
+						GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
 		this.getContentPane().add(
 				jScrollPane1,
-				new GridBagConstraints(0, 1, 1, 3, 4.0, 1.0,
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(0, 1, 1, 3, 4.0, 1.0, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		jScrollPane1.getViewport().add(listMain, null);
 		this.getContentPane().add(
 				jScrollPane2,
-				new GridBagConstraints(2, 1, 3, 3, 1.0, 1.0,
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(2, 1, 3, 3, 1.0, 1.0, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butCancel,
-				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
+						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butSame,
-				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.WEST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butOK,
-				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
+						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butNew,
-				new GridBagConstraints(2, 0, 3, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+				new GridBagConstraints(2, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 		jScrollPane2.getViewport().add(listAdded, null);
-		listMain.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
-		listAdded.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
+		listMain.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listAdded.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	private void makeForFormat()
@@ -407,14 +365,6 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		// Get the current format
 		Format form = (Format) comboNumber.getSelectedItem();
 
-		// Add all the categories - ensure a valid format has been selected
-		if (form != null)
-		{
-			Iterator<Category> cIt = form.getCategories().iterator();
-			while (cIt.hasNext())
-				addElem(cIt.next());
-		}
-
 	}
 
 	public Category makeNewCategory()
@@ -422,13 +372,11 @@ public class CategoryBuilderGUI extends JDialog implements ActionListener
 		Category ret = null;
 
 		// Bring up a text box to collect the new category
-		String newCat = JOptionPane.showInputDialog(this,
-				"Enter The New Category");
+		String newCat = JOptionPane.showInputDialog(this, "Enter The New Category");
 
 		// Get the MP3 Code
-		String MP3Num = (String) JOptionPane.showInputDialog(this,
-				"Select The MP3 Genre", "MP3 Genre",
-				JOptionPane.QUESTION_MESSAGE, null, MP3s, MP3s[0]);
+		String MP3Num = (String) JOptionPane.showInputDialog(this, "Select The MP3 Genre",
+				"MP3 Genre", JOptionPane.QUESTION_MESSAGE, null, MP3s, MP3s[0]);
 
 		// Collect the MP3 Code
 		if (!newCat.equalsIgnoreCase("") && !MP3Num.equals(""))

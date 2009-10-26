@@ -9,15 +9,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import uk.co.brotherlogic.mdb.Artist;
-import uk.co.brotherlogic.mdb.GetArtists;
-import uk.co.brotherlogic.mdb.GetLabels;
-import uk.co.brotherlogic.mdb.Label;
-import uk.co.brotherlogic.mdb.LineUp;
-import uk.co.brotherlogic.mdb.Track;
+import uk.co.brotherlogic.mdb.artist.Artist;
+import uk.co.brotherlogic.mdb.artist.GetArtists;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.groop.Groop;
+import uk.co.brotherlogic.mdb.groop.LineUp;
+import uk.co.brotherlogic.mdb.label.GetLabels;
+import uk.co.brotherlogic.mdb.label.Label;
 import uk.co.brotherlogic.mdb.record.Record;
+import uk.co.brotherlogic.mdb.record.Track;
 
 public class DiscogsReaderParser extends DefaultHandler
 {
@@ -43,16 +43,14 @@ public class DiscogsReaderParser extends DefaultHandler
 	}
 
 	@Override
-	public void characters(char[] ch, int start, int length)
-			throws SAXException
+	public void characters(char[] ch, int start, int length) throws SAXException
 	{
 		super.characters(ch, start, length);
 		text += new String(ch, start, length);
 	}
 
 	@Override
-	public void endElement(String uri, String localName, String name)
-			throws SAXException
+	public void endElement(String uri, String localName, String name) throws SAXException
 	{
 		super.endElement(uri, localName, name);
 
@@ -87,15 +85,14 @@ public class DiscogsReaderParser extends DefaultHandler
 		else if (name.equals("duration") && state == READING_TRACK)
 		{
 			String[] elems = text.split(":");
-			int timeInSeconds = Integer.parseInt(elems[0]) * 60
-					+ Integer.parseInt(elems[1]);
+			int timeInSeconds = Integer.parseInt(elems[0]) * 60 + Integer.parseInt(elems[1]);
 			currTrack.setLengthInSeconds(timeInSeconds);
 		}
 	}
 
 	@Override
-	public void startElement(String uri, String localName, String name,
-			Attributes attributes) throws SAXException
+	public void startElement(String uri, String localName, String name, Attributes attributes)
+			throws SAXException
 	{
 		super.startElement(uri, localName, name, attributes);
 		if (name.equalsIgnoreCase("artists"))
@@ -124,8 +121,7 @@ public class DiscogsReaderParser extends DefaultHandler
 				List<LineUp> finishedLineUps = new LinkedList<LineUp>();
 				for (Groop grp : overallGroops)
 				{
-					List<LineUp> lineups = new LinkedList<LineUp>(grp
-							.getLineUps());
+					List<LineUp> lineups = new LinkedList<LineUp>(grp.getLineUps());
 					if (lineups.size() == 0)
 					{
 						List<Artist> artists = new LinkedList<Artist>();
@@ -148,7 +144,8 @@ public class DiscogsReaderParser extends DefaultHandler
 				try
 				{
 					for (Track track : rec.getTracks())
-						track.setLineUps(finishedLineUps);
+						for (LineUp lineup : track.getLineUps())
+							track.addLineUp(lineup);
 				}
 				catch (SQLException e)
 				{

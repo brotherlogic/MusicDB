@@ -27,10 +27,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import uk.co.brotherlogic.mdb.artist.Artist;
 import uk.co.brotherlogic.mdb.groop.Groop;
+import uk.co.brotherlogic.mdb.groop.LineUp;
 
-public class LineUpSelectorGUI extends JDialog implements ActionListener,
-		CaretListener
+public class LineUpSelectorGUI extends JDialog implements ActionListener, CaretListener
 {
 	// Controller Elements
 	DefaultListModel listMod;
@@ -100,8 +101,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		{
 			// Make sure that we're not adding from the list
 			if (listMain.getSelectedValue() != null
-					&& textIn.getText().equalsIgnoreCase(
-							(listMain.getSelectedValue().toString())))
+					&& textIn.getText().equalsIgnoreCase((listMain.getSelectedValue().toString())))
 
 			{
 				// First remove this item from the main list
@@ -110,13 +110,12 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 			}
 			else
 				// Add a label by just placing it into the addlist
-				addElem(new Artist(textIn.getText(), Utils.flipString(textIn
-						.getText()), -1));
+				addElem(new Artist(textIn.getText(), Utils.flipString(textIn.getText()), -1));
 		}
 		else if (e.getActionCommand() == "all")
 		{
-			int res = JOptionPane.showConfirmDialog(this, "Are You Sure?",
-					"Confirm", JOptionPane.YES_NO_OPTION);
+			int res = JOptionPane.showConfirmDialog(this, "Are You Sure?", "Confirm",
+					JOptionPane.YES_NO_OPTION);
 
 			// Assuming 0 means no
 			if (res < 1)
@@ -174,8 +173,7 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		listMain.setSelectedValue(close, true);
 
 		// Make sure that the selection is visible
-		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4,
-				objs.size() + 1));
+		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4, objs.size() + 1));
 	}
 
 	public void clean()
@@ -273,10 +271,8 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 		this.getContentPane().add(butAll, null);
 		jScrollPane2.getViewport().add(listAdded, null);
 		jScrollPane1.getViewport().add(listMain, null);
-		listMain.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
-		listAdded.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
+		listMain.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listAdded.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	private void remElem(Artist in)
@@ -361,7 +357,6 @@ public class LineUpSelectorGUI extends JDialog implements ActionListener,
 	{
 		Object close = getClosest("");
 		listMain.setSelectedValue(close, true);
-		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4,
-				objs.size() + 1));
+		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4, objs.size() + 1));
 	}
 }

@@ -10,9 +10,12 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import uk.co.brotherlogic.mdb.artist.GetArtists;
+import uk.co.brotherlogic.mdb.categories.GetCategories;
 import uk.co.brotherlogic.mdb.cdbuilder.MakeCDFileOverseer;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
+import uk.co.brotherlogic.mdb.label.GetLabels;
 import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
@@ -45,12 +48,10 @@ public class MDBApp extends JFrame
 			{
 				try
 				{
-					AddRecordOverseer over = new AddRecordOverseer(ref,
-							GetArtists.create().getArtists(), GetLabels
-									.create().getLabels(), GetFormats.create()
-									.getFormats(), GetGroops.build()
-									.getGroopMap(), GetCategories.build()
-									.getCategories());
+					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create()
+							.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
+							.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
+							.getCategories());
 					over.showGUI(ref);
 				}
 				catch (SQLException e)
@@ -64,17 +65,14 @@ public class MDBApp extends JFrame
 	public final void addDone(final Record done)
 	{
 		// Add record is done!
-		try
-		{
-			if (done.getNumber() < 0)
-				GetRecords.create().addRecord(done);
-			else
-				GetRecords.create().updateRecord(done);
-		}
-		catch (SQLException ex)
-		{
-			ex.printStackTrace();
-		}
+		/*
+		 * try { if (done.getNumber() < 0) GetRecords.create().addRecord(done);
+		 * else GetRecords.create().updateRecord(done); } catch (SQLException
+		 * ex) { ex.printStackTrace(); }
+		 */
+
+		System.out.println(done);
+		System.exit(1);
 
 		this.setVisible(true);
 	}
@@ -97,11 +95,10 @@ public class MDBApp extends JFrame
 				// Prepare the viewer
 				this.setVisible(false);
 
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
-						.create().getArtists(), GetLabels.create().getLabels(),
-						GetFormats.create().getFormats(), GetGroops.build()
-								.getGroopMap(), GetCategories.build()
-								.getCategories(), examine);
+				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create()
+						.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
+						.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
+						.getCategories(), examine);
 				over.showGUI(this);
 			}
 		}

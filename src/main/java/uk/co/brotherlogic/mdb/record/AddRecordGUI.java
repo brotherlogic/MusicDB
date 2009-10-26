@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,10 +26,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import uk.co.brotherlogic.mdb.Category;
 import uk.co.brotherlogic.mdb.FilledTextArea;
-import uk.co.brotherlogic.mdb.Label;
+import uk.co.brotherlogic.mdb.categories.Category;
+import uk.co.brotherlogic.mdb.categories.GetCategories;
 import uk.co.brotherlogic.mdb.format.Format;
+import uk.co.brotherlogic.mdb.label.Label;
 
 public class AddRecordGUI extends JFrame
 {
@@ -92,8 +94,9 @@ public class AddRecordGUI extends JFrame
 	JComboBox comboCategory = new JComboBox();
 	JButton butNewCat = new JButton();
 
-	public AddRecordGUI(Collection<Label> labels, Collection<Format> formats,
-			ActionListener list)
+	Record model;
+
+	public AddRecordGUI(Collection<Label> labels, Collection<Format> formats, ActionListener list)
 	{
 		// Create the filled Text Area
 		textLabel = new FilledTextArea<Label>(labels);
@@ -135,10 +138,13 @@ public class AddRecordGUI extends JFrame
 		}
 
 		// Only set the categories if there are categories to set!
-		if (formats.size() > 0)
+		try
 		{
-			setCategories(getFormat().getCategories());
-			comboFormat.setEnabled(true);
+			setCategories(GetCategories.build().getCategories());
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -157,8 +163,7 @@ public class AddRecordGUI extends JFrame
 
 		// Re-size the track panel
 		Dimension panDim = trackPan.getSize();
-		panDim.setSize(panDim.getWidth(), panDim.getHeight()
-				* (currNoTracks + noTracks) / currNoTracks);
+		panDim.setSize(panDim.getWidth(), panDim.getHeight() * (currNoTracks + noTracks) / currNoTracks);
 
 		for (int i = currNoTracks; i < currNoTracks + noTracks; i++)
 		{
@@ -182,25 +187,16 @@ public class AddRecordGUI extends JFrame
 			trackGroops.add(i, butGroop);
 
 			// Add them using the required constraints
-			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butGroop, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 2, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTrack, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 1, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butPers, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTime, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butGroop, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 2, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTrack, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 1, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butPers, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTime, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
 		}
 
 		scrollTracks.getViewport().removeAll();
@@ -210,10 +206,8 @@ public class AddRecordGUI extends JFrame
 		for (int i = currNoTracks + noTracks - 1; i > addPoint + noTracks - 1; i--)
 		{
 			// Move the titles and times
-			(trackTitles.get(i)).setText((trackTitles.get(i - noTracks))
-					.getText());
-			(trackLengths.get(i)).setText((trackLengths.get(i - noTracks))
-					.getText());
+			(trackTitles.get(i)).setText((trackTitles.get(i - noTracks)).getText());
+			(trackLengths.get(i)).setText((trackLengths.get(i - noTracks)).getText());
 		}
 
 		// And blank the new fields
@@ -263,25 +257,16 @@ public class AddRecordGUI extends JFrame
 			trackGroops.add(butGroop);
 
 			// Add them using the required constraints
-			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butGroop, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 2, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTrack, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 1, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butPers, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTime, new GridBagConstraints(
-					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butGroop, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 2, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTrack, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 1, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butPers, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTime, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
 		}
 
 		trackTitles.trimToSize();
@@ -441,6 +426,7 @@ public class AddRecordGUI extends JFrame
 		textLabel.setPreferredSize(new Dimension(63, 30));
 		textMix.setMinimumSize(new Dimension(4, 30));
 		textMix.setPreferredSize(new Dimension(63, 30));
+		textMix.setEditable(false);
 		textCatNo.setMinimumSize(new Dimension(4, 30));
 		textCatNo.setPreferredSize(new Dimension(63, 30));
 		textDate.setMaximumSize(new Dimension(50, 30));
@@ -539,12 +525,10 @@ public class AddRecordGUI extends JFrame
 		comboMonth.setPreferredSize(new Dimension(31, 30));
 		comboType.setMinimumSize(new Dimension(31, 30));
 		comboType.setPreferredSize(new Dimension(31, 30));
-		comboCategory.setEnabled(false);
 		comboFormat.setMinimumSize(new Dimension(31, 30));
 		comboFormat.setPreferredSize(new Dimension(31, 30));
 		comboFormat.setActionCommand("format");
 		comboFormat.addActionListener(list);
-		comboFormat.setEnabled(false);
 		butNewCat.setMaximumSize(new Dimension(79, 30));
 		butNewCat.setMinimumSize(new Dimension(79, 30));
 		butNewCat.setPreferredSize(new Dimension(79, 30));
@@ -553,256 +537,112 @@ public class AddRecordGUI extends JFrame
 		butNewCat.addActionListener(list);
 		butNewCat.setEnabled(true);
 
-		this.getContentPane().add(
-				jLabel1,
-				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textTitle,
-				new GridBagConstraints(1, 0, 8, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+		this.getContentPane().add(jLabel1,
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textTitle,
+				new GridBagConstraints(1, 0, 8, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				jLabel2,
-				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textLabel,
-				new GridBagConstraints(1, 1, 7, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				butMultiLabel,
-				new GridBagConstraints(8, 1, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel2,
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textLabel,
+				new GridBagConstraints(1, 1, 7, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butMultiLabel,
+				new GridBagConstraints(8, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 		JLabel tLabel = new JLabel("Type: ");
 		tLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		this.getContentPane().add(
-				tLabel,
-				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				comboType,
-				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				jLabel3,
-				new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				comboFormat,
-				new GridBagConstraints(3, 2, 5, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				butNew,
-				new GridBagConstraints(8, 2, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(tLabel,
+				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(comboType,
+				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel3,
+				new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(comboFormat,
+				new GridBagConstraints(3, 2, 5, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butNew,
+				new GridBagConstraints(8, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				jLabel4,
-				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textCatNo,
-				new GridBagConstraints(1, 3, 7, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				butMultiCat,
-				new GridBagConstraints(8, 3, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel4,
+				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textCatNo,
+				new GridBagConstraints(1, 3, 7, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butMultiCat,
+				new GridBagConstraints(8, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				jLabel5,
-				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textDate,
-				new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				jLabel7,
-				new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textYear,
-				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				new JLabel("Month: "),
-				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				comboMonth,
-				new GridBagConstraints(5, 4, 1, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
-						0, 0));
-		this.getContentPane().add(
-				jLabel9,
-				new GridBagConstraints(6, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(
-				comboCategory,
-				new GridBagConstraints(7, 4, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
-						0, 0));
-		this.getContentPane().add(
-				butNewCat,
-				new GridBagConstraints(8, 4, 1, 2, 0.0, 0.0,
-						GridBagConstraints.NORTH, GridBagConstraints.NONE,
-						new Insets(0, 0, 0, 0), 0, 0));
+		this.getContentPane().add(jLabel5,
+				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textDate,
+				new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel7,
+				new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textYear,
+				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(new JLabel("Month: "),
+				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(comboMonth,
+				new GridBagConstraints(5, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+		this.getContentPane().add(jLabel9,
+				new GridBagConstraints(6, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		this.getContentPane().add(comboCategory,
+				new GridBagConstraints(7, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+		this.getContentPane().add(butNewCat,
+				new GridBagConstraints(8, 4, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-		this.getContentPane().add(
-				new JLabel("Owner: "),
-				new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				comboOwner,
-				new GridBagConstraints(5, 7, 1, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
-						0, 0));
+		this.getContentPane().add(new JLabel("Owner: "),
+				new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(comboOwner,
+				new GridBagConstraints(5, 7, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 
-		this.getContentPane().add(
-				jLabel8,
-				new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textNotes,
-				new GridBagConstraints(1, 5, 8, 2, 1.0, 0.1,
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel8,
+				new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textNotes,
+				new GridBagConstraints(1, 5, 8, 2, 1.0, 0.1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				jLabel6,
-				new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textNoTracks,
-				new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				butTracks,
-				new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0,
-						GridBagConstraints.WEST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				butPersonnel,
-				new GridBagConstraints(7, 7, 1, 1, 0.0, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				butGroup,
-				new GridBagConstraints(8, 7, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(jLabel6,
+				new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textNoTracks,
+				new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butTracks,
+				new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butPersonnel,
+				new GridBagConstraints(7, 7, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butGroup,
+				new GridBagConstraints(8, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				labelMix,
-				new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textMix,
-				new GridBagConstraints(1, 8, 3, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				butMix,
-				new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(labelMix,
+				new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(textMix,
+				new GridBagConstraints(1, 8, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butMix,
+				new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				labelPrice,
-				new GridBagConstraints(7, 8, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(labelPrice,
+				new GridBagConstraints(7, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				labelPrice,
-				new GridBagConstraints(6, 8, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(labelPrice,
+				new GridBagConstraints(6, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				textPrice,
-				new GridBagConstraints(7, 8, 1, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+		this.getContentPane().add(textPrice,
+				new GridBagConstraints(7, 8, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				scrollTracks,
-				new GridBagConstraints(0, 9, 9, 1, 1.0, 0.9,
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(scrollTracks,
+				new GridBagConstraints(0, 9, 9, 1, 1.0, 0.9, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				labelAuth,
-				new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
-		this.getContentPane().add(
-				textAuth,
-				new GridBagConstraints(1, 10, 8, 1, 1.0, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+		this.getContentPane()
+				.add(
+						labelAuth,
+						new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+								new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane()
+				.add(
+						textAuth,
+						new GridBagConstraints(1, 10, 8, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+								new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(
-				butCancel,
-				new GridBagConstraints(7, 11, 1, 1, 0.0, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(
-				butDone,
-				new GridBagConstraints(8, 11, 1, 1, 0.0, 0.0,
-						GridBagConstraints.CENTER, GridBagConstraints.NONE,
-						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butCancel,
+				new GridBagConstraints(7, 11, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(butDone,
+				new GridBagConstraints(8, 11, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 	}
 
@@ -831,18 +671,8 @@ public class AddRecordGUI extends JFrame
 		// Fill the categories combo box accordingly
 		comboCategory.removeAllItems();
 
-		Iterator<Category> cit = in.iterator();
-		while (cit.hasNext())
-		{
-			Object n = cit.next();
-			comboCategory.addItem(n);
-		}
-
-		// Disabled the combo if there are no categories for this format
-		if (in.size() < 1)
-			comboCategory.setEnabled(false);
-		else
-			comboCategory.setEnabled(true);
+		for (Category category : in)
+			comboCategory.addItem(category);
 	}
 
 	public void setCategory(Category in)
@@ -874,6 +704,17 @@ public class AddRecordGUI extends JFrame
 	public void setLength(String title, int no)
 	{
 		(trackLengths.get(no - 1)).setText(title);
+	}
+
+	public void setModel(Record rec)
+	{
+		model = rec;
+
+		// Set the format
+		if (model.getFormat() != null)
+			comboFormat.setSelectedItem(model.getFormat());
+		else
+			comboFormat.setSelectedIndex(0);
 	}
 
 	public void setMonth(int in)
