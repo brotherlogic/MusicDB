@@ -48,10 +48,8 @@ public class MDBApp extends JFrame
 			{
 				try
 				{
-					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create()
-							.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
-							.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
-							.getCategories());
+					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
+							.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories());
 					over.showGUI(ref);
 				}
 				catch (SQLException e)
@@ -65,14 +63,19 @@ public class MDBApp extends JFrame
 	public final void addDone(final Record done)
 	{
 		// Add record is done!
-		/*
-		 * try { if (done.getNumber() < 0) GetRecords.create().addRecord(done);
-		 * else GetRecords.create().updateRecord(done); } catch (SQLException
-		 * ex) { ex.printStackTrace(); }
-		 */
 
-		System.out.println(done);
-		System.exit(1);
+		try
+		{
+			System.err.println(done.getNumber());
+			if (done.getNumber() <= 0)
+				GetRecords.create().addRecord(done);
+			else
+				GetRecords.create().updateRecord(done);
+		}
+		catch (SQLException ex)
+		{
+			ex.printStackTrace();
+		}
 
 		this.setVisible(true);
 	}
@@ -95,10 +98,8 @@ public class MDBApp extends JFrame
 				// Prepare the viewer
 				this.setVisible(false);
 
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create()
-						.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
-						.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
-						.getCategories(), examine);
+				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
+						.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories(), examine);
 				over.showGUI(this);
 			}
 		}
