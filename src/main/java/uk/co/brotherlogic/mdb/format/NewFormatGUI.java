@@ -29,6 +29,13 @@ import uk.co.brotherlogic.mdb.categories.GetCategories;
 
 public class NewFormatGUI extends JDialog implements ActionListener
 {
+	public static void main(String[] args) throws SQLException
+	{
+		NewFormatGUI gui = new NewFormatGUI(GetCategories.build().getCategories(), GetFormats
+				.create().getBaseFormats(), null);
+		gui.setVisible(true);
+	}
+
 	GridBagLayout gridBagLayout1 = new GridBagLayout();
 	JLabel jLabel1 = new JLabel();
 	JLabel jLabel2 = new JLabel();
@@ -37,6 +44,7 @@ public class NewFormatGUI extends JDialog implements ActionListener
 	JButton butOK = new JButton();
 	JButton butCancel = new JButton();
 	JPanel jPanel1 = new JPanel();
+
 	JComboBox comboBase = new JComboBox();
 
 	// Flag to indicate cancellation
@@ -88,8 +96,7 @@ public class NewFormatGUI extends JDialog implements ActionListener
 			Format other = (Format) comboOther.getSelectedItem();
 
 			if (other != null)
-				ret = new Format(-1, textFormat.getText(), (String) comboBase.getSelectedItem(),
-						other);
+				ret = new Format(textFormat.getText(), (String) comboBase.getSelectedItem());
 			else
 				ret = new Format(-1, textFormat.getText(), (String) comboBase.getSelectedItem());
 
@@ -170,12 +177,5 @@ public class NewFormatGUI extends JDialog implements ActionListener
 				jPanel1,
 				new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-	}
-
-	public static void main(String[] args) throws SQLException
-	{
-		NewFormatGUI gui = new NewFormatGUI(GetCategories.build().getCategories(), GetFormats
-				.create().getBaseFormats(), null);
-		gui.setVisible(true);
 	}
 }
