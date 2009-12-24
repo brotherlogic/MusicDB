@@ -105,6 +105,8 @@ public class AddRecordOverseer implements ActionListener
 		this.groops = groops;
 		this.categories = categories;
 
+		System.err.println("STARTING");
+
 		// We are editing a record
 		gui = new AddRecordGUI(labels, formats, this);
 		gui.setModel(rec);
@@ -131,8 +133,8 @@ public class AddRecordOverseer implements ActionListener
 		gui.displayCats(rec.getCatNos());
 		DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
 		gui.setDate(myForm.format(rec.getDate().getTime()));
-		gui.setNoTracks(rec.getNoTracks(), this);
-		for (int i = 0; i < rec.getNoTracks(); i++)
+		gui.setNoTracks(rec.getTracks().size(), this);
+		for (int i = 0; i < rec.getTracks().size(); i++)
 		{
 			Track currTrack = rec.getTrack(i + 1);
 			addGroopsToGUI(currTrack.getLineUps(), i + 1);
@@ -226,26 +228,59 @@ public class AddRecordOverseer implements ActionListener
 				e2.printStackTrace();
 			}
 		else if (e.getActionCommand().equals("tracks"))
-			newTracks();
+			try
+			{
+				newTracks();
+			}
+			catch (SQLException e2)
+			{
+				JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
+			}
 		else if (e.getActionCommand().equals("addtracks"))
 			addTracks();
 		else if (e.getActionCommand().equals("pers"))
-			addPersonnel();
+			try
+			{
+				addPersonnel();
+			}
+			catch (SQLException e2)
+			{
+				JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
+			}
 		else if (e.getActionCommand().equals("groop"))
-			addGroop();
+			try
+			{
+				addGroop();
+			}
+			catch (SQLException e2)
+			{
+				JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
+			}
 		else if (e.getActionCommand().startsWith("tpers"))
 		{
 			// Get the track number
 			int trackNumber = Integer.parseInt(e.getActionCommand().substring(5));
-			addPersonnel(trackNumber);
+			try
+			{
+				addPersonnel(trackNumber);
+			}
+			catch (SQLException e2)
+			{
+				JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
+			}
 		}
 		else if (e.getActionCommand().startsWith("tgroop"))
-		{
-			// Get the track number
-			int trackNumber = Integer.parseInt(e.getActionCommand().substring(6));
-			addGroop(trackNumber);
-			updateAuthor();
-		}
+			try
+			{
+				// Get the track number
+				int trackNumber = Integer.parseInt(e.getActionCommand().substring(6));
+				addGroop(trackNumber);
+				updateAuthor();
+			}
+			catch (SQLException e2)
+			{
+				JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
+			}
 		else if (e.getActionCommand().startsWith("comp"))
 			try
 			{
@@ -275,7 +310,7 @@ public class AddRecordOverseer implements ActionListener
 			}
 	}
 
-	public void addGroop()
+	public void addGroop() throws SQLException
 	{
 		// Bring up the group selection screen
 		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groop", gui,
@@ -324,7 +359,7 @@ public class AddRecordOverseer implements ActionListener
 				// Ask which tracks this should be added to
 				String tracksToAdd = JOptionPane.showInputDialog(gui, "Enter Tracks",
 						"Enter Tracks", JOptionPane.QUESTION_MESSAGE);
-				Collection<Integer> numbers = getRange(tracksToAdd, curr.getNoTracks());
+				Collection<Integer> numbers = getRange(tracksToAdd, curr.getTracks().size());
 
 				// Iterate each number and add the group
 				Iterator<Integer> nIt = numbers.iterator();
@@ -344,7 +379,7 @@ public class AddRecordOverseer implements ActionListener
 		grpBuild.clean();
 	}
 
-	public void addGroop(int trackNumber)
+	public void addGroop(int trackNumber) throws SQLException
 	{
 		Collection<Groop> chGrps = new LinkedList<Groop>();
 		for (LineUp lineup : curr.getTrack(trackNumber).getLineUps())
@@ -360,7 +395,8 @@ public class AddRecordOverseer implements ActionListener
 						return new Groop(name);
 					}
 				});
-		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1), curr.getNoTracks());
+		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1), curr.getTracks()
+				.size());
 		grpBuild.setVisible(true);
 
 		// Get the results
@@ -428,7 +464,7 @@ public class AddRecordOverseer implements ActionListener
 		gui.setGroop(rep, trackNumber);
 	}
 
-	public void addPersonnel()
+	public void addPersonnel() throws SQLException
 	{
 		// Bring up the personnel selection screen
 		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui,
@@ -467,7 +503,7 @@ public class AddRecordOverseer implements ActionListener
 					JOptionPane.QUESTION_MESSAGE);
 
 			// Get the track numbers
-			Collection<Integer> trackNumbers = getRange(tracksToAdd, curr.getNoTracks());
+			Collection<Integer> trackNumbers = getRange(tracksToAdd, curr.getTracks().size());
 
 			Iterator<Integer> tIt = trackNumbers.iterator();
 			while (tIt.hasNext())
@@ -484,7 +520,7 @@ public class AddRecordOverseer implements ActionListener
 		persBuild.clean();
 	}
 
-	public void addPersonnel(int trackNumber)
+	public void addPersonnel(int trackNumber) throws SQLException
 	{
 		// Bring up the personnel selection screen
 		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui,
@@ -498,7 +534,7 @@ public class AddRecordOverseer implements ActionListener
 
 				});
 		persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(), Math.max(1,
-				trackNumber - 1), curr.getNoTracks());
+				trackNumber - 1), curr.getTracks().size());
 		persBuild.setVisible(true);
 
 		// Get the results
@@ -636,7 +672,7 @@ public class AddRecordOverseer implements ActionListener
 		int currTrackNumber = -1;
 		try
 		{
-			for (currTrackNumber = 1; currTrackNumber <= curr.getNoTracks(); currTrackNumber++)
+			for (currTrackNumber = 1; currTrackNumber <= curr.getTracks().size(); currTrackNumber++)
 			{
 				curr.getTrack(currTrackNumber).setTitle(gui.getTrackTitle(currTrackNumber));
 
@@ -843,9 +879,9 @@ public class AddRecordOverseer implements ActionListener
 		}
 	}
 
-	public void newTracks()
+	public void newTracks() throws SQLException
 	{
-		if (curr.getNoTracks() > 0)
+		if (curr.getTracks().size() > 0)
 		{
 			// Wipe the tracks
 			gui.createTracks(this);
@@ -854,7 +890,7 @@ public class AddRecordOverseer implements ActionListener
 			curr.setTracks(gui.getNoTracks());
 
 			// Update the display
-			for (int i = 1; i <= curr.getNoTracks(); i++)
+			for (int i = 1; i <= curr.getTracks().size(); i++)
 			{
 				Track currTrack = curr.getTrack(i);
 

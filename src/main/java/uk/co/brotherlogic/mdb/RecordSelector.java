@@ -56,8 +56,7 @@ public class RecordSelector
 				while (rIt.hasNext())
 				{
 					Record rec = rIt.next();
-					catNos.addLast(rec.getCatNoString() + " ["
-							+ rec.getNumber() + "]");
+					catNos.addLast(rec.getCatNoString() + " [" + rec.getNumber() + "]");
 				}
 
 				sel.setData(catNos, "Select Catalogue Number");
@@ -65,6 +64,8 @@ public class RecordSelector
 				ret = records.get(val);
 			}
 		}
+
+		System.err.println("GOT: " + ret);
 		return ret;
 	}
 }

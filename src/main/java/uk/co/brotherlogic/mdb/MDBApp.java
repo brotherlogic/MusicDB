@@ -28,6 +28,26 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class MDBApp extends JFrame
 {
+	public static void main(final String[] args) throws Exception
+	{
+		Connect.setForProduction();
+		Record r = GetRecords.create().getRecord(9914);
+		System.err.println(r.getLabels());
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+
+		MDBApp c = new MDBApp();
+		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
+			c.setFileString("/usr/share/hancock_multimedia/");
+		c.runApp();
+	}
+
 	/** The output string for windows */
 	private String fileString = "i:\\";
 
@@ -36,6 +56,7 @@ public class MDBApp extends JFrame
 	 */
 	public MDBApp()
 	{
+		Connect.setForProduction();
 	}
 
 	private void addCD()
@@ -48,8 +69,10 @@ public class MDBApp extends JFrame
 			{
 				try
 				{
-					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
-							.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories());
+					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create()
+							.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
+							.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
+							.getCategories());
 					over.showGUI(ref);
 				}
 				catch (SQLException e)
@@ -71,6 +94,10 @@ public class MDBApp extends JFrame
 				GetRecords.create().addRecord(done);
 			else
 				GetRecords.create().updateRecord(done);
+
+			//Commit all the transactions
+			Connect.getConnection().commitTrans();
+			System.err.println(done.getLabels());
 		}
 		catch (SQLException ex)
 		{
@@ -87,6 +114,7 @@ public class MDBApp extends JFrame
 
 	private void edit()
 	{
+		System.err.println("Editing");
 		try
 		{
 			// Choose a file to examine
@@ -98,8 +126,11 @@ public class MDBApp extends JFrame
 				// Prepare the viewer
 				this.setVisible(false);
 
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
-						.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories(), examine);
+				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create()
+						.getArtists(), GetLabels.create().getLabels(), GetFormats.create()
+						.getFormats(), GetGroops.build().getGroopMap(), GetCategories.build()
+						.getCategories(), examine);
+				System.err.println("HERE");
 				over.showGUI(this);
 			}
 		}
@@ -192,23 +223,6 @@ public class MDBApp extends JFrame
 	public final void setFileString(final String in)
 	{
 		fileString = in;
-	}
-
-	public static void main(final String[] args) throws Exception
-	{
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-
-		MDBApp c = new MDBApp();
-		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
-			c.setFileString("/usr/share/hancock_multimedia/");
-		c.runApp();
 	}
 
 }
