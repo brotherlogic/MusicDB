@@ -65,8 +65,8 @@ public class AddRecordOverseer implements ActionListener
 	// Collections to be used for making
 	Collection<Label> labels;
 
-	public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels,
-			Collection<Format> formats, Map<String, Groop> groops, Collection<Category> categories)
+	public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels, Collection<Format> formats, Map<String, Groop> groops,
+			Collection<Category> categories)
 	{
 		// Set the callback object
 		call = c;
@@ -92,9 +92,8 @@ public class AddRecordOverseer implements ActionListener
 		gui.setYear(yForm.format(today));
 	}
 
-	public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels,
-			Collection<Format> formats, Map<String, Groop> groops, Collection<Category> categories,
-			Record rec) throws SQLException
+	public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels, Collection<Format> formats, Map<String, Groop> groops,
+			Collection<Category> categories, Record rec) throws SQLException
 	{
 		call = c;
 		curr = rec;
@@ -286,16 +285,15 @@ public class AddRecordOverseer implements ActionListener
 			{
 				// Deal with the compiler
 				// Bring up the personnel selection screen
-				SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Compilers", gui,
-						new Builder<Artist>()
-						{
-							@Override
-							public Artist build(String name)
-							{
-								return new Artist(name);
-							}
+				SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Compilers", gui, new Builder<Artist>()
+				{
+					@Override
+					public Artist build(String name)
+					{
+						return new Artist(name);
+					}
 
-						});
+				});
 				persBuild.setData(artists, curr.getCompilers());
 				persBuild.setVisible(true);
 
@@ -313,15 +311,14 @@ public class AddRecordOverseer implements ActionListener
 	public void addGroop() throws SQLException
 	{
 		// Bring up the group selection screen
-		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groop", gui,
-				new Builder<Groop>()
-				{
-					@Override
-					public Groop build(String name)
-					{
-						return new Groop(name);
-					}
-				});
+		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groop", gui, new Builder<Groop>()
+		{
+			@Override
+			public Groop build(String name)
+			{
+				return new Groop(name);
+			}
+		});
 		grpBuild.setData(groops.values(), new Vector<Groop>());
 		grpBuild.setVisible(true);
 
@@ -357,8 +354,7 @@ public class AddRecordOverseer implements ActionListener
 			{
 				// Now get the range to add to
 				// Ask which tracks this should be added to
-				String tracksToAdd = JOptionPane.showInputDialog(gui, "Enter Tracks",
-						"Enter Tracks", JOptionPane.QUESTION_MESSAGE);
+				String tracksToAdd = JOptionPane.showInputDialog(gui, "Enter Tracks", "Enter Tracks", JOptionPane.QUESTION_MESSAGE);
 				Collection<Integer> numbers = getRange(tracksToAdd, curr.getTracks().size());
 
 				// Iterate each number and add the group
@@ -386,17 +382,15 @@ public class AddRecordOverseer implements ActionListener
 			if (groops.containsKey(lineup.getGroop().getSortName()))
 				chGrps.add(groops.get(lineup.getGroop().getSortName()));
 
-		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops", gui,
-				new Builder<Groop>()
-				{
-					@Override
-					public Groop build(String name)
-					{
-						return new Groop(name);
-					}
-				});
-		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1), curr.getTracks()
-				.size());
+		SetBuilder<Groop> grpBuild = new SetBuilder<Groop>("Select Groops", gui, new Builder<Groop>()
+		{
+			@Override
+			public Groop build(String name)
+			{
+				return new Groop(name);
+			}
+		});
+		grpBuild.setData(groops.values(), chGrps, Math.max(1, trackNumber - 1), curr.getTracks().size());
 		grpBuild.setVisible(true);
 
 		// Get the results
@@ -467,17 +461,16 @@ public class AddRecordOverseer implements ActionListener
 	public void addPersonnel() throws SQLException
 	{
 		// Bring up the personnel selection screen
-		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui,
-				new Builder<Artist>()
-				{
+		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui, new Builder<Artist>()
+		{
 
-					@Override
-					public Artist build(String name)
-					{
-						return new Artist(name);
-					}
+			@Override
+			public Artist build(String name)
+			{
+				return new Artist(name);
+			}
 
-				});
+		});
 		persBuild.setData(artists, new Vector<Artist>());
 		persBuild.setVisible(true);
 
@@ -489,9 +482,8 @@ public class AddRecordOverseer implements ActionListener
 		{
 			// Decide whether to add or replace
 			Object[] options = { "Add", "Replace" };
-			int choice = JOptionPane.showOptionDialog(gui, "Should this set be added or replaced?",
-					"Add or Replace?", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options, options[1]);
+			int choice = JOptionPane.showOptionDialog(gui, "Should this set be added or replaced?", "Add or Replace?", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
 			// Set the replace flag accordingly
 			boolean replace = true;
@@ -499,8 +491,7 @@ public class AddRecordOverseer implements ActionListener
 				replace = false;
 
 			// Ask which tracks this should be added to
-			String tracksToAdd = JOptionPane.showInputDialog(gui, "Enter Tracks", "Enter Tracks",
-					JOptionPane.QUESTION_MESSAGE);
+			String tracksToAdd = JOptionPane.showInputDialog(gui, "Enter Tracks", "Enter Tracks", JOptionPane.QUESTION_MESSAGE);
 
 			// Get the track numbers
 			Collection<Integer> trackNumbers = getRange(tracksToAdd, curr.getTracks().size());
@@ -523,18 +514,16 @@ public class AddRecordOverseer implements ActionListener
 	public void addPersonnel(int trackNumber) throws SQLException
 	{
 		// Bring up the personnel selection screen
-		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui,
-				new Builder<Artist>()
-				{
-					@Override
-					public Artist build(String name)
-					{
-						return new Artist(name);
-					}
+		SetBuilder<Artist> persBuild = new SetBuilder<Artist>("Select Personnel", gui, new Builder<Artist>()
+		{
+			@Override
+			public Artist build(String name)
+			{
+				return new Artist(name);
+			}
 
-				});
-		persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(), Math.max(1,
-				trackNumber - 1), curr.getTracks().size());
+		});
+		persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(), Math.max(1, trackNumber - 1), curr.getTracks().size());
 		persBuild.setVisible(true);
 
 		// Get the results
@@ -542,9 +531,7 @@ public class AddRecordOverseer implements ActionListener
 
 		// Add the data if cancel wasn't pressed
 		if (persBuild.getTrackNumber() > 0)
-			curr
-					.setPersonnel(trackNumber, curr.getTrack(persBuild.getTrackNumber())
-							.getPersonnel());
+			curr.setPersonnel(trackNumber, curr.getTrack(persBuild.getTrackNumber()).getPersonnel());
 		else if (tempPers != null)
 			curr.setPersonnel(trackNumber, tempPers);
 
@@ -557,8 +544,7 @@ public class AddRecordOverseer implements ActionListener
 		try
 		{
 			// Ask for the number of tracks
-			String toAdd = JOptionPane.showInputDialog(gui, "Enter Number of Tracks",
-					"Number of Tracks", JOptionPane.QUESTION_MESSAGE);
+			String toAdd = JOptionPane.showInputDialog(gui, "Enter Number of Tracks", "Number of Tracks", JOptionPane.QUESTION_MESSAGE);
 			if (toAdd != null)
 			{
 				// Get the number of tracks to add
@@ -566,9 +552,7 @@ public class AddRecordOverseer implements ActionListener
 
 				// Bring up an entry box asking for the point of entry - less
 				// one since we must add at the required point
-				String point = JOptionPane.showInputDialog(gui,
-						"Where Should The Tracks Be Added?", "Addition Point",
-						JOptionPane.QUESTION_MESSAGE);
+				String point = JOptionPane.showInputDialog(gui, "Where Should The Tracks Be Added?", "Addition Point", JOptionPane.QUESTION_MESSAGE);
 				if (point != null)
 				{
 					// Get the point at which to add them
@@ -585,8 +569,7 @@ public class AddRecordOverseer implements ActionListener
 		}
 		catch (NumberFormatException ex)
 		{
-			JOptionPane.showMessageDialog(gui, "Enter a Proper Number!", "Warning",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Enter a Proper Number!", "Warning", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
@@ -642,8 +625,7 @@ public class AddRecordOverseer implements ActionListener
 		catch (ParseException e)
 		{
 			done = false;
-			JOptionPane.showMessageDialog(gui, "Error in date!", "Error",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Error in date!", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 
 		// Get the year
@@ -652,16 +634,14 @@ public class AddRecordOverseer implements ActionListener
 			int yearVal = Integer.parseInt(gui.getYear());
 			if ((yearVal > 3000 || yearVal < 1800) && yearVal != -1)
 			{
-				JOptionPane.showMessageDialog(gui, "Error in Year!", "Error",
-						JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(gui, "Error in Year!", "Error", JOptionPane.WARNING_MESSAGE);
 				done = false;
 			}
 			curr.setYear(yearVal);
 		}
 		catch (NumberFormatException e)
 		{
-			JOptionPane.showMessageDialog(gui, "Error in Year!", "Error",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Error in Year!", "Error", JOptionPane.WARNING_MESSAGE);
 			done = false;
 		}
 
@@ -695,8 +675,7 @@ public class AddRecordOverseer implements ActionListener
 		}
 		catch (NumberFormatException e)
 		{
-			JOptionPane.showMessageDialog(gui, "Error in Track" + currTrackNumber, "Error",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Error in Track" + currTrackNumber, "Error", JOptionPane.WARNING_MESSAGE);
 			done = false;
 		}
 
@@ -707,15 +686,14 @@ public class AddRecordOverseer implements ActionListener
 	public void doCat() throws SQLException
 	{
 		// Bring up a set selector using the catalogue list
-		SetBuilder<String> catBuild = new SetBuilder<String>("Select Cat. Nos", gui,
-				new Builder<String>()
-				{
-					@Override
-					public String build(String name)
-					{
-						return name;
-					}
-				});
+		SetBuilder<String> catBuild = new SetBuilder<String>("Select Cat. Nos", gui, new Builder<String>()
+		{
+			@Override
+			public String build(String name)
+			{
+				return name;
+			}
+		});
 		catBuild.setData(new Vector<String>(), curr.getCatNos());
 		catBuild.setAddOnly(true);
 		catBuild.setVisible(true);
@@ -738,16 +716,15 @@ public class AddRecordOverseer implements ActionListener
 	public void doLabels() throws SQLException
 	{
 		// Bring up a set selector using the label list
-		SetBuilder<Label> labBuild = new SetBuilder<Label>("Select Labels", gui,
-				new Builder<Label>()
-				{
-					@Override
-					public Label build(String name)
-					{
-						return new Label(name);
-					}
+		SetBuilder<Label> labBuild = new SetBuilder<Label>("Select Labels", gui, new Builder<Label>()
+		{
+			@Override
+			public Label build(String name)
+			{
+				return new Label(name);
+			}
 
-				});
+		});
 		labBuild.setData(labels, curr.getLabels());
 		labBuild.setVisible(true);
 
@@ -767,12 +744,6 @@ public class AddRecordOverseer implements ActionListener
 			// And update the display
 			gui.displayLabels(newLabels);
 		}
-	}
-
-	private void error(Exception e)
-	{
-		e.printStackTrace();
-		JOptionPane.showMessageDialog(gui, "ERROR: " + e.getMessage());
 	}
 
 	public Collection<Integer> getRange(String ret, int max)
@@ -817,16 +788,14 @@ public class AddRecordOverseer implements ActionListener
 		catch (NumberFormatException e)
 		{
 			// Wipe the returning collection
-			JOptionPane.showMessageDialog(gui, "Invalid Track Range Entry!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Invalid Track Range Entry!", "Error", JOptionPane.ERROR_MESSAGE);
 
 			trckList.removeAllElements();
 		}
 		catch (NoSuchElementException e)
 		{
 			// Wipe the returning collection
-			JOptionPane.showMessageDialog(gui, "Invalid Track Range Entry!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(gui, "Invalid Track Range Entry!", "Error", JOptionPane.ERROR_MESSAGE);
 
 			trckList.removeAllElements();
 		}
@@ -852,8 +821,7 @@ public class AddRecordOverseer implements ActionListener
 	public void newCategory() throws SQLException
 	{
 		// Put up the new category dialog
-		CategoryBuilderGUI catgui = new CategoryBuilderGUI(gui, new TreeSet<Category>(),
-				new TreeSet<Format>());
+		CategoryBuilderGUI catgui = new CategoryBuilderGUI(gui, new TreeSet<Category>(), new TreeSet<Format>());
 
 		// Get the new category
 		Category cat = catgui.makeNewCategory();
@@ -980,5 +948,11 @@ public class AddRecordOverseer implements ActionListener
 		{
 			error(e);
 		}
+	}
+
+	private void error(Exception e)
+	{
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(gui, "ERROR: " + e.getMessage());
 	}
 }
