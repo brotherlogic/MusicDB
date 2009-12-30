@@ -163,7 +163,7 @@ public class MakeCDFileOverseer
 		TrackChooser track;
 		track = new TrackChooser(null, outRec.getTracks());
 
-		if (!auto && noFiles != outRec.getNoTracks())
+		if (!auto && noFiles != outRec.getTracks().size())
 			// Build a viewer to deal with the tracks
 			track.setVisible(true);
 		else

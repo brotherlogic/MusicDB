@@ -27,8 +27,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-public class SetBuilder<X extends Comparable<X>> extends JDialog implements
-		ActionListener, CaretListener
+public class SetBuilder<X extends Comparable<X>> extends JDialog implements ActionListener,
+		CaretListener
 {
 	int element;
 
@@ -169,15 +169,15 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 				trackNumber = Integer.parseInt(textTrackNumber.getText());
 
 				if (trackNumber > maxTrack || trackNumber < 1)
-					JOptionPane.showMessageDialog(this, "Invalid Track Number",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Invalid Track Number", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				else
 					this.setVisible(false);
 			}
 			catch (NumberFormatException ex)
 			{
-				JOptionPane.showMessageDialog(this, "Invalid Track Number",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Invalid Track Number", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 	}
 
@@ -322,10 +322,8 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 		this.getContentPane().add(textTrackNumber, null);
 		jScrollPane2.getViewport().add(listAdded, null);
 		jScrollPane1.getViewport().add(listMain, null);
-		listMain.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
-		listAdded.getSelectionModel().setSelectionMode(
-				ListSelectionModel.SINGLE_SELECTION);
+		listMain.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listAdded.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	private void remElem(X in)
@@ -385,8 +383,7 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 		start();
 	}
 
-	public void setData(Collection<X> listElems, Collection<X> chosen,
-			int entTrack, int maxTrack)
+	public void setData(Collection<X> listElems, Collection<X> chosen, int entTrack, int maxTrack)
 	{
 		// Prepare the form
 		setData(listElems, chosen);
@@ -410,9 +407,12 @@ public class SetBuilder<X extends Comparable<X>> extends JDialog implements
 
 	public void start()
 	{
-		Object close = getClosest("");
-		listMain.setSelectedValue(close, true);
-		listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4,
-				sortedObjs.size() + 1));
+		if (sortedObjs.size() > 0)
+		{
+			Object close = getClosest("");
+			listMain.setSelectedValue(close, true);
+			listMain.ensureIndexIsVisible(Math.min(listMain.getSelectedIndex() + 4, sortedObjs
+					.size() + 1));
+		}
 	}
 }
