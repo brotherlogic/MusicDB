@@ -36,7 +36,7 @@ public class MDBApp extends JFrame
 	 */
 	public MDBApp()
 	{
-		// Connect.setForProduction();
+		Connect.setForProduction();
 	}
 
 	public final void addDone(final Record done)
@@ -203,9 +203,6 @@ public class MDBApp extends JFrame
 
 	public static void main(final String[] args) throws Exception
 	{
-		Record r = GetRecords.create().getRecord(9931);
-		System.err.println(r.getLabels().size());
-
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
