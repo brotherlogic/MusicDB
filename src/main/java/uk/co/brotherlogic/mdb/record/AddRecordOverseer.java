@@ -104,8 +104,6 @@ public class AddRecordOverseer implements ActionListener
 		this.groops = groops;
 		this.categories = categories;
 
-		System.err.println("STARTING");
-
 		// We are editing a record
 		gui = new AddRecordGUI(labels, formats, this);
 		gui.setModel(rec);
@@ -172,6 +170,7 @@ public class AddRecordOverseer implements ActionListener
 				// For now just parse the gui
 				if (collectDataFromGUI())
 				{
+					DateFormat df = DateFormat.getDateInstance();
 					gui.setVisible(false);
 
 					// Destroy the gui!
@@ -212,10 +211,7 @@ public class AddRecordOverseer implements ActionListener
 		else if (e.getActionCommand().equals("format"))
 		{
 			if (gui != null)
-			{
 				curr.setFormat(gui.getFormat());
-				System.err.println("Set format");
-			}
 		}
 		else if (e.getActionCommand().equals("cat"))
 			try
@@ -619,7 +615,8 @@ public class AddRecordOverseer implements ActionListener
 		// Get the date
 		try
 		{
-			DateFormat df = new SimpleDateFormat("dd/mm/yy");
+			DateFormat df = new SimpleDateFormat("dd/MM/yy");
+			DateFormat df2 = DateFormat.getDateInstance();
 			curr.setDate(df.parse(gui.getDate()));
 		}
 		catch (ParseException e)

@@ -159,7 +159,6 @@ public class AddRecordGUI extends JFrame
 
 	public void addTracks(int noTracks, int addPoint, ActionListener list)
 	{
-		System.err.println("Adding " + trackTitles.size() + " Tracks");
 		int currNoTracks = trackTitles.size();
 
 		// Re-size the track panel

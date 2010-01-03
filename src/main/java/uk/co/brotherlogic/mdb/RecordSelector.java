@@ -65,7 +65,6 @@ public class RecordSelector
 			}
 		}
 
-		System.err.println("GOT: " + ret);
 		return ret;
 	}
 }

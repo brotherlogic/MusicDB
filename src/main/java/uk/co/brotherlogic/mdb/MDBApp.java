@@ -3,6 +3,7 @@ package uk.co.brotherlogic.mdb;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.text.DateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -45,15 +46,11 @@ public class MDBApp extends JFrame
 
 		try
 		{
-			System.err.println(done.getNumber());
-			if (done.getNumber() <= 0)
-				GetRecords.create().addRecord(done);
-			else
-				GetRecords.create().updateRecord(done);
+			DateFormat df = DateFormat.getDateInstance();
+			done.save();
 
 			// Commit all the transactions
 			Connect.getConnection().commitTrans();
-			System.err.println(done.getLabels());
 		}
 		catch (SQLException ex)
 		{
@@ -120,7 +117,6 @@ public class MDBApp extends JFrame
 
 	private void edit()
 	{
-		System.err.println("Editing");
 		try
 		{
 			// Choose a file to examine
@@ -134,7 +130,6 @@ public class MDBApp extends JFrame
 
 				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
 						.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories(), examine);
-				System.err.println("HERE");
 				over.showGUI(this);
 			}
 		}
