@@ -187,7 +187,8 @@ public class MDBApp extends JFrame
 		{
 			// Run the button CD overseer
 			this.setVisible(false);
-			new MakeCDFileOverseer(GetRecords.create(), fileString);
+			new MakeCDFileOverseer(GetRecords.create(), Settings.getCDFileOutputDirectory()
+					.getAbsolutePath());
 			this.setVisible(true);
 		}
 		catch (SQLException e2)

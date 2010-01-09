@@ -37,7 +37,6 @@ public class MakeCDFileOverseer
 	File outDir;
 	boolean nonOver;
 
-	// Where the CD files should be stored
 	String fileLoc;
 
 	public MakeCDFileOverseer(GetRecords recIn, String fileString)
@@ -124,7 +123,8 @@ public class MakeCDFileOverseer
 		Map<String, String> trans = new TreeMap<String, String>();
 
 		// Construct the correct file
-		File sDir = new File(musicDir.getCanonicalPath() + File.separator + "convert");
+		File sDir = new File(musicDir.getAbsolutePath());
+		System.out.println("PATH = " + sDir);
 
 		// Search the sub-directories of this too!
 		File[] dirs2 = sDir.listFiles();
@@ -179,7 +179,7 @@ public class MakeCDFileOverseer
 		String groop = outRec.getGroopString();
 
 		if (nonOver)
-			w.println(groop + "~" + outRec.getTitleWithCat());
+			w.println(groop + "~" + outRec.getTitle() + "|||" + outRec.getCatNoString());
 		else
 			w.println(groop + "~" + outRec.getTitle());
 
