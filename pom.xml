@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.1</version>
+      <version>0.2-SNAPSHOT</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>
@@ -59,7 +59,7 @@
                -->
           <configuration>
             <jnlp>
-              <mainClass>uk.co.brotherlogic.mdb.App</mainClass>
+              <mainClass>uk.co.brotherlogic.mdb.MDBApp</mainClass>
             </jnlp>
             <sign>
               <keystore>/home/sat/code/musicdbapp/src/jnlp/mdb.jks</keystore>
