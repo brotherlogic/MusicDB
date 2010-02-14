@@ -2,6 +2,7 @@ package uk.co.brotherlogic.mdb;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 
@@ -17,6 +18,8 @@ import uk.co.brotherlogic.mdb.cdbuilder.MakeCDFileOverseer;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.label.GetLabels;
+import uk.co.brotherlogic.mdb.parsers.DiscogParser;
+import uk.co.brotherlogic.mdb.parsers.DiscogSelector;
 import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
@@ -29,6 +32,22 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class MDBApp extends JFrame
 {
+	public static void main(final String[] args) throws Exception
+	{
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+
+		MDBApp c = new MDBApp();
+		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
+			c.setFileString("/usr/share/hancock_multimedia/");
+		c.runApp();
+	}
+
 	/** The output string for windows */
 	private String fileString = "i:\\";
 
@@ -38,6 +57,64 @@ public class MDBApp extends JFrame
 	public MDBApp()
 	{
 		Connect.setForProduction();
+	}
+
+	private void addCD()
+	{
+		this.setVisible(false);
+		final MDBApp ref = this;
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					// Try and pre-fill the record stuff
+					String artist = JOptionPane.showInputDialog(null, "Artist");
+					String title = JOptionPane.showInputDialog(null, "Title");
+
+					DiscogSelector selector = new DiscogSelector();
+					int id = selector.getDiscogID(artist, title);
+
+					DiscogParser parser = new DiscogParser();
+					if (id >= 0)
+						try
+						{
+							Record rec = parser.parseDiscogRelease(id);
+							AddRecordOverseer over = new AddRecordOverseer(ref,
+									GetArtists.create().getArtists(), GetLabels
+											.create().getLabels(), GetFormats
+											.create().getFormats(), GetGroops
+											.build().getGroopMap(),
+									GetCategories.build().getCategories(), rec);
+							over.showGUI(ref);
+						} catch (IOException e)
+						{
+							e.printStackTrace();
+							AddRecordOverseer over = new AddRecordOverseer(ref,
+									GetArtists.create().getArtists(), GetLabels
+											.create().getLabels(), GetFormats
+											.create().getFormats(), GetGroops
+											.build().getGroopMap(),
+									GetCategories.build().getCategories());
+							over.showGUI(ref);
+						}
+					else
+					{
+						AddRecordOverseer over = new AddRecordOverseer(ref,
+								GetArtists.create().getArtists(), GetLabels
+										.create().getLabels(), GetFormats
+										.create().getFormats(), GetGroops
+										.build().getGroopMap(), GetCategories
+										.build().getCategories());
+						over.showGUI(ref);
+					}
+				} catch (SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public final void addDone(final Record done)
@@ -51,8 +128,7 @@ public class MDBApp extends JFrame
 
 			// Commit all the transactions
 			Connect.getConnection().commitTrans();
-		}
-		catch (SQLException ex)
+		} catch (SQLException ex)
 		{
 			ex.printStackTrace();
 		}
@@ -63,56 +139,6 @@ public class MDBApp extends JFrame
 	public final void cancel()
 	{
 		this.setVisible(true);
-	}
-
-	public final void runApp()
-	{
-
-		// Now construct the gui
-		try
-		{
-			jbInit();
-			final int appSize = 500;
-			this.setSize(appSize, appSize);
-
-			// Center the frame on screen
-			this.setLocationRelativeTo(null);
-
-			// Display the giu
-			this.setVisible(true);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-	}
-
-	public final void setFileString(final String in)
-	{
-		fileString = in;
-	}
-
-	private void addCD()
-	{
-		this.setVisible(false);
-		final MDBApp ref = this;
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
-					AddRecordOverseer over = new AddRecordOverseer(ref, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
-							.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories());
-					over.showGUI(ref);
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	private void edit()
@@ -128,12 +154,14 @@ public class MDBApp extends JFrame
 				// Prepare the viewer
 				this.setVisible(false);
 
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
-						.create().getFormats(), GetGroops.build().getGroopMap(), GetCategories.build().getCategories(), examine);
+				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
+						.create().getArtists(), GetLabels.create().getLabels(),
+						GetFormats.create().getFormats(), GetGroops.build()
+								.getGroopMap(), GetCategories.build()
+								.getCategories(), examine);
 				over.showGUI(this);
 			}
-		}
-		catch (Exception ex)
+		} catch (Exception ex)
 		{
 			ex.printStackTrace();
 		}
@@ -186,32 +214,41 @@ public class MDBApp extends JFrame
 		{
 			// Run the button CD overseer
 			this.setVisible(false);
-			new MakeCDFileOverseer(GetRecords.create(), Settings.getCDFileOutputDirectory()
-					.getAbsolutePath());
+			new MakeCDFileOverseer(GetRecords.create(), Settings
+					.getCDFileOutputDirectory().getAbsolutePath());
 			this.setVisible(true);
-		}
-		catch (SQLException e2)
+		} catch (SQLException e2)
 		{
 			JOptionPane.showMessageDialog(this, e2.getMessage());
 		}
 
 	}
 
-	public static void main(final String[] args) throws Exception
+	public final void runApp()
 	{
+
+		// Now construct the gui
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception ex)
+			jbInit();
+			final int appSize = 500;
+			this.setSize(appSize, appSize);
+
+			// Center the frame on screen
+			this.setLocationRelativeTo(null);
+
+			// Display the giu
+			this.setVisible(true);
+		} catch (Exception e)
 		{
-			ex.printStackTrace();
+			e.printStackTrace();
 		}
 
-		MDBApp c = new MDBApp();
-		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
-			c.setFileString("/usr/share/hancock_multimedia/");
-		c.runApp();
+	}
+
+	public final void setFileString(final String in)
+	{
+		fileString = in;
 	}
 
 }
