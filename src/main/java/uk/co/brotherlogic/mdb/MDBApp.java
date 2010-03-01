@@ -112,21 +112,22 @@ public class MDBApp extends JFrame
 		{
 			// Choose a file to examine
 			String id = JOptionPane.showInputDialog("Enter discog ID");
+
+			// Prepare the viewer
+			this.setVisible(false);
 			DiscogParser parser = new DiscogParser();
 			Record examine = parser.parseDiscogRelease(Integer.parseInt(id));
 
 			if (examine != null)
 			{
-				// Prepare the viewer
-				this.setVisible(false);
-
 				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
 						.create().getArtists(), GetLabels.create().getLabels(),
 						GetFormats.create().getFormats(), GetGroops.build()
 								.getGroopMap(), GetCategories.build()
 								.getCategories(), examine);
 				over.showGUI(this);
-			}
+			} else
+				this.setVisible(true);
 		} catch (Exception ex)
 		{
 			ex.printStackTrace();
@@ -192,7 +193,7 @@ public class MDBApp extends JFrame
 			}
 		});
 
-		JButton buttonDiscogs = new JButton("Discog Add");
+		JButton buttonDiscogs = new JButton("Add From DiscogID");
 		buttonDiscogs.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(final ActionEvent e)
