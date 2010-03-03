@@ -2,7 +2,6 @@ package uk.co.brotherlogic.mdb;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 
@@ -19,7 +18,6 @@ import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.label.GetLabels;
 import uk.co.brotherlogic.mdb.parsers.DiscogParser;
-import uk.co.brotherlogic.mdb.parsers.DiscogSelector;
 import uk.co.brotherlogic.mdb.record.AddRecordOverseer;
 import uk.co.brotherlogic.mdb.record.GetRecords;
 import uk.co.brotherlogic.mdb.record.Record;
@@ -69,46 +67,13 @@ public class MDBApp extends JFrame
 			{
 				try
 				{
-					// Try and pre-fill the record stuff
-					String artist = JOptionPane.showInputDialog(null, "Artist");
-					String title = JOptionPane.showInputDialog(null, "Title");
-
-					DiscogSelector selector = new DiscogSelector();
-					int id = selector.getDiscogID(artist, title);
-
-					DiscogParser parser = new DiscogParser();
-					if (id >= 0)
-						try
-						{
-							Record rec = parser.parseDiscogRelease(id);
-							AddRecordOverseer over = new AddRecordOverseer(ref,
-									GetArtists.create().getArtists(), GetLabels
-											.create().getLabels(), GetFormats
-											.create().getFormats(), GetGroops
-											.build().getGroopMap(),
-									GetCategories.build().getCategories(), rec);
-							over.showGUI(ref);
-						} catch (IOException e)
-						{
-							e.printStackTrace();
-							AddRecordOverseer over = new AddRecordOverseer(ref,
-									GetArtists.create().getArtists(), GetLabels
-											.create().getLabels(), GetFormats
-											.create().getFormats(), GetGroops
-											.build().getGroopMap(),
-									GetCategories.build().getCategories());
-							over.showGUI(ref);
-						}
-					else
-					{
-						AddRecordOverseer over = new AddRecordOverseer(ref,
-								GetArtists.create().getArtists(), GetLabels
-										.create().getLabels(), GetFormats
-										.create().getFormats(), GetGroops
-										.build().getGroopMap(), GetCategories
-										.build().getCategories());
-						over.showGUI(ref);
-					}
+					AddRecordOverseer over = new AddRecordOverseer(ref,
+							GetArtists.create().getArtists(), GetLabels
+									.create().getLabels(), GetFormats.create()
+									.getFormats(), GetGroops.build()
+									.getGroopMap(), GetCategories.build()
+									.getCategories());
+					over.showGUI(ref);
 				} catch (SQLException e)
 				{
 					e.printStackTrace();
@@ -139,6 +104,35 @@ public class MDBApp extends JFrame
 	public final void cancel()
 	{
 		this.setVisible(true);
+	}
+
+	private void discog()
+	{
+		try
+		{
+			// Choose a file to examine
+			String id = JOptionPane.showInputDialog("Enter discog ID");
+
+			// Prepare the viewer
+			this.setVisible(false);
+			DiscogParser parser = new DiscogParser();
+			Record examine = parser.parseDiscogRelease(Integer.parseInt(id));
+
+			if (examine != null)
+			{
+				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
+						.create().getArtists(), GetLabels.create().getLabels(),
+						GetFormats.create().getFormats(), GetGroops.build()
+								.getGroopMap(), GetCategories.build()
+								.getCategories(), examine);
+				over.showGUI(this);
+			} else
+				this.setVisible(true);
+		} catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+
 	}
 
 	private void edit()
@@ -199,6 +193,15 @@ public class MDBApp extends JFrame
 			}
 		});
 
+		JButton buttonDiscogs = new JButton("Add From DiscogID");
+		buttonDiscogs.addActionListener(new java.awt.event.ActionListener()
+		{
+			public void actionPerformed(final ActionEvent e)
+			{
+				discog();
+			}
+		});
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.setTitle("Music Database");
@@ -206,6 +209,7 @@ public class MDBApp extends JFrame
 		this.getContentPane().add(buttonAdd, null);
 		this.getContentPane().add(buttonCD, null);
 		this.getContentPane().add(buttonEdit, null);
+		this.getContentPane().add(buttonDiscogs, null);
 	}
 
 	private void makeCD()

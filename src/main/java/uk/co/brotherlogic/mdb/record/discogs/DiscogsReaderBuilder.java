@@ -26,6 +26,19 @@ public class DiscogsReaderBuilder
 {
 	private static final String API_KEY = "67668099b8";
 
+	public static void main(String[] args) throws Exception
+	{
+		DiscogsReaderBuilder builder = new DiscogsReaderBuilder();
+		Record rec = (builder.buildRecordFromDiscogs("Hana & Petr",
+				"Hana & Petr"));
+		AddRecordOverseer over = new AddRecordOverseer(new MDBApp(), GetArtists
+				.create().getArtists(), GetLabels.create().getLabels(),
+				GetFormats.create().getFormats(), GetGroops.build()
+						.getGroopMap(), GetCategories.build().getCategories(),
+				rec);
+		System.out.println(over);
+	}
+
 	public Record buildRecordFromDiscogs(String artist, String title)
 	{
 		Record toRet = new Record();
@@ -34,7 +47,8 @@ public class DiscogsReaderBuilder
 		for (Record record : records)
 		{
 			fillOutRecord(record);
-			if (record.getAuthor() != null && record.getAuthor().equalsIgnoreCase(artist))
+			if (record.getAuthor() != null
+					&& record.getAuthor().equalsIgnoreCase(artist))
 				toRet = record;
 			else
 				System.err.println(record.getAuthor() + ", " + artist);
@@ -49,24 +63,21 @@ public class DiscogsReaderBuilder
 	{
 		try
 		{
-			String rURL = "http://www.discogs.com/release/" + record.getDiscogsURI()
-					+ "?f=xml&api_key=" + API_KEY;
-			System.out.println("http://www.discogs.com/release/" + record.getDiscogsURI()
-					+ "?f=xml&api_key=" + API_KEY);
+			String rURL = "http://www.discogs.com/release/"
+					+ record.getDiscogsURI() + "?f=xml&api_key=" + API_KEY;
+			System.out.println("http://www.discogs.com/release/"
+					+ record.getDiscogsURI() + "?f=xml&api_key=" + API_KEY);
 			InputStream rIs = new GZIPInputStream(new URL(rURL).openStream());
 			DiscogsReaderParser parser = new DiscogsReaderParser(record);
 			SAXParser p = SAXParserFactory.newInstance().newSAXParser();
 			p.parse(rIs, parser);
-		}
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			e.printStackTrace();
-		}
-		catch (ParserConfigurationException e)
+		} catch (ParserConfigurationException e)
 		{
 			e.printStackTrace();
-		}
-		catch (SAXException e)
+		} catch (SAXException e)
 		{
 			e.printStackTrace();
 		}
@@ -78,38 +89,25 @@ public class DiscogsReaderBuilder
 
 		try
 		{
-			String sURL = "http://www.discogs.com/search?type=title&q=" + title.replace(" ", "+")
-					+ "&f=xml&api_key=" + API_KEY;
+			String sURL = "http://www.discogs.com/search?type=title&q="
+					+ title.replace(" ", "+") + "&f=xml&api_key=" + API_KEY;
 			System.out.println(sURL);
 			InputStream sIs = new GZIPInputStream(new URL(sURL).openStream());
 			DiscogsSearchParser parser = new DiscogsSearchParser();
 			SAXParser p = SAXParserFactory.newInstance().newSAXParser();
 			p.parse(sIs, parser);
 			records.addAll(parser.getRecords());
-		}
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			e.printStackTrace();
-		}
-		catch (ParserConfigurationException e)
+		} catch (ParserConfigurationException e)
 		{
 			e.printStackTrace();
-		}
-		catch (SAXException e)
+		} catch (SAXException e)
 		{
 			e.printStackTrace();
 		}
 
 		return records;
-	}
-
-	public static void main(String[] args) throws Exception
-	{
-		DiscogsReaderBuilder builder = new DiscogsReaderBuilder();
-		Record rec = (builder.buildRecordFromDiscogs("Sharon Van Etten", "Because I Was Love"));
-		AddRecordOverseer over = new AddRecordOverseer(new MDBApp(), GetArtists.create()
-				.getArtists(), GetLabels.create().getLabels(), GetFormats.create().getFormats(),
-				GetGroops.build().getGroopMap(), GetCategories.build().getCategories(), rec);
-		System.out.println(over);
 	}
 }
