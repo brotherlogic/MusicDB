@@ -72,6 +72,24 @@
             <verbose>true</verbose>
 	  </configuration>
 	</plugin>
+
+	<plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <goals>
+		<goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <mainClass>uk.co.brotherlogic.mdb.MDBApp</mainClass>
+          </configuration>
+	</plugin>
+
+
       </plugins>
     </pluginManagement>
   </build>
