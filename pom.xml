@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.4</version>
+      <version>0.5-SNAPSHOT</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>
