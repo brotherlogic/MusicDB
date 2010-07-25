@@ -8,6 +8,7 @@ import java.text.DateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -186,6 +187,10 @@ public class MDBApp extends JFrame {
 		buttonPanel.add(buttonCD, null);
 		buttonPanel.add(buttonEdit, null);
 		buttonPanel.add(buttonDiscogs, null);
+		this.add(buttonPanel, BorderLayout.CENTER);
+
+		JLabel label = new JLabel("Version 0.31");
+		this.add(label, BorderLayout.SOUTH);
 	}
 
 	private void makeCD() {
