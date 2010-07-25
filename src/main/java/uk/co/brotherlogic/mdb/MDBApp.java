@@ -49,7 +49,7 @@ public class MDBApp extends JFrame {
 	 * Constructor
 	 */
 	public MDBApp() {
-		Connect.setForProduction();
+		// Connect.setForProduction();
 	}
 
 	private void addCD() {
