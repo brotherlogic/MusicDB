@@ -1,5 +1,6 @@
 package uk.co.brotherlogic.mdb;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
@@ -7,7 +8,9 @@ import java.text.DateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -152,7 +155,8 @@ public class MDBApp extends JFrame {
 			}
 		});
 
-		this.getContentPane().setLayout(new GridLayout(2, 2));
+		this.getContentPane().setLayout(new BorderLayout());
+		JPanel buttonPanel = new JPanel(new GridLayout(2, 2));
 
 		JButton buttonEdit = new JButton("Edit Record");
 		buttonEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -179,10 +183,14 @@ public class MDBApp extends JFrame {
 
 		this.setTitle("Music Database");
 
-		this.getContentPane().add(buttonAdd, null);
-		this.getContentPane().add(buttonCD, null);
-		this.getContentPane().add(buttonEdit, null);
-		this.getContentPane().add(buttonDiscogs, null);
+		buttonPanel.add(buttonAdd, null);
+		buttonPanel.add(buttonCD, null);
+		buttonPanel.add(buttonEdit, null);
+		buttonPanel.add(buttonDiscogs, null);
+		this.add(buttonPanel, BorderLayout.CENTER);
+
+		JLabel label = new JLabel("Version 0.31");
+		this.add(label, BorderLayout.SOUTH);
 	}
 
 	private void makeCD() {
