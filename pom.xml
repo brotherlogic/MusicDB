@@ -4,7 +4,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdb</artifactId>
   <packaging>jar</packaging>
-  <version>0.3</version>
+  <version>0.3-SNAPSHOT</version>
   <name>mdb</name>
   <url>http://maven.apache.org</url>
   <dependencies>
