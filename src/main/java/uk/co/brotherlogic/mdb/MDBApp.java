@@ -189,7 +189,7 @@ public class MDBApp extends JFrame {
 		buttonPanel.add(buttonDiscogs, null);
 		this.add(buttonPanel, BorderLayout.CENTER);
 
-		JLabel label = new JLabel("Version 0.31");
+		JLabel label = new JLabel("Version 0.32 - " + Connect.getSource());
 		this.add(label, BorderLayout.SOUTH);
 	}
 
