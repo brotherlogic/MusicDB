@@ -1,12 +1,31 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdb</artifactId>
   <packaging>jar</packaging>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.3.4-SNAPSHOT</version>
   <name>mdb</name>
   <url>http://maven.apache.org</url>
+
+  <scm>
+   <connection>scm:git:git://github.com/BrotherLogic/MusicDB.git</connection>
+   <url>scm:git:git://github.com/BrotherLogic/MusicDB.git</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>edip</id>
+      <name>edip-releases</name>
+      <url>http://edip:8085/artifactory/libs-releases-local</url>
+    </repository>
+    <snapshotRepository>
+        <id>edip</id>
+        <name>edip-snapshots</name>
+        <url>http://edip:8085/artifactory/libs-snapshots-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -21,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.6-SNAPSHOT</version>
+      <version>0.5.3</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>
