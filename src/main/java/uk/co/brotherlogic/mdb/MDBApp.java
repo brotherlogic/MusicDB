@@ -32,6 +32,8 @@ import uk.co.brotherlogic.mdb.record.Record;
  * 
  */
 public class MDBApp extends JFrame {
+	private static String VERSION = "0.3.3";
+
 	public static void main(final String[] args) throws Exception {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -189,7 +191,7 @@ public class MDBApp extends JFrame {
 		buttonPanel.add(buttonDiscogs, null);
 		this.add(buttonPanel, BorderLayout.CENTER);
 
-		JLabel label = new JLabel("Version 0.31");
+		JLabel label = new JLabel("Version " + VERSION);
 		this.add(label, BorderLayout.SOUTH);
 	}
 
