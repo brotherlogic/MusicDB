@@ -4,7 +4,7 @@
   <information>
     <title>Music Database</title>
     <vendor>Simon</vendor>
-    <shortcut online="false">
+    <shortcut online="true">
       <menu />
       <desktop submenu="/Internet"/>
     </shortcut>
