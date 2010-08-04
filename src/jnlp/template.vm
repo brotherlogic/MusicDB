@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<jnlp spec="1.0+" codebase="http://edip/mdbapp/" href="$outputFile">
+<jnlp spec="1.0+" codebase="http://mdb/" href="$outputFile">
   <information>
     <title>Music Database</title>
     <vendor>Simon</vendor>
