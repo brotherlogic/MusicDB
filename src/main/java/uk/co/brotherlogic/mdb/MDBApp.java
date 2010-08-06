@@ -38,7 +38,7 @@ public class MDBApp extends JFrame {
 		try {
 
 			// Set for production
-			Connect.setForProduction();
+			// Connect.setForProduction();
 
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception ex) {
@@ -123,8 +123,8 @@ public class MDBApp extends JFrame {
 				this.setVisible(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "ERROR: "
-					+ ex.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null,
+					"ERROR: " + ex.getLocalizedMessage());
 			this.setVisible(true);
 		}
 
