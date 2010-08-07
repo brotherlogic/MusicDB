@@ -32,7 +32,7 @@ import uk.co.brotherlogic.mdb.record.Record;
  * 
  */
 public class MDBApp extends JFrame {
-	private static String VERSION = "0.3.3";
+	private static String VERSION = "0.3.7";
 
 	public static void main(final String[] args) throws Exception {
 		try {
@@ -123,8 +123,8 @@ public class MDBApp extends JFrame {
 				this.setVisible(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "ERROR: "
-					+ ex.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null,
+					"ERROR: " + ex.getLocalizedMessage());
 			this.setVisible(true);
 		}
 
