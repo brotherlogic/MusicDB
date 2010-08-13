@@ -163,7 +163,6 @@ public class AddRecordOverseer implements ActionListener {
 			try {
 				// For now just parse the gui
 				if (collectDataFromGUI()) {
-					DateFormat df = DateFormat.getDateInstance();
 					gui.setVisible(false);
 
 					// Destroy the gui!
@@ -564,7 +563,6 @@ public class AddRecordOverseer implements ActionListener {
 		// Get the date
 		try {
 			DateFormat df = new SimpleDateFormat("dd/MM/yy");
-			DateFormat df2 = DateFormat.getDateInstance();
 			curr.setDate(df.parse(gui.getDate()));
 		} catch (ParseException e) {
 			done = false;

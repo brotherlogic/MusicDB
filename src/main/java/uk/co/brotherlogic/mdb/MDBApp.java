@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
-import java.text.DateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -46,13 +45,8 @@ public class MDBApp extends JFrame {
 		}
 
 		MDBApp c = new MDBApp();
-		if (System.getProperty("os.name").compareToIgnoreCase("Linux") == 0)
-			c.setFileString("/usr/share/hancock_multimedia/");
 		c.runApp();
 	}
-
-	/** The output string for windows */
-	private String fileString = "i:\\";
 
 	/**
 	 * Constructor
@@ -85,7 +79,6 @@ public class MDBApp extends JFrame {
 		// Add record is done!
 
 		try {
-			DateFormat df = DateFormat.getDateInstance();
 			done.save();
 
 			// Commit all the transactions
@@ -230,9 +223,4 @@ public class MDBApp extends JFrame {
 		}
 
 	}
-
-	public final void setFileString(final String in) {
-		fileString = in;
-	}
-
 }
