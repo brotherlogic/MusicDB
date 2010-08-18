@@ -23,8 +23,7 @@ import javax.swing.JScrollPane;
 
 import uk.co.brotherlogic.mdb.record.Track;
 
-public class TrackChooser extends JDialog implements ActionListener
-{
+public class TrackChooser extends JDialog implements ActionListener {
 
 	Collection<Track> tracks;
 
@@ -39,8 +38,7 @@ public class TrackChooser extends JDialog implements ActionListener
 	JPanel midPan;
 	JScrollPane scroller;
 
-	public TrackChooser(JFrame in, Collection<Track> trackListing)
-	{
+	public TrackChooser(JFrame in, Collection<Track> trackListing) {
 		super(in, "Choose Joining Tracks", true);
 
 		// Prepare the middle panel
@@ -58,25 +56,20 @@ public class TrackChooser extends JDialog implements ActionListener
 		setSize(500, 500);
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok"))
 			// Do nothing
 			doTracks();
-		else if (e.getActionCommand().equals("command"))
-		{
+		else if (e.getActionCommand().equals("command")) {
 			// Restore the lists to their original settings
 			prepareList();
 			showTracks();
-		}
-		else
-		{
+		} else {
 			// Button pressed - get the number
-			int buttonPressed = Integer.parseInt(e.getActionCommand().substring(3,
-					e.getActionCommand().length()));
+			int buttonPressed = Integer.parseInt(e.getActionCommand()
+					.substring(3, e.getActionCommand().length()));
 
-			if (buttonPressed > 0)
-			{
+			if (buttonPressed > 0) {
 				// Subsume the correct tracks
 				LinkedList<Track> move = elems.remove(buttonPressed);
 				LinkedList<Track> receive = elems.get(buttonPressed - 1);
@@ -91,8 +84,7 @@ public class TrackChooser extends JDialog implements ActionListener
 		}
 	}
 
-	private void displayTracks()
-	{
+	private void displayTracks() {
 		getContentPane().setLayout(new BorderLayout());
 
 		// First construct the buttons
@@ -112,57 +104,44 @@ public class TrackChooser extends JDialog implements ActionListener
 		getContentPane().add(botPan, BorderLayout.SOUTH);
 	}
 
-	public void doTracks()
-	{
+	public void doTracks() {
 		// Prepare the list for output
 
 		setVisible(false);
 	}
 
-	public LinkedList<LinkedList<Track>> getTrackData()
-	{
+	public LinkedList<LinkedList<Track>> getTrackData() {
 		return elems;
 	}
 
-	public void prepareList()
-	{
+	public void prepareList() {
 		// Deal with the elems
 		elems = new LinkedList<LinkedList<Track>>();
 		Iterator<Track> tIt = tracks.iterator();
-		while (tIt.hasNext())
-		{
+		while (tIt.hasNext()) {
 			LinkedList<Track> temp = new LinkedList<Track>();
 			temp.addLast(tIt.next());
 			elems.addLast(temp);
 		}
 	}
 
-	public void showTracks()
-	{
+	public void showTracks() {
 
 		Iterator<JButton> butIt = buttons.iterator();
 		int count = 0;
-		while (butIt.hasNext())
-		{
+		while (butIt.hasNext()) {
 			// Get the button and the track list
 			JButton tempBut = butIt.next();
 
-			if (count < elems.size())
-			{
+			if (count < elems.size()) {
 				LinkedList<Track> stuff = elems.get(count);
 
 				// Generate a track title
-				Iterator<Track> vIt = stuff.iterator();
-				String rep = "";
-				while (vIt.hasNext())
-					rep += (vIt.next()).getTitle() + " / ";
-
-				rep = rep.substring(0, rep.length() - 3);
-
-				tempBut.setText(rep);
-			}
-			else
-			{
+				StringBuffer rep = new StringBuffer(stuff.get(0).getTitle());
+				for (Track trck : stuff.subList(1, stuff.size() - 1))
+					rep.append(" / " + trck.getTitle());
+				tempBut.setText(rep.toString());
+			} else {
 				tempBut.setText("");
 				tempBut.setEnabled(false);
 			}
@@ -172,23 +151,21 @@ public class TrackChooser extends JDialog implements ActionListener
 
 	}
 
-	public void showTracksFirst()
-	{
+	public void showTracksFirst() {
 		getContentPane().remove(scroller);
 		midPan.removeAll();
 
 		// Add the track details
 		Iterator<LinkedList<Track>> tIt = elems.iterator();
 		int count = 0;
-		while (tIt.hasNext())
-		{
+		while (tIt.hasNext()) {
 			LinkedList<Track> vec = tIt.next();
 			Iterator<Track> vIt = vec.iterator();
-			String rep = "";
+			StringBuffer rep = new StringBuffer();
 			while (vIt.hasNext())
-				rep += (vIt.next()).getTitle();
+				rep.append(vIt.next().getTitle());
 
-			JButton tempBut = new JButton(rep);
+			JButton tempBut = new JButton(rep.toString());
 			tempBut.setActionCommand("but" + count);
 			tempBut.addActionListener(this);
 			midPan.add(tempBut);

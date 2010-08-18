@@ -155,11 +155,10 @@ public class AddRecordGUI extends JFrame {
 	public void addTracks(int noTracks, int addPoint, ActionListener list) {
 		int currNoTracks = trackTitles.size();
 
-		System.err.println("TRACKS = " + currNoTracks + " and " + noTracks);
 		for (int i = currNoTracks; i < currNoTracks + noTracks; i++) {
 			// Create the necessary object
 			JLabel labTrack = new JLabel("" + (i + 1));
-			JTextField formTrackNumber = new JTextField(i + "");
+			JTextField formTrackNumber = new JTextField((i + 1) + "");
 			JButton butGroop = new JButton("");
 			JTextField textTrack = new JTextField("");
 			JButton butPers = new JButton("Personnel");
@@ -327,6 +326,10 @@ public class AddRecordGUI extends JFrame {
 
 	public Format getFormat() {
 		return (Format) comboFormat.getSelectedItem();
+	}
+
+	public int getFormatTrackNumber(int track) {
+		return Integer.parseInt(trackFormNumbers.get(track - 1).getText());
 	}
 
 	public String getLabel() {
@@ -857,6 +860,10 @@ public class AddRecordGUI extends JFrame {
 
 	public void setRecOwner(int in) {
 		comboOwner.setSelectedIndex(in - 1);
+	}
+
+	public void setTrackFormNumber(int number, int track) {
+		(trackFormNumbers.get(track - 1)).setText("" + number);
 	}
 
 	public void setTrackTitle(String title, int no) {
