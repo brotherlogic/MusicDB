@@ -155,7 +155,6 @@ public class AddRecordGUI extends JFrame {
 	public void addTracks(int noTracks, int addPoint, ActionListener list) {
 		int currNoTracks = trackTitles.size();
 
-		System.err.println("TRACKS = " + currNoTracks + " and " + noTracks);
 		for (int i = currNoTracks; i < currNoTracks + noTracks; i++) {
 			// Create the necessary object
 			JLabel labTrack = new JLabel("" + (i + 1));

@@ -99,7 +99,6 @@ public class MakeCDFileOverseer {
 
 		// Construct the correct file
 		File sDir = new File(musicDir.getAbsolutePath());
-		System.out.println("PATH = " + sDir);
 
 		// Search the sub-directories of this too!
 		File[] dirs2 = sDir.listFiles();
