@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -32,8 +34,7 @@ import uk.co.brotherlogic.mdb.categories.GetCategories;
 import uk.co.brotherlogic.mdb.format.Format;
 import uk.co.brotherlogic.mdb.label.Label;
 
-public class AddRecordGUI extends JFrame
-{
+public class AddRecordGUI extends JFrame {
 	// Create objects
 	GridBagLayout gridBagLayout1 = new GridBagLayout();
 	JLabel jLabel1 = new JLabel();
@@ -81,6 +82,7 @@ public class AddRecordGUI extends JFrame
 	Vector<JTextField> trackTitles = new Vector<JTextField>();
 	Vector<JTextField> trackLengths = new Vector<JTextField>();
 	Vector<JButton> trackGroops = new Vector<JButton>();
+	List<JTextField> trackFormNumbers = new LinkedList<JTextField>();
 
 	// Stuff for ownership
 	JLabel labelOwner = new JLabel();
@@ -96,8 +98,8 @@ public class AddRecordGUI extends JFrame
 
 	Record model;
 
-	public AddRecordGUI(Collection<Label> labels, Collection<Format> formats, ActionListener list)
-	{
+	public AddRecordGUI(Collection<Label> labels, Collection<Format> formats,
+			ActionListener list) {
 		// Create the filled Text Area
 		textLabel = new FilledTextArea<Label>(labels);
 		comboFormat = new JComboBox(new Vector<Format>(formats));
@@ -128,28 +130,21 @@ public class AddRecordGUI extends JFrame
 		types.add("Single");
 		comboType = new JComboBox(types);
 
-		try
-		{
+		try {
 			jbInit(list);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		// Only set the categories if there are categories to set!
-		try
-		{
+		try {
 			setCategories(GetCategories.build().getCategories());
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void addFormat(Format formIn)
-	{
+	public void addFormat(Format formIn) {
 		// Add the format to the combo box
 		comboFormat.addItem(formIn);
 
@@ -157,18 +152,13 @@ public class AddRecordGUI extends JFrame
 		butNewCat.setEnabled(true);
 	}
 
-	public void addTracks(int noTracks, int addPoint, ActionListener list)
-	{
+	public void addTracks(int noTracks, int addPoint, ActionListener list) {
 		int currNoTracks = trackTitles.size();
 
-		// Re-size the track panel
-		Dimension panDim = trackPan.getSize();
-		panDim.setSize(panDim.getWidth(), panDim.getHeight() * (currNoTracks + noTracks) / currNoTracks);
-
-		for (int i = currNoTracks; i < currNoTracks + noTracks; i++)
-		{
-			// Create the necessary objects
+		for (int i = currNoTracks; i < currNoTracks + noTracks; i++) {
+			// Create the necessary object
 			JLabel labTrack = new JLabel("" + (i + 1));
+			JTextField formTrackNumber = new JTextField((i + 1) + "");
 			JButton butGroop = new JButton("");
 			JTextField textTrack = new JTextField("");
 			JButton butPers = new JButton("Personnel");
@@ -185,41 +175,57 @@ public class AddRecordGUI extends JFrame
 			trackTitles.add(i, textTrack);
 			trackLengths.add(i, textTime);
 			trackGroops.add(i, butGroop);
+			trackFormNumbers.add(i, formTrackNumber);
 
 			// Add them using the required constraints
-			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE,
 					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butGroop, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 2, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTrack, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 1, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butPers, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTime, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(formTrackNumber, new GridBagConstraints(
+					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butGroop, new GridBagConstraints(
+					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTrack, new GridBagConstraints(
+					GridBagConstraints.RELATIVE, i, 1, 1, 1, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(butPers, new GridBagConstraints(
+					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(1, 1, 1, 1), 0, 0));
+			trackPan.add(textTime, new GridBagConstraints(
+					GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE,
+					new Insets(1, 1, 1, 1), 0, 0));
 		}
 
-		scrollTracks.getViewport().removeAll();
-		scrollTracks.getViewport().add(trackPan);
+		// scrollTracks.getViewport().removeAll();
+		// scrollTracks.getViewport().add(trackPan);
 
 		// Now move the titles around - start at the back!
-		for (int i = currNoTracks + noTracks - 1; i > addPoint + noTracks - 1; i--)
-		{
+		for (int i = currNoTracks + noTracks - 1; i > addPoint + noTracks - 1; i--) {
 			// Move the titles and times
-			(trackTitles.get(i)).setText((trackTitles.get(i - noTracks)).getText());
-			(trackLengths.get(i)).setText((trackLengths.get(i - noTracks)).getText());
+			(trackTitles.get(i)).setText((trackTitles.get(i - noTracks))
+					.getText());
+			(trackLengths.get(i)).setText((trackLengths.get(i - noTracks))
+					.getText());
 		}
 
 		// And blank the new fields
-		for (int i = addPoint; i < addPoint + noTracks; i++)
-		{
+		for (int i = addPoint; i < addPoint + noTracks; i++) {
 			(trackTitles.get(i)).setText("");
 			(trackLengths.get(i)).setText("");
 		}
+
+		trackPan.invalidate();
+		this.invalidate();
 	}
 
-	public void createTracks(ActionListener list)
-	{
+	public void createTracks(ActionListener list) {
 		// Enable the relevant buttons
 		butTracks.setEnabled(true);
 		butGroup.setEnabled(true);
@@ -229,291 +235,149 @@ public class AddRecordGUI extends JFrame
 		// Get the number of tracks
 		noTracks = Integer.parseInt(textNoTracks.getText().trim());
 
-		// Create the panel to store the track stuff
 		trackPan = new JPanel(new GridBagLayout());
-
-		// Add the tracks
-		scrollTracks.getViewport().add(trackPan); // ,new
-
-		for (int i = 0; i < noTracks; i++)
-		{
-			// Create the necessary objects
-			JLabel labTrack = new JLabel("" + (i + 1));
-			JButton butGroop = new JButton("");
-			JTextField textTrack = new JTextField("");
-			JButton butPers = new JButton("Personnel");
-			JTextField textTime = new JTextField("");
-			butGroop.setPreferredSize(new Dimension(79, 30));
-			butGroop.setActionCommand("tgroop" + (i + 1));
-			butGroop.addActionListener(list);
-			butPers.setPreferredSize(new Dimension(92, 30));
-			butPers.setActionCommand("tpers" + (i + 1));
-			butPers.addActionListener(list);
-			textTime.setPreferredSize(new Dimension(60, 30));
-			textTrack.setPreferredSize(new Dimension(60, 30));
-
-			trackTitles.add(textTrack);
-			trackLengths.add(textTime);
-			trackGroops.add(butGroop);
-
-			// Add them using the required constraints
-			trackPan.add(labTrack, new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-					new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butGroop, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 2, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTrack, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 1, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(butPers, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
-			trackPan.add(textTime, new GridBagConstraints(GridBagConstraints.RELATIVE, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
-		}
-
-		trackTitles.trimToSize();
-		trackLengths.trimToSize();
+		scrollTracks.getViewport().add(trackPan);
+		addTracks(noTracks, 0, list);
+		/*
+		 * // Create the panel to store the track stuff trackPan = new
+		 * JPanel(new GridBagLayout());
+		 * 
+		 * // Add the tracks scrollTracks.getViewport().add(trackPan); // ,new
+		 * 
+		 * for (int i = 0; i < noTracks; i++) { // Create the necessary objects
+		 * JLabel labTrack = new JLabel("" + (i + 1)); JButton butGroop = new
+		 * JButton(""); JTextField textTrack = new JTextField(""); JButton
+		 * butPers = new JButton("Personnel"); JTextField textTime = new
+		 * JTextField(""); butGroop.setPreferredSize(new Dimension(79, 30));
+		 * butGroop.setActionCommand("tgroop" + (i + 1));
+		 * butGroop.addActionListener(list); butPers.setPreferredSize(new
+		 * Dimension(92, 30)); butPers.setActionCommand("tpers" + (i + 1));
+		 * butPers.addActionListener(list); textTime.setPreferredSize(new
+		 * Dimension(60, 30)); textTrack.setPreferredSize(new Dimension(60,
+		 * 30));
+		 * 
+		 * trackTitles.add(textTrack); trackLengths.add(textTime);
+		 * trackGroops.add(butGroop);
+		 * 
+		 * // Add them using the required constraints trackPan.add(labTrack, new
+		 * GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.CENTER,
+		 * GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+		 * trackPan.add(butGroop, new GridBagConstraints(
+		 * GridBagConstraints.RELATIVE, i, 2, 1, 0, 0,
+		 * GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(1, 1,
+		 * 1, 1), 0, 0)); trackPan.add(textTrack, new GridBagConstraints(
+		 * GridBagConstraints.RELATIVE, i, 1, 1, 1, 0,
+		 * GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new
+		 * Insets(1, 1, 1, 1), 0, 0)); trackPan.add(butPers, new
+		 * GridBagConstraints( GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+		 * GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(1, 1,
+		 * 1, 1), 0, 0)); trackPan.add(textTime, new GridBagConstraints(
+		 * GridBagConstraints.RELATIVE, i, 1, 1, 0, 0,
+		 * GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(1, 1,
+		 * 1, 1), 0, 0)); }
+		 * 
+		 * trackTitles.trimToSize(); trackLengths.trimToSize();
+		 */
 	}
 
-	public void displayCats(Collection<String> in)
-	{
-		if (in.size() > 1)
-		{
+	public void displayCats(Collection<String> in) {
+		if (in.size() > 1) {
 			textCatNo.setText("Multiple Numbers");
 			textCatNo.setEnabled(false);
-		}
-		else
-		{
+		} else {
 			for (String catno : in)
 				textCatNo.setText(catno);
 			textCatNo.setEnabled(true);
 		}
 	}
 
-	public void displayLabels(Collection<Label> in)
-	{
-		if (in.size() > 1)
-		{
+	public void displayLabels(Collection<Label> in) {
+		if (in.size() > 1) {
 			textLabel.setText("Multiple Labels");
 			textLabel.setEnabled(false);
 			butMultiCat.setEnabled(true);
-		}
-		else if (in.size() > 0)
-		{
+		} else if (in.size() > 0) {
 			Iterator<Label> lIt = in.iterator();
 			textLabel.setText(lIt.next().toString());
 			textLabel.setEnabled(true);
 			// butMultiCat.setEnabled(false);
-		}
-		else
-		{
+		} else {
 			textLabel.setText("");
 			textLabel.setEnabled(true);
 			// butMultiCat.setEnabled(false);
 		}
 	}
 
-	public String getAuthor()
-	{
+	public String getAuthor() {
 		return textAuth.getText();
 	}
 
-	public Category getCategory()
-	{
+	public Category getCategory() {
 		return (Category) comboCategory.getSelectedItem();
 	}
 
-	public String getCatNo()
-	{
+	public String getCatNo() {
 		return textCatNo.getText();
 	}
 
-	public String getDate()
-	{
+	public String getDate() {
 		return textDate.getText();
 	}
 
-	public Format getFormat()
-	{
+	public Format getFormat() {
 		return (Format) comboFormat.getSelectedItem();
 	}
 
-	public String getLabel()
-	{
+	public int getFormatTrackNumber(int track) {
+		return Integer.parseInt(trackFormNumbers.get(track - 1).getText());
+	}
+
+	public String getLabel() {
 		return textLabel.getText();
 	}
 
-	public String getNotes()
-	{
+	public String getNotes() {
 		return textNotes.getText();
 	}
 
-	public int getNoTracks()
-	{
+	public int getNoTracks() {
 		return Integer.parseInt(textNoTracks.getText());
 	}
 
-	public double getPrice()
-	{
+	public double getPrice() {
 		return Double.parseDouble(textPrice.getText());
 	}
 
-	public String getRecordTitle()
-	{
+	public String getRecordTitle() {
 		return textTitle.getText();
 	}
 
-	public int getRecOwner()
-	{
+	public int getRecOwner() {
 		return comboOwner.getSelectedIndex() + 1;
 	}
 
-	public int getReleaseMonth()
-	{
+	public int getReleaseMonth() {
 		return comboMonth.getSelectedIndex();
 	}
 
-	public int getReleaseType()
-	{
+	public int getReleaseType() {
 		return comboType.getSelectedIndex() + 1;
 	}
 
-	public String getTrackTime(int i)
-	{
+	public String getTrackTime(int i) {
 		return (trackLengths.get(i - 1)).getText();
 	}
 
-	public String getTrackTitle(int i)
-	{
+	public String getTrackTitle(int i) {
 		// +1 since track i = array entry i-1
 		return (trackTitles.get(i - 1)).getText();
 	}
 
-	public String getYear()
-	{
+	public String getYear() {
 		return textYear.getText();
 	}
 
-	public void maximise()
-	{
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-	}
-
-	public void selectCategory(Category catIn)
-	{
-		comboCategory.setSelectedItem(catIn);
-	}
-
-	public void selectFormat(Format formIn)
-	{
-		comboFormat.setSelectedItem(formIn);
-	}
-
-	public void setAuthor(String in)
-	{
-		textAuth.setText(in);
-	}
-
-	public void setCategories(Collection<Category> in)
-	{
-		// Fill the categories combo box accordingly
-		comboCategory.removeAllItems();
-
-		for (Category category : in)
-			comboCategory.addItem(category);
-	}
-
-	public void setCategory(Category in)
-	{
-		// Add this category
-		comboCategory.addItem(in);
-
-		// And select it
-		comboCategory.setSelectedItem(in);
-	}
-
-	public void setCompiler(String name)
-	{
-		textMix.setText(name);
-	}
-
-	public void setDate(String in)
-	{
-		textDate.setText(in);
-	}
-
-	public void setGroop(String name, int trackNo)
-	{
-		// Get the button
-		JButton tempBut = trackGroops.get(trackNo - 1);
-		tempBut.setText(name);
-	}
-
-	public void setLength(String title, int no)
-	{
-		(trackLengths.get(no - 1)).setText(title);
-	}
-
-	public void setModel(Record rec)
-	{
-		model = rec;
-
-		// Set the format
-		if (model.getFormat() != null)
-			comboFormat.setSelectedItem(model.getFormat());
-		else
-			comboFormat.setSelectedIndex(0);
-	}
-
-	public void setMonth(int in)
-	{
-		comboMonth.setSelectedIndex(in);
-	}
-
-	public void setNotes(String in)
-	{
-		textNotes.setText(in);
-	}
-
-	public void setNoTracks(int no, ActionListener list)
-	{
-		textNoTracks.setText("" + no);
-		createTracks(list);
-	}
-
-	public void setPrice(double in)
-	{
-		NumberFormat form = NumberFormat.getInstance();
-		form.setMaximumFractionDigits(2);
-		form.setMinimumFractionDigits(2);
-		textPrice.setText(form.format(in));
-	}
-
-	public void setRecordTitle(String in)
-	{
-		textTitle.setText(in);
-	}
-
-	public void setRecOwner(int in)
-	{
-		comboOwner.setSelectedIndex(in - 1);
-	}
-
-	public void setTrackTitle(String title, int no)
-	{
-		(trackTitles.get(no - 1)).setText(title);
-	}
-
-	public void setType(int in)
-	{
-		comboType.setSelectedIndex(in - 1);
-	}
-
-	public void setYear(String in)
-	{
-		textYear.setText(in);
-	}
-
-	private void jbInit(ActionListener list) throws Exception
-	{
+	private void jbInit(ActionListener list) throws Exception {
 		titledBorder1 = new TitledBorder("");
 		jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
 		jLabel1.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -657,112 +521,360 @@ public class AddRecordGUI extends JFrame
 		butNewCat.addActionListener(list);
 		butNewCat.setEnabled(true);
 
-		this.getContentPane().add(jLabel1,
-				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textTitle,
-				new GridBagConstraints(1, 0, 8, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jLabel1,
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textTitle,
+				new GridBagConstraints(1, 0, 8, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 
-		this.getContentPane().add(jLabel2,
-				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textLabel,
-				new GridBagConstraints(1, 1, 7, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butMultiLabel,
-				new GridBagConstraints(8, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jLabel2,
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textLabel,
+				new GridBagConstraints(1, 1, 7, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				butMultiLabel,
+				new GridBagConstraints(8, 1, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
 		JLabel tLabel = new JLabel("Type: ");
 		tLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		this.getContentPane().add(tLabel,
-				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(comboType,
-				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(jLabel3,
-				new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(comboFormat,
-				new GridBagConstraints(3, 2, 5, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butNew,
-				new GridBagConstraints(8, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				tLabel,
+				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				comboType,
+				new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				jLabel3,
+				new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				comboFormat,
+				new GridBagConstraints(3, 2, 5, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				butNew,
+				new GridBagConstraints(8, 2, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(jLabel4,
-				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textCatNo,
-				new GridBagConstraints(1, 3, 7, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butMultiCat,
-				new GridBagConstraints(8, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jLabel4,
+				new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textCatNo,
+				new GridBagConstraints(1, 3, 7, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				butMultiCat,
+				new GridBagConstraints(8, 3, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(jLabel5,
-				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textDate,
-				new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(jLabel7,
-				new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textYear,
-				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(new JLabel("Month: "),
-				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(comboMonth,
-				new GridBagConstraints(5, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
-		this.getContentPane().add(jLabel9,
-				new GridBagConstraints(6, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(comboCategory,
-				new GridBagConstraints(7, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
-		this.getContentPane().add(butNewCat,
-				new GridBagConstraints(8, 4, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		this.getContentPane().add(
+				jLabel5,
+				new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textDate,
+				new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				jLabel7,
+				new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textYear,
+				new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				new JLabel("Month: "),
+				new GridBagConstraints(4, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				comboMonth,
+				new GridBagConstraints(5, 4, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
+						0, 0));
+		this.getContentPane().add(
+				jLabel9,
+				new GridBagConstraints(6, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(0, 0, 0, 0), 0, 0));
+		this.getContentPane().add(
+				comboCategory,
+				new GridBagConstraints(7, 4, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
+						0, 0));
+		this.getContentPane().add(
+				butNewCat,
+				new GridBagConstraints(8, 4, 1, 2, 0.0, 0.0,
+						GridBagConstraints.NORTH, GridBagConstraints.NONE,
+						new Insets(0, 0, 0, 0), 0, 0));
 
-		this.getContentPane().add(new JLabel("Owner: "),
-				new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(comboOwner,
-				new GridBagConstraints(5, 7, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+		this.getContentPane().add(
+				new JLabel("Owner: "),
+				new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				comboOwner,
+				new GridBagConstraints(5, 7, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5),
+						0, 0));
 
-		this.getContentPane().add(jLabel8,
-				new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textNotes,
-				new GridBagConstraints(1, 5, 8, 2, 1.0, 0.1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jLabel8,
+				new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textNotes,
+				new GridBagConstraints(1, 5, 8, 2, 1.0, 0.1,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(jLabel6,
-				new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textNoTracks,
-				new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butTracks,
-				new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butPersonnel,
-				new GridBagConstraints(7, 7, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butGroup,
-				new GridBagConstraints(8, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				jLabel6,
+				new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textNoTracks,
+				new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				butTracks,
+				new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0,
+						GridBagConstraints.WEST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				butPersonnel,
+				new GridBagConstraints(7, 7, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				butGroup,
+				new GridBagConstraints(8, 7, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(labelMix,
-				new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(textMix,
-				new GridBagConstraints(1, 8, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butMix,
-				new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				labelMix,
+				new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textMix,
+				new GridBagConstraints(1, 8, 3, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				butMix,
+				new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(labelPrice,
-				new GridBagConstraints(7, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				labelPrice,
+				new GridBagConstraints(7, 8, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(labelPrice,
-				new GridBagConstraints(6, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				labelPrice,
+				new GridBagConstraints(6, 8, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane().add(textPrice,
-				new GridBagConstraints(7, 8, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				textPrice,
+				new GridBagConstraints(7, 8, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 
-		this.getContentPane().add(scrollTracks,
-				new GridBagConstraints(0, 9, 9, 1, 1.0, 0.9, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				scrollTracks,
+				new GridBagConstraints(0, 9, 9, 1, 1.0, 0.9,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(5, 5, 5, 5), 0, 0));
 
-		this.getContentPane()
-				.add(
-						labelAuth,
-						new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-								new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane()
-				.add(
-						textAuth,
-						new GridBagConstraints(1, 10, 8, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-								new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				labelAuth,
+				new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
+		this.getContentPane().add(
+				textAuth,
+				new GridBagConstraints(1, 10, 8, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 
-		this.getContentPane().add(butCancel,
-				new GridBagConstraints(7, 11, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		this.getContentPane().add(butDone,
-				new GridBagConstraints(8, 11, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				butCancel,
+				new GridBagConstraints(7, 11, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
+		this.getContentPane().add(
+				butDone,
+				new GridBagConstraints(8, 11, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
+	}
+
+	public void maximise() {
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+	}
+
+	public void selectCategory(Category catIn) {
+		comboCategory.setSelectedItem(catIn);
+	}
+
+	public void selectFormat(Format formIn) {
+		comboFormat.setSelectedItem(formIn);
+	}
+
+	public void setAuthor(String in) {
+		textAuth.setText(in);
+	}
+
+	public void setCategories(Collection<Category> in) {
+		// Fill the categories combo box accordingly
+		comboCategory.removeAllItems();
+
+		for (Category category : in)
+			comboCategory.addItem(category);
+	}
+
+	public void setCategory(Category in) {
+		// Add this category
+		comboCategory.addItem(in);
+
+		// And select it
+		comboCategory.setSelectedItem(in);
+	}
+
+	public void setCompiler(String name) {
+		textMix.setText(name);
+	}
+
+	public void setDate(String in) {
+		textDate.setText(in);
+	}
+
+	public void setGroop(String name, int trackNo) {
+		// Get the button
+		JButton tempBut = trackGroops.get(trackNo - 1);
+		tempBut.setText(name);
+	}
+
+	public void setLength(String title, int no) {
+		(trackLengths.get(no - 1)).setText(title);
+	}
+
+	public void setModel(Record rec) {
+		model = rec;
+
+		// Set the format
+		if (model.getFormat() != null)
+			comboFormat.setSelectedItem(model.getFormat());
+		else
+			comboFormat.setSelectedIndex(0);
+	}
+
+	public void setMonth(int in) {
+		comboMonth.setSelectedIndex(in);
+	}
+
+	public void setNotes(String in) {
+		textNotes.setText(in);
+	}
+
+	public void setNoTracks(int no, ActionListener list) {
+		textNoTracks.setText("" + no);
+		createTracks(list);
+	}
+
+	public void setPrice(double in) {
+		NumberFormat form = NumberFormat.getInstance();
+		form.setMaximumFractionDigits(2);
+		form.setMinimumFractionDigits(2);
+		textPrice.setText(form.format(in));
+	}
+
+	public void setRecordTitle(String in) {
+		textTitle.setText(in);
+	}
+
+	public void setRecOwner(int in) {
+		comboOwner.setSelectedIndex(in - 1);
+	}
+
+	public void setTrackFormNumber(int number, int track) {
+		(trackFormNumbers.get(track - 1)).setText("" + number);
+	}
+
+	public void setTrackTitle(String title, int no) {
+		(trackTitles.get(no - 1)).setText(title);
+	}
+
+	public void setType(int in) {
+		comboType.setSelectedIndex(in - 1);
+	}
+
+	public void setYear(String in) {
+		textYear.setText(in);
 	}
 }
