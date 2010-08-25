@@ -26,8 +26,6 @@ import uk.co.brotherlogic.mdb.record.Record;
 public class MakeCDFileOverseer {
 	Record outRec;
 	File outFile;
-	File outDir;
-	boolean nonOver;
 
 	String fileLoc;
 
@@ -40,7 +38,6 @@ public class MakeCDFileOverseer {
 
 			// Get the record
 			outRec = sel.selectRecord(null);
-			nonOver = sel.getMyState();
 
 			// Get the output point
 			outFile = chooseFile();
@@ -71,7 +68,6 @@ public class MakeCDFileOverseer {
 
 			// Get the record
 			outRec = recIn;
-			nonOver = no;
 
 			// Get the output point
 			outFile = of;
@@ -103,7 +99,6 @@ public class MakeCDFileOverseer {
 
 		// Construct the correct file
 		File sDir = new File(musicDir.getAbsolutePath());
-		System.out.println("PATH = " + sDir);
 
 		// Search the sub-directories of this too!
 		File[] dirs2 = sDir.listFiles();
@@ -123,11 +118,10 @@ public class MakeCDFileOverseer {
 		resultingDir = fname;
 
 		File ret;
-		if (resultingDir != null) {
+		if (resultingDir != null)
 			ret = new File(trans.get(resultingDir) + File.separator
 					+ "CDout.txt");
-			outDir = new File(trans.get(resultingDir));
-		} else
+		else
 			ret = null;
 		return ret;
 	}
