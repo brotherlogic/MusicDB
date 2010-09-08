@@ -478,8 +478,8 @@ public class AddRecordOverseer implements ActionListener {
 
 		// Add the data if cancel wasn't pressed
 		if (persBuild.getTrackNumber() > 0)
-			curr.setPersonnel(trackNumber,
-					curr.getTrack(persBuild.getTrackNumber()).getPersonnel());
+			curr.setPersonnel(trackNumber, curr.getTrack(
+					persBuild.getTrackNumber()).getPersonnel());
 		else if (tempPers != null)
 			curr.setPersonnel(trackNumber, tempPers);
 
@@ -788,12 +788,12 @@ public class AddRecordOverseer implements ActionListener {
 				Track currTrack = curr.getTrack(i);
 
 				// Set the details
-				gui.setTrackTitle(currTrack.getTitle(),
-						currTrack.getTrackNumber());
-				addGroopsToGUI(currTrack.getLineUps(),
-						currTrack.getTrackNumber());
-				setTrackTime(currTrack.getLengthInSeconds(),
-						currTrack.getTrackNumber());
+				gui.setTrackTitle(currTrack.getTitle(), currTrack
+						.getTrackNumber());
+				addGroopsToGUI(currTrack.getLineUps(), currTrack
+						.getTrackNumber());
+				setTrackTime(currTrack.getLengthInSeconds(), currTrack
+						.getTrackNumber());
 			}
 
 			try {
@@ -842,7 +842,8 @@ public class AddRecordOverseer implements ActionListener {
 		gui.setLocationRelativeTo(parent);
 
 		// DO THIS WHILST DEBUGGING
-		gui.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+		gui
+				.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
 		gui.setVisible(true);
 	}
