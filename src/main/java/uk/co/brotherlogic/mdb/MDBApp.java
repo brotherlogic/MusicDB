@@ -79,6 +79,7 @@ public class MDBApp extends JFrame {
 		// Add record is done!
 
 		try {
+			System.err.println(done.getLabels());
 			done.save();
 
 			// Commit all the transactions
@@ -116,8 +117,8 @@ public class MDBApp extends JFrame {
 				this.setVisible(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null,
-					"ERROR: " + ex.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null, "ERROR: "
+					+ ex.getLocalizedMessage());
 			this.setVisible(true);
 		}
 
