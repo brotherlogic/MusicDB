@@ -27,12 +27,10 @@ import javax.swing.SwingConstants;
 import uk.co.brotherlogic.mdb.categories.Category;
 import uk.co.brotherlogic.mdb.categories.GetCategories;
 
-public class NewFormatGUI extends JDialog implements ActionListener
-{
-	public static void main(String[] args) throws SQLException
-	{
-		NewFormatGUI gui = new NewFormatGUI(GetCategories.build().getCategories(), GetFormats
-				.create().getBaseFormats(), null);
+public class NewFormatGUI extends JDialog implements ActionListener {
+	public static void main(String[] args) throws SQLException {
+		NewFormatGUI gui = new NewFormatGUI(GetCategories.build()
+				.getCategories(), GetFormats.create().getBaseFormats(), null);
 		gui.setVisible(true);
 	}
 
@@ -50,18 +48,15 @@ public class NewFormatGUI extends JDialog implements ActionListener
 	// Flag to indicate cancellation
 	boolean cancelled = false;
 
-	public NewFormatGUI(Collection<Category> categories, Collection<String> baseFormats, JFrame in)
-	{
+	public NewFormatGUI(Collection<Category> categories,
+			Collection<String> baseFormats, JFrame in) {
 		super(in, true);
 		Vector<Category> cats = new Vector<Category>();
 		cats.addAll(categories);
 
-		try
-		{
+		try {
 			jbInit(cats, baseFormats);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -73,39 +68,43 @@ public class NewFormatGUI extends JDialog implements ActionListener
 		this.setLocationRelativeTo(null);
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok"))
 			setVisible(false);
-		else if (e.getActionCommand().equals("cancel"))
-		{
+		else if (e.getActionCommand().equals("cancel")) {
 			cancelled = true;
 			setVisible(false);
 		}
 	}
 
-	public Format getFormat()
-	{
+	/**
+	 * Gets the format from the GUI
+	 * 
+	 * @return A suitable Format object
+	 */
+	public Format getFormat() {
 		Format ret;
 
 		// Build the format object using the string
 		if (cancelled)
 			return null;
-		else
-		{
-			Format other = (Format) comboOther.getSelectedItem();
+		else {
+			Format other = new Format(textFormat.getText(), (String) comboBase
+					.getSelectedItem());
 
 			if (other != null)
-				ret = new Format(textFormat.getText(), (String) comboBase.getSelectedItem());
+				ret = new Format(textFormat.getText(), (String) comboBase
+						.getSelectedItem());
 			else
-				ret = new Format(-1, textFormat.getText(), (String) comboBase.getSelectedItem());
+				ret = new Format(-1, textFormat.getText(), (String) comboBase
+						.getSelectedItem());
 
 			return ret;
 		}
 	}
 
-	private void jbInit(Vector<Category> categories, Collection<String> base) throws Exception
-	{
+	private void jbInit(Vector<Category> categories, Collection<String> base)
+			throws Exception {
 		// Construct the Categories thing accordingly
 		comboOther = new JComboBox(categories);
 		comboBase = new JComboBox(base.toArray(new String[0]));
@@ -143,39 +142,52 @@ public class NewFormatGUI extends JDialog implements ActionListener
 		butCancel.addActionListener(this);
 		this.getContentPane().add(
 				jLabel1,
-				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
-						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				baseLabel,
-				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
-						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				comboBase,
-				new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 		this.getContentPane().add(
 				jLabel2,
-				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				textFormat,
-				new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 		this.getContentPane().add(
 				comboOther,
-				new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
+						0, 0));
 		this.getContentPane().add(
 				butOK,
-				new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
-						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				butCancel,
-				new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
-						GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+				new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 		this.getContentPane().add(
 				jPanel1,
-				new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+				new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+						0, 0));
 	}
 }
