@@ -79,7 +79,6 @@ public class MDBApp extends JFrame {
 		// Add record is done!
 
 		try {
-			System.err.println(done.getLabels());
 			done.save();
 
 			// Commit all the transactions
