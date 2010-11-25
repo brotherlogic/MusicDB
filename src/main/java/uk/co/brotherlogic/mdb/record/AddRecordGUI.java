@@ -88,6 +88,8 @@ public class AddRecordGUI extends JFrame {
 	JLabel labelOwner = new JLabel();
 	JComboBox comboOwner = new JComboBox();
 
+	JButton butParent = new JButton("Parent");
+
 	int noTracks;
 	JTextField textNotes = new JTextField();
 	JLabel jLabel8 = new JLabel();
@@ -521,6 +523,9 @@ public class AddRecordGUI extends JFrame {
 		butNewCat.addActionListener(list);
 		butNewCat.setEnabled(true);
 
+		butParent.setActionCommand("parent");
+		butParent.addActionListener(list);
+
 		this.getContentPane().add(
 				jLabel1,
 				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
@@ -760,6 +765,12 @@ public class AddRecordGUI extends JFrame {
 						GridBagConstraints.CENTER,
 						GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
 						0, 0));
+
+		this.getContentPane().add(
+				butParent,
+				new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0,
+						GridBagConstraints.EAST, GridBagConstraints.NONE,
+						new Insets(5, 5, 5, 5), 0, 0));
 
 		this.getContentPane().add(
 				butCancel,
