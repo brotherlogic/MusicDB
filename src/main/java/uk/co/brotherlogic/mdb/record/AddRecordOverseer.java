@@ -128,7 +128,8 @@ public class AddRecordOverseer implements ActionListener
 
       // Set the selected categories
       gui.selectCategory(rec.getCategory());
-      if (rec.getParent() != null || rec.getParent() > 0)
+
+      if (rec.getParent() != null && rec.getParent() > 0)
          gui.setParent(GetRecords.create().getRecord(rec.getParent()));
 
       gui.displayCats(rec.getCatNos());
