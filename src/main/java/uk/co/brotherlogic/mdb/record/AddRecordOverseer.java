@@ -128,6 +128,8 @@ public class AddRecordOverseer implements ActionListener
 
       // Set the selected categories
       gui.selectCategory(rec.getCategory());
+      if (rec.getParent() != null || rec.getParent() > 0)
+         gui.setParent(GetRecords.create().getRecord(rec.getParent()));
 
       gui.displayCats(rec.getCatNos());
       DateFormat myForm = new SimpleDateFormat("dd/MM/yy");
@@ -933,6 +935,8 @@ public class AddRecordOverseer implements ActionListener
       Record parent = sel.selectRecord(gui);
       if (parent != null)
          curr.setParent(parent.getNumber());
+
+      gui.setParent(parent);
 
    }
 
