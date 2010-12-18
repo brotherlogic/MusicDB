@@ -171,6 +171,8 @@ public class AddRecordGUI extends JFrame
          // Create the necessary object
          JLabel labTrack = new JLabel("" + (i + 1));
          JTextField formTrackNumber = new JTextField((i + 1) + "");
+         formTrackNumber.setActionCommand("formtrack" + (i + 1));
+         formTrackNumber.addActionListener(list);
          JButton butGroop = new JButton("");
          JTextField textTrack = new JTextField("");
          JButton butPers = new JButton("Personnel");
@@ -404,6 +406,15 @@ public class AddRecordGUI extends JFrame
    public String getYear()
    {
       return textYear.getText();
+   }
+
+   public void incrementLabFrom(int val)
+   {
+      for (JTextField tForm : trackFormNumbers.subList(val, trackFormNumbers.size()))
+      {
+         int num = Integer.parseInt(tForm.getText());
+         tForm.setText(Integer.toString(num - 1));
+      }
    }
 
    private void jbInit(ActionListener list) throws Exception

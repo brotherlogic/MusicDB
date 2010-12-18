@@ -265,6 +265,11 @@ public class AddRecordOverseer implements ActionListener
          {
             JOptionPane.showMessageDialog(null, e2.getLocalizedMessage());
          }
+      else if (e.getActionCommand().startsWith("formtrack"))
+      {
+         int number = Integer.parseInt(e.getActionCommand().substring("formtrack".length()));
+         gui.incrementLabFrom(number);
+      }
       else if (e.getActionCommand().startsWith("tpers"))
       {
          // Get the track number
@@ -541,8 +546,8 @@ public class AddRecordOverseer implements ActionListener
                }
 
             });
-      persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(), Math.max(1,
-            trackNumber - 1), curr.getTracks().size());
+      persBuild.setData(artists, curr.getTrack(trackNumber).getPersonnel(),
+            Math.max(1, trackNumber - 1), curr.getTracks().size());
       persBuild.setVisible(true);
 
       // Get the results
