@@ -3,7 +3,7 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbapp</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.20</version>
+  <version>0.3.21-SNAPSHOT</version>
   <name>mdb</name>
   <url>http://maven.apache.org</url>
 
