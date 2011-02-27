@@ -175,16 +175,19 @@ public class MDBApp extends JFrame
       {
          Properties props = new Properties();
          InputStream is = this.getClass().getResourceAsStream(
-               "META-INF/maven/uk.co.brotherlogic.mdb/mdbapp/pom.properties");
+               "/META-INF/maven/uk.co.brotherlogic.mdb/mdbapp/pom.properties");
          if (is != null)
          {
             props.load(is);
             return props.getProperty("version");
          }
+         else
+            System.err.println("HERE");
       }
       catch (IOException e)
       {
          // Ignore
+         e.printStackTrace();
       }
       return "DEV";
    }
