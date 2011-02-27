@@ -33,7 +33,7 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class MDBApp extends JFrame
 {
-   private static String VERSION = "0.3.18";
+   private static String VERSION = "0.3.19";
 
    public static void main(final String[] args) throws Exception
    {
@@ -229,7 +229,8 @@ public class MDBApp extends JFrame
       buttonPanel.add(buttonFind, null);
       this.add(buttonPanel, BorderLayout.CENTER);
 
-      JLabel label = new JLabel("Version " + VERSION);
+      JLabel label = new JLabel("Version " + VERSION + " ["
+            + Connect.getConnection().getVersionString() + "]");
       this.add(label, BorderLayout.SOUTH);
    }
 
