@@ -33,7 +33,7 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class MDBApp extends JFrame
 {
-   private static String VERSION = "0.3.19";
+   private static String VERSION = "0.3.20";
 
    public static void main(final String[] args) throws Exception
    {
