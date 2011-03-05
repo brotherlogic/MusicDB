@@ -759,6 +759,7 @@ public class AddRecordGUI extends JFrame
 
    public void maximise()
    {
+      System.err.println("Maximising");
       this.setExtendedState(JFrame.MAXIMIZED_BOTH);
    }
 
