@@ -40,10 +40,6 @@ public class MDBApp extends JFrame
    {
       try
       {
-
-         // Set for production
-         // Connect.setForProduction();
-
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
       catch (Exception ex)
