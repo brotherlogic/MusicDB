@@ -3,7 +3,10 @@ package uk.co.brotherlogic.mdb;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,16 +36,10 @@ import uk.co.brotherlogic.mdb.record.Record;
  */
 public class MDBApp extends JFrame
 {
-   private static String VERSION = "0.3.19";
-
    public static void main(final String[] args) throws Exception
    {
       try
       {
-
-         // Set for production
-         // Connect.setForProduction();
-
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
       catch (Exception ex)
@@ -168,6 +165,29 @@ public class MDBApp extends JFrame
 
    }
 
+   private String getVersion()
+   {
+      try
+      {
+         Properties props = new Properties();
+         InputStream is = this.getClass().getResourceAsStream(
+               "/META-INF/maven/uk.co.brotherlogic.mdb/mdbapp/pom.properties");
+         if (is != null)
+         {
+            props.load(is);
+            return props.getProperty("version");
+         }
+         else
+            System.err.println("HERE");
+      }
+      catch (IOException e)
+      {
+         // Ignore
+         e.printStackTrace();
+      }
+      return "DEV";
+   }
+
    private void jbInit() throws Exception
    {
       JButton buttonAdd = new JButton("Add Record");
@@ -229,7 +249,8 @@ public class MDBApp extends JFrame
       buttonPanel.add(buttonFind, null);
       this.add(buttonPanel, BorderLayout.CENTER);
 
-      JLabel label = new JLabel("Version " + VERSION);
+      JLabel label = new JLabel("Version " + getVersion() + " ["
+            + Connect.getConnection().getVersionString() + "]");
       this.add(label, BorderLayout.SOUTH);
    }
 

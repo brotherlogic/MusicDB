@@ -981,6 +981,10 @@ public class AddRecordOverseer implements ActionListener
       gui.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
       gui.setVisible(true);
+
+      // Ensure that the window is maximised if we're editing
+      if (curr.getTitle() != null && curr.getTitle().length() > 0)
+         gui.maximise();
    }
 
    public void updateAuthor()

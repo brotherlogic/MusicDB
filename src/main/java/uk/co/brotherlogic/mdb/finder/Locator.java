@@ -84,12 +84,15 @@ public class Locator extends JFrame
          e.printStackTrace();
       }
 
-      for (int i = 1; i < records.size() - 1; i++)
+      for (int i = 0; i < records.size(); i++)
       {
          Record rec = records.get(i);
+
          catMap.put(rec.getDisplayTitle(), rec.getCategory().getCatName());
-         befores.put(rec.getDisplayTitle(), records.get(i - 1).getDisplayTitle());
-         afters.put(rec.getDisplayTitle(), records.get(i + 1).getDisplayTitle());
+         if (i > 1)
+            befores.put(rec.getDisplayTitle(), records.get(i - 1).getDisplayTitle());
+         if (i < (records.size() - 1))
+            afters.put(rec.getDisplayTitle(), records.get(i + 1).getDisplayTitle());
       }
    }
 
