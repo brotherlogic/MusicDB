@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -38,6 +39,12 @@ public class MDBApp extends JFrame
 {
    public static void main(final String[] args) throws Exception
    {
+      System.out.println(Connect.getConnection().getVersionString());
+      Collection<Record> records = GetRecords.create().getRecords(GetRecords.UNSHELVED, "12");
+      for (Record rec : records)
+         System.out.println(rec.getAuthor() + " - " + rec.getTitle());
+      System.exit(1);
+
       try
       {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

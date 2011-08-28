@@ -75,7 +75,7 @@ public class Locator extends JFrame
          for (Record rec : recs)
          {
             rec.setCategory(new Category("Unshelved", 10));
-            System.err.println(rec.getAuthor() + " - " + rec.getTitle());
+            System.out.println(rec.getAuthor() + " - " + rec.getTitle());
          }
          records.addAll(recs);
       }
