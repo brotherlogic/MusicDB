@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -39,12 +38,6 @@ public class MDBApp extends JFrame
 {
    public static void main(final String[] args) throws Exception
    {
-      System.out.println(Connect.getConnection().getVersionString());
-      Collection<Record> records = GetRecords.create().getRecords(GetRecords.UNSHELVED, "12");
-      for (Record rec : records)
-         System.out.println(rec.getAuthor() + " - " + rec.getTitle());
-      System.exit(1);
-
       try
       {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -112,6 +105,30 @@ public class MDBApp extends JFrame
    public final void cancel()
    {
       this.setVisible(true);
+   }
+
+   private void delete()
+   {
+      try
+      {
+         // Choose a file to examine
+         RecordSelector sel = new RecordSelector();
+         Record examine = sel.selectRecord(this);
+
+         if (examine != null)
+         {
+            // Check
+            int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete "
+                  + examine.getAuthor() + " - " + examine.getTitle());
+            if (option == JOptionPane.YES_OPTION)
+               GetRecords.create().deleteRecord(examine);
+         }
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+      }
+
    }
 
    private void discog()
@@ -245,6 +262,15 @@ public class MDBApp extends JFrame
          }
       });
 
+      JButton buttonDelete = new JButton("Delete");
+      buttonDelete.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            delete();
+         }
+      });
+
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       this.setTitle("Music Database");
@@ -254,6 +280,7 @@ public class MDBApp extends JFrame
       buttonPanel.add(buttonEdit, null);
       buttonPanel.add(buttonDiscogs, null);
       buttonPanel.add(buttonFind, null);
+      buttonPanel.add(buttonDelete, null);
       this.add(buttonPanel, BorderLayout.CENTER);
 
       JLabel label = new JLabel("Version " + getVersion() + " ["

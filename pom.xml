@@ -30,7 +30,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
+      <version>4.9</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.5.54</version>
+      <version>0.5.61</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>
