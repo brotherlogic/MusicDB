@@ -818,7 +818,7 @@ public class AddRecordGUI extends JFrame
       (trackLengths.get(no - 1)).setText(title);
    }
 
-   public void setModel(Record rec)
+   public void setModel(Record rec) throws SQLException
    {
       model = rec;
 

@@ -68,6 +68,7 @@ public class AddRecordOverseer implements ActionListener
 
    public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels,
          Collection<Format> formats, Map<String, Groop> groops, Collection<Category> categories)
+         throws SQLException
    {
       // Set the callback object
       call = c;
