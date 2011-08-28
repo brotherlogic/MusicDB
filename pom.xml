@@ -3,13 +3,13 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbapp</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.22-SNAPSHOT</version>
+  <version>0.3.24-SNAPSHOT</version>
   <name>mdb</name>
   <url>http://maven.apache.org</url>
 
   <scm>
-   <connection>scm:git:git://github.com/BrotherLogic/MusicDB.git</connection>
-   <url>scm:git:git://github.com/BrotherLogic/MusicDB.git</url>
+   <connection>scm:git:git@github.com:BrotherLogic/MusicDB.git</connection>
+   <url>scm:git:git@github.com:BrotherLogic/MusicDB.git</url>
   </scm>
 
   <distributionManagement>
