@@ -3,7 +3,10 @@ package uk.co.brotherlogic.mdb;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +19,7 @@ import javax.swing.UIManager;
 import uk.co.brotherlogic.mdb.artist.GetArtists;
 import uk.co.brotherlogic.mdb.categories.GetCategories;
 import uk.co.brotherlogic.mdb.cdbuilder.MakeCDFileOverseer;
+import uk.co.brotherlogic.mdb.finder.Locator;
 import uk.co.brotherlogic.mdb.format.GetFormats;
 import uk.co.brotherlogic.mdb.groop.GetGroops;
 import uk.co.brotherlogic.mdb.label.GetLabels;
@@ -30,197 +34,311 @@ import uk.co.brotherlogic.mdb.record.Record;
  * @author sat
  * 
  */
-public class MDBApp extends JFrame {
-	private static String VERSION = "0.3.13";
+public class MDBApp extends JFrame
+{
+   public static void main(final String[] args) throws Exception
+   {
+      try
+      {
+         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+      }
 
-	public static void main(final String[] args) throws Exception {
-		try {
+      MDBApp c = new MDBApp();
+      c.runApp();
+   }
 
-			// Set for production
-			// Connect.setForProduction();
+   /**
+    * Constructor
+    */
+   public MDBApp()
+   {
+      // Connect.setForProduction();
+   }
 
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+   private void addCD()
+   {
+      this.setVisible(false);
+      final MDBApp ref = this;
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            try
+            {
+               AddRecordOverseer over = new AddRecordOverseer(ref,
+                     GetArtists.create().getArtists(), GetLabels.create().getLabels(), GetFormats
+                           .create().getFormats(), GetGroops.build().getGroopMap(), GetCategories
+                           .build().getCategories());
+               over.showGUI(ref);
+            }
+            catch (SQLException e)
+            {
+               e.printStackTrace();
+            }
+         }
+      });
+   }
 
-		MDBApp c = new MDBApp();
-		c.runApp();
-	}
+   public final void addDone(final Record done)
+   {
+      // Add record is done!
 
-	/**
-	 * Constructor
-	 */
-	public MDBApp() {
-		// Connect.setForProduction();
-	}
+      try
+      {
+         done.save();
 
-	private void addCD() {
-		this.setVisible(false);
-		final MDBApp ref = this;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AddRecordOverseer over = new AddRecordOverseer(ref,
-							GetArtists.create().getArtists(), GetLabels
-									.create().getLabels(), GetFormats.create()
-									.getFormats(), GetGroops.build()
-									.getGroopMap(), GetCategories.build()
-									.getCategories());
-					over.showGUI(ref);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+         // Commit all the transactions
+         Connect.getConnection().commitTrans();
+      }
+      catch (SQLException ex)
+      {
+         ex.printStackTrace();
+      }
 
-	public final void addDone(final Record done) {
-		// Add record is done!
+      this.setVisible(true);
+   }
 
-		try {
-			done.save();
+   public final void cancel()
+   {
+      this.setVisible(true);
+   }
 
-			// Commit all the transactions
-			Connect.getConnection().commitTrans();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
+   private void delete()
+   {
+      try
+      {
+         // Choose a file to examine
+         RecordSelector sel = new RecordSelector();
+         Record examine = sel.selectRecord(this);
 
-		this.setVisible(true);
-	}
+         if (examine != null)
+         {
+            // Check
+            int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete "
+                  + examine.getAuthor() + " - " + examine.getTitle());
+            if (option == JOptionPane.YES_OPTION)
+               GetRecords.create().deleteRecord(examine);
+         }
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+      }
 
-	public final void cancel() {
-		this.setVisible(true);
-	}
+   }
 
-	private void discog() {
-		this.setVisible(false);
-		try {
-			// Choose a file to examine
-			String id = JOptionPane.showInputDialog("Enter discog ID");
+   private void discog()
+   {
+      this.setVisible(false);
+      try
+      {
+         // Choose a file to examine
+         String id = JOptionPane.showInputDialog("Enter discog ID");
 
-			// Prepare the viewer
+         // Prepare the viewer
 
-			DiscogParser parser = new DiscogParser();
-			Record examine = parser.parseDiscogRelease(Integer.parseInt(id));
+         DiscogParser parser = new DiscogParser();
+         Record examine = parser.parseDiscogRelease(Integer.parseInt(id));
 
-			if (examine != null) {
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
-						.create().getArtists(), GetLabels.create().getLabels(),
-						GetFormats.create().getFormats(), GetGroops.build()
-								.getGroopMap(), GetCategories.build()
-								.getCategories(), examine);
-				over.showGUI(this);
-			} else
-				this.setVisible(true);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "ERROR: "
-					+ ex.getLocalizedMessage());
-			this.setVisible(true);
-		}
+         if (examine != null)
+         {
+            AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(),
+                  GetLabels.create().getLabels(), GetFormats.create().getFormats(), GetGroops
+                        .build().getGroopMap(), GetCategories.build().getCategories(), examine);
+            over.showGUI(this);
+         }
+         else
+            this.setVisible(true);
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+         JOptionPane.showMessageDialog(null, "ERROR: " + ex.getLocalizedMessage());
+         this.setVisible(true);
+      }
 
-	}
+   }
 
-	private void edit() {
-		try {
-			// Choose a file to examine
-			RecordSelector sel = new RecordSelector();
-			Record examine = sel.selectRecord(this);
+   private void edit()
+   {
+      try
+      {
+         // Choose a file to examine
+         RecordSelector sel = new RecordSelector();
+         Record examine = sel.selectRecord(this);
 
-			if (examine != null) {
-				// Prepare the viewer
-				this.setVisible(false);
+         if (examine != null)
+         {
+            // Prepare the viewer
+            this.setVisible(false);
 
-				AddRecordOverseer over = new AddRecordOverseer(this, GetArtists
-						.create().getArtists(), GetLabels.create().getLabels(),
-						GetFormats.create().getFormats(), GetGroops.build()
-								.getGroopMap(), GetCategories.build()
-								.getCategories(), examine);
-				over.showGUI(this);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+            AddRecordOverseer over = new AddRecordOverseer(this, GetArtists.create().getArtists(),
+                  GetLabels.create().getLabels(), GetFormats.create().getFormats(), GetGroops
+                        .build().getGroopMap(), GetCategories.build().getCategories(), examine);
+            over.showGUI(this);
+         }
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+      }
 
-	}
+   }
 
-	private void jbInit() throws Exception {
-		JButton buttonAdd = new JButton("Add Record");
-		buttonAdd.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				addCD();
-			}
-		});
+   private String getVersion()
+   {
+      try
+      {
+         Properties props = new Properties();
+         InputStream is = this.getClass().getResourceAsStream(
+               "/META-INF/maven/uk.co.brotherlogic.mdb/mdbapp/pom.properties");
+         if (is != null)
+         {
+            props.load(is);
+            return props.getProperty("version");
+         }
+         else
+            System.err.println("HERE");
+      }
+      catch (IOException e)
+      {
+         // Ignore
+         e.printStackTrace();
+      }
+      return "DEV";
+   }
 
-		this.getContentPane().setLayout(new BorderLayout());
-		JPanel buttonPanel = new JPanel(new GridLayout(2, 2));
+   private void jbInit() throws Exception
+   {
+      JButton buttonAdd = new JButton("Add Record");
+      buttonAdd.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            addCD();
+         }
+      });
 
-		JButton buttonEdit = new JButton("Edit Record");
-		buttonEdit.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				edit();
-			}
-		});
+      this.getContentPane().setLayout(new BorderLayout());
+      JPanel buttonPanel = new JPanel(new GridLayout(3, 2));
 
-		JButton buttonCD = new JButton("Make CD File");
-		buttonCD.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				makeCD();
-			}
-		});
+      JButton buttonEdit = new JButton("Edit Record");
+      buttonEdit.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            edit();
+         }
+      });
 
-		JButton buttonDiscogs = new JButton("Add From DiscogID");
-		buttonDiscogs.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				discog();
-			}
-		});
+      JButton buttonCD = new JButton("Make CD File");
+      buttonCD.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            makeCD();
+         }
+      });
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      JButton buttonDiscogs = new JButton("Add From DiscogID");
+      buttonDiscogs.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            discog();
+         }
+      });
 
-		this.setTitle("Music Database");
+      JButton buttonFind = new JButton("Find");
+      buttonFind.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            locate();
+         }
+      });
 
-		buttonPanel.add(buttonAdd, null);
-		buttonPanel.add(buttonCD, null);
-		buttonPanel.add(buttonEdit, null);
-		buttonPanel.add(buttonDiscogs, null);
-		this.add(buttonPanel, BorderLayout.CENTER);
+      JButton buttonDelete = new JButton("Delete");
+      buttonDelete.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            delete();
+         }
+      });
 
-		JLabel label = new JLabel("Version " + VERSION);
-		this.add(label, BorderLayout.SOUTH);
-	}
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-	private void makeCD() {
-		try {
-			// Run the button CD overseer
-			this.setVisible(false);
-			new MakeCDFileOverseer(GetRecords.create(), Settings
-					.getCDFileOutputDirectory().getAbsolutePath());
-			this.setVisible(true);
-		} catch (SQLException e2) {
-			JOptionPane.showMessageDialog(this, e2.getMessage());
-		}
+      this.setTitle("Music Database");
 
-	}
+      buttonPanel.add(buttonAdd, null);
+      buttonPanel.add(buttonCD, null);
+      buttonPanel.add(buttonEdit, null);
+      buttonPanel.add(buttonDiscogs, null);
+      buttonPanel.add(buttonFind, null);
+      buttonPanel.add(buttonDelete, null);
+      this.add(buttonPanel, BorderLayout.CENTER);
 
-	public final void runApp() {
+      JLabel label = new JLabel("Version " + getVersion() + " ["
+            + Connect.getConnection().getVersionString() + "]");
+      this.add(label, BorderLayout.SOUTH);
+   }
 
-		// Now construct the gui
-		try {
-			jbInit();
-			final int appSize = 500;
-			this.setSize(appSize, appSize);
+   private void locate()
+   {
+      this.setVisible(false);
+      final MDBApp ref = this;
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            Locator loc = new Locator();
+            loc.run(ref);
+         }
+      });
+   }
 
-			// Center the frame on screen
-			this.setLocationRelativeTo(null);
+   private void makeCD()
+   {
+      try
+      {
+         // Run the button CD overseer
+         this.setVisible(false);
+         new MakeCDFileOverseer(GetRecords.create(), Settings.getCDFileOutputDirectory()
+               .getAbsolutePath());
+         this.setVisible(true);
+      }
+      catch (SQLException e2)
+      {
+         JOptionPane.showMessageDialog(this, e2.getMessage());
+      }
 
-			// Display the giu
-			this.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+   }
 
-	}
+   public final void runApp()
+   {
+
+      // Now construct the gui
+      try
+      {
+         jbInit();
+         final int appSize = 500;
+         this.setSize(appSize, appSize);
+
+         // Center the frame on screen
+         this.setLocationRelativeTo(null);
+
+         // Display the giu
+         this.setVisible(true);
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+
+   }
 }
