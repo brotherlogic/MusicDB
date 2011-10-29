@@ -30,17 +30,17 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.2</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
     	<groupId>postgresql</groupId>
-    	<version>8.3-606.jdbc3</version>
+    	<version>9.0-801.jdbc4</version>
     	<artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.5.44-SNAPSHOT</version>
+      <version>0.5.52</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>
