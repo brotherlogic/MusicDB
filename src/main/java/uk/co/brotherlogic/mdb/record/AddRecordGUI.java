@@ -64,6 +64,7 @@ public class AddRecordGUI extends JFrame
 
    JLabel labelPrice = new JLabel("Price: ");
    JTextField textPrice = new JTextField("0.00");
+   JTextField textSalePrice = new JTextField("-1.00");
 
    // Author and Mixer stuff
    JLabel labelAuth = new JLabel();
@@ -392,6 +393,11 @@ public class AddRecordGUI extends JFrame
       return comboType.getSelectedIndex() + 1;
    }
 
+   public int getSalePrice()
+   {
+      return (int) (100 * Double.parseDouble(textSalePrice.getText()));
+   }
+
    public String getTrackTime(int i)
    {
       return (trackLengths.get(i - 1)).getText();
@@ -535,6 +541,7 @@ public class AddRecordGUI extends JFrame
       butTracks.addActionListener(list);
 
       textPrice.setMinimumSize(new Dimension(4, 30));
+      textSalePrice.setMinimumSize(new Dimension(4, 30));
       labelOwner.setText("Owner: ");
 
       textNotes.setBorder(textYear.getBorder());
@@ -728,6 +735,11 @@ public class AddRecordGUI extends JFrame
                   GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
       this.getContentPane().add(
+            textSalePrice,
+            new GridBagConstraints(8, 8, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+                  GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+      this.getContentPane().add(
             scrollTracks,
             new GridBagConstraints(0, 9, 9, 1, 1.0, 0.9, GridBagConstraints.CENTER,
                   GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -818,7 +830,7 @@ public class AddRecordGUI extends JFrame
       (trackLengths.get(no - 1)).setText(title);
    }
 
-   public void setModel(Record rec)
+   public void setModel(Record rec) throws SQLException
    {
       model = rec;
 
@@ -866,6 +878,14 @@ public class AddRecordGUI extends JFrame
    public void setRecOwner(int in)
    {
       comboOwner.setSelectedIndex(in - 1);
+   }
+
+   public void setSalePrice(Integer in)
+   {
+      NumberFormat form = NumberFormat.getInstance();
+      form.setMaximumFractionDigits(2);
+      form.setMinimumFractionDigits(2);
+      textSalePrice.setText(form.format(in / 100.0));
    }
 
    public void setTrackFormNumber(int number, int track)

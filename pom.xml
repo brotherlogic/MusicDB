@@ -3,13 +3,13 @@
   <groupId>uk.co.brotherlogic.mdb</groupId>
   <artifactId>mdbapp</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.22-SNAPSHOT</version>
+  <version>0.3.24-SNAPSHOT</version>
   <name>mdb</name>
   <url>http://maven.apache.org</url>
 
   <scm>
-   <connection>scm:git:git://github.com/BrotherLogic/MusicDB.git</connection>
-   <url>scm:git:git://github.com/BrotherLogic/MusicDB.git</url>
+   <connection>scm:git:git@github.com:BrotherLogic/MusicDB.git</connection>
+   <url>scm:git:git@github.com:BrotherLogic/MusicDB.git</url>
   </scm>
 
   <distributionManagement>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
+      <version>4.10</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>uk.co.brotherlogic.mdb</groupId>
-      <version>0.5.52</version>
+      <version>0.5.64</version>
       <artifactId>mdbcore</artifactId>
     </dependency>
   </dependencies>

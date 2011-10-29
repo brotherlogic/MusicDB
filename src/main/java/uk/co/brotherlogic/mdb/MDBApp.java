@@ -107,6 +107,30 @@ public class MDBApp extends JFrame
       this.setVisible(true);
    }
 
+   private void delete()
+   {
+      try
+      {
+         // Choose a file to examine
+         RecordSelector sel = new RecordSelector();
+         Record examine = sel.selectRecord(this);
+
+         if (examine != null)
+         {
+            // Check
+            int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete "
+                  + examine.getAuthor() + " - " + examine.getTitle());
+            if (option == JOptionPane.YES_OPTION)
+               GetRecords.create().deleteRecord(examine);
+         }
+      }
+      catch (Exception ex)
+      {
+         ex.printStackTrace();
+      }
+
+   }
+
    private void discog()
    {
       this.setVisible(false);
@@ -238,6 +262,15 @@ public class MDBApp extends JFrame
          }
       });
 
+      JButton buttonDelete = new JButton("Delete");
+      buttonDelete.addActionListener(new java.awt.event.ActionListener()
+      {
+         public void actionPerformed(final ActionEvent e)
+         {
+            delete();
+         }
+      });
+
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       this.setTitle("Music Database");
@@ -247,6 +280,7 @@ public class MDBApp extends JFrame
       buttonPanel.add(buttonEdit, null);
       buttonPanel.add(buttonDiscogs, null);
       buttonPanel.add(buttonFind, null);
+      buttonPanel.add(buttonDelete, null);
       this.add(buttonPanel, BorderLayout.CENTER);
 
       JLabel label = new JLabel("Version " + getVersion() + " ["

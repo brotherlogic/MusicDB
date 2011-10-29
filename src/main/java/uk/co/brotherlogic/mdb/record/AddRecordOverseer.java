@@ -68,6 +68,7 @@ public class AddRecordOverseer implements ActionListener
 
    public AddRecordOverseer(MDBApp c, Collection<Artist> artists, Collection<Label> labels,
          Collection<Format> formats, Map<String, Groop> groops, Collection<Category> categories)
+         throws SQLException
    {
       // Set the callback object
       call = c;
@@ -154,6 +155,7 @@ public class AddRecordOverseer implements ActionListener
       gui.setMonth(rec.getReleaseMonth());
 
       gui.setPrice(rec.getPrice());
+      gui.setSalePrice(rec.getSoldPrice());
 
       updateCompiler();
    }
@@ -642,6 +644,7 @@ public class AddRecordOverseer implements ActionListener
       curr.setCategory(gui.getCategory());
 
       curr.setPrice(gui.getPrice());
+      curr.setSoldPrice(gui.getSalePrice());
 
       // Get the date
       try
